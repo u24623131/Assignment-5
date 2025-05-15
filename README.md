@@ -1,4 +1,4 @@
-# Price Comparison Tool - School Project
+# Price Comparison Tool 
 
 ## Table of Contents
 - [Project Description](#project-description)
