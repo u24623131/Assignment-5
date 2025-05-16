@@ -1,0 +1,13 @@
+#Ignore environment variables
+backend/.env
+backend/.env.*
+
+# ignore composer dependencies and lockfile
+backend/vendor/
+backend/composer.lock
+
+#ignore logs (just in case)
+*.log
+
+#ignore test/debug files
+backend/testConfig.php

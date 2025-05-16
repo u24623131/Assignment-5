@@ -96,6 +96,7 @@ header("Access-Control-Allow-Origin: *"); // Allows any website (any “origin�
 header("Access-Control-Allow-Methods: POST"); // Tells the browser that only POST requests are permitted from cross‑origin callers.
 header("Access-Control-Allow-Headers: Content-Type"); // Declares which custom headers the client is allowed to send.
 //Sending HTTP headers that enable Cross-Origin Resource Sharing(CORS) so that browsers will let web pages on other domains talk to the API
+
 if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     // Only run this if api.php is called directly. Doing this prevents the double-running of handleRequest()
     try{
