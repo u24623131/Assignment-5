@@ -16,7 +16,54 @@ class API {
         $this->DB_Connection = null;
     }
 
-    public function handleRequest() {}
+    public function handleRequest() {
+        if($_SERVER['REQUEST_METHOD'] !== 'POST'){
+            http_response_code(405);
+            $this->response("405 Method Not Allowed","error","Method not allowed");
+            error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
+            return;
+        }
+
+        if(!isset($_SERVER['CONTENT_TYPE']) || strpos($_SERVER['CONTENT_TYPE'],'application/json') === false){ // ensures only JSON content is checked and prevents non-JSON payload attacks
+            http_response_code(415);
+            $this->response("415 Unsupported Media Type","error","JSON expected");
+            return;
+        }
+
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Invalid JSON syntax");
+            return;
+        }
+
+        if(!isset($input["type"])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Invalid/Missing type");
+            return;
+        }
+
+        switch ($input["type"]) {
+            case "Register":
+                // $this->handleRegister($input);
+                break;
+
+            case "GetAllProducts":
+                // $this->getAllProducts($input);
+                break;
+
+            case "Login":
+                // $this->handleLogin($input);
+                break;
+            
+            default:
+                http_response_code(400);
+                $this->response("400 Bad Request","error","Invalid request type");
+                break;
+        }
+
+    }
 
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
