@@ -29,6 +29,7 @@ A web application that allows users to compare product prices across different r
 - Product comparison page
 - User profile
 - Login/Signup
+- Favorites
 
 ## Installation
 
