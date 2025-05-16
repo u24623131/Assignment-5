@@ -7,5 +7,6 @@
 </head>
 <body>
     
+<script src="JS/signup.js"></script>
 </body>
 </html>

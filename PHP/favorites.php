@@ -7,5 +7,6 @@
 </head>
 <body>
     
+<script src="JS/favorites.js"></script>
 </body>
 </html>

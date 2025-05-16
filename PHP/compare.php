@@ -7,5 +7,6 @@
 </head>
 <body>
     
+<script src="JS/compare.js"></script>
 </body>
 </html>
