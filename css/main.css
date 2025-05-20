@@ -84,9 +84,10 @@ nav ul li i {
     display: flex;
     align-items: center; 
     gap: 5px;
+    margin-right: 250px;
 }
 .search-input{
-    width: 134px;
+    width: 200px;
     height: 13px;
     border: none;
     border-radius: 7px;
@@ -121,10 +122,12 @@ p{
 }
 .container{
     position: sticky;
-    max-width: 871px;
+    max-width: 100%;
     margin:auto;
     padding-left: 17px;
     padding-right: 17px;
+    border-bottom: 2px solid black;
+    background-color: rgb(100, 100, 100);
 }
 
 /* Login/Signup or Logged-in User Place Holder syling   */
@@ -162,7 +165,7 @@ p{
 
   .toggle-btn {
     position: absolute; /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
-    top: 44px;
+    top: 41px;
     right: 201px;
     width: 34px;
     height: 34px;
