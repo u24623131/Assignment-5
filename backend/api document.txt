@@ -1,0 +1,109 @@
+==================================================================
+                 WORKING WITH SATOSHI NAKAMOTO API
+==================================================================
+
+============================= SETUP ==============================
+-> Only POST requests allowed
+-> MUST HAVE .env FILE (Available on Discord)
+-> Install Composer: https://getcomposer.org/download/
+-> After Composer is installed, run in terminal:
+
+       composer require vlucas/phpdotenv
+
+==================================================================
+                        REQUESTS
+==================================================================
+
+========================= REGISTRATION ===========================
+
+Required Fields:
+  - type         : "Register"
+  - Name         : First name
+  - Email        : Valid email address
+  - Password     : Minimum 8 characters; must include:
+                     * Uppercase & lowercase letters
+                     * Numbers
+                     * Symbols
+  - User_Type    : "admin" or "normal"
+
+Optional Field:
+  - Cell_No      : 10-digit phone number
+
+------------------ REQUEST EXAMPLE 1 ------------------
+
+{
+  "type": "Register",
+  "Name": "TestName2",
+  "Surname": "TestSurname2",
+  "Email": "testemail2@test.com",
+  "Password": "test1P@ssword",
+  "User_Type": "normal",
+  "Cell_No": "0123456789"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747763875493,
+  "data": {
+    "message": "TestName2 was added",
+    "apiKey": "0ce38b841cd526f2b18b9707aed7f772"
+  }
+}
+
+------------------- ERROR RESPONSE -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747766654058,
+  "data": "Email was already used"
+}
+
+------------------ REQUEST EXAMPLE 2 ------------------
+
+{
+  "type": "Register",
+  "Name": "TestName",
+  "Surname": "TestSurname",
+  "Email": "testemail@test.com",
+  "Password": "test1P@ssword",
+  "User_Type": "normal"
+}
+
+==================================================================
+                          LOGIN
+==================================================================
+
+Required Fields:
+  - type     : "Login"
+  - Email    : Registered email address
+  - Password : Associated password
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "Login",
+  "Email": "testemail2@test.com",
+  "Password": "test1P@ssword"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": {
+    "API_Key": "0ce38b841cd526f2b18b9707aed7f772"
+  }
+}
+
+------------------- ERROR RESPONSE -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "Incorrect password."
+}
+
+==================================================================
