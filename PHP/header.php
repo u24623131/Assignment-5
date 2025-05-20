@@ -34,10 +34,10 @@ session_start();
     </div>
 
     <!-- Right Side: Login/Signup or Logged-in User -->
+    <button id="modeToggle" class="toggle-btn">
+        <i class="fas fa-moon" id="modeIcon"></i>
+    </button>
 </div>
 
-<button id="modeToggle" class="toggle-btn">
-    <i class="fas fa-moon" id="modeIcon"></i>
-</button>
 
 <script src="js\header.js"></script>

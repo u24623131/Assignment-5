@@ -34,7 +34,7 @@ body {
 
 /*Header styling */
 
-.navbar{
+.navbar {
     display: flex;
     align-items: center;
     padding: 13px;
@@ -100,8 +100,8 @@ nav ul li i {
     border-bottom: 1px solid #ff523b;
 }
 
-.search-input::placeholder{
-        color: white;
+.search-input::placeholder {
+    color: white;
 }
 
 #MenuItems li a:hover {
@@ -133,13 +133,16 @@ p {
 }
 
 .container {
+    top: 0px;
+    z-index: 1;
     position: sticky;
     max-width: 100%;
     margin: auto;
     padding-left: 17px;
     padding-right: 17px;
-    border-bottom: 2px solid black;
-    background-color: rgb(100, 100, 100);
+    /* border-bottom: 2px solid black; */
+    background-color: rgb(50, 50, 50);
+    box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.7);
 }
 
 /* Login/Signup or Logged-in User Place Holder syling   */
@@ -179,7 +182,7 @@ p {
 .toggle-btn {
     position: absolute;
     /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
-    top: 41px;
+    top: 30px;
     right: 25px;
     width: 34px;
     height: 34px;
@@ -193,6 +196,7 @@ p {
     justify-content: center;
     align-items: center;
     font-size: 16px;
+    z-index: 1;
 }
 
 .toggle-btn:hover {
