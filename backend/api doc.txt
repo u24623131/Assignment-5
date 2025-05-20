@@ -19,6 +19,7 @@
 Required Fields:
   - type         : "Register"
   - Name         : First name
+  - Surname	     : Surname
   - Email        : Valid email address
   - Password     : Minimum 8 characters; must include:
                      * Uppercase & lowercase letters
@@ -153,4 +154,3 @@ Required Fields:
   "timestamp": 1747774567890,
   "data": "Missing required field: Password"
 }
-
