@@ -83,7 +83,15 @@ class API {
             
             case "DeleteAccount":
                 $this->deleteAccount($input);
-                break;  
+                break; 
+                
+            case "ProductByRetailer":
+                $this->handleProductByRetailer($input);
+                break;
+
+            case "ProductsByCustomerId":
+                $this->handleProductsByCustomerId($input);
+                break;
 
             default:
                 http_response_code(400);
@@ -333,6 +341,66 @@ class API {
         $this->response("500 Internal Server Error", "error", "Execution failed during deleteAccount");
 }
     }
+
+    private function handleProductByRetailer($input){ // called when you click a button
+        $required = ['retailer', 'productNum'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+
+        $retailer = $input['retailer'];
+        $productNum = $input['productNum'];
+
+        // check if retailer actualy exists in comparison table (avoid db errors early)
+        // get product details using productID
+        // get price using both
+        $getSql = "SELECT Price FROM Prices WHERE Retailer_ID = ? AND Product_No = ?";
+        $getStmt = $this->DB_Connection->prepare($getSql);
+        $getStmt->bind_param("ii", $retailer, $productNum);
+        $getStmt->execute();
+        $resultPrice = $getStmt->get_result();
+        $getStmt->close();
+
+        if ($resultPrice && $price = $resultPrice->fetch_assoc()) {
+            //Fetch other product data
+            $sql = "SELECT * FROM Products WHERE Product_No = ?";
+            $stmt = $this->DB_Connection->prepare($sql);
+            $stmt->bind_param("i", $productNum);
+            $stmt->execute();
+            $resProductData = $stmt->get_result();
+            if ($resProductData && $productData = $resProductData->fetch_assoc()) {
+                http_response_code(200);
+                $this->response("200 OK","success",[
+                    "ProductNo" => $productData['Product_No'],
+                    "Title" => $productData['Title'],
+                    "Category" => $productData['Category'],
+                    "Description" => $productData['Description'],
+                    "Brand" => $productData['Brand'],
+                    "ImageUrl" => $productData['Image_UTL'],
+                    "Price" => $price['Price']
+                ]);
+            }else{
+                http_response_code(500);
+                $this->response("500 Internal Server Error","error",["Could not fetch product data"]);
+            }
+            $stmt->close();
+        }else{
+            // Return error
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error",["Could not get price of desired item"]);
+        }
+
+    }
+
+    private function handleProductsByCustomerId($input){
+        $required = ['customerID'];
+        // do the whole string concatination thing per product associated with the customer id (Apparently the product numbers are in an array?)
+    }
+
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
         $headerText = "HTTP/1.1 ".$codeAndMessage;
