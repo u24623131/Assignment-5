@@ -19,56 +19,6 @@
     $currentPage = 'product';
     include 'header.php';
     ?>
-    <div id="filterMenu" class="filter-sidebar">
-        <a class="close-btn" id="btnClose">✖</a>
-        <h2>Filters</h2>
-        <div class="filter-section">
-            <label class="Label-filter">Price Range:</label>
-            <input class="Input_range" type="range" id="priceRange" min="0" max="10000" value="10000" step="50">
-            <label>Max Price: $<input type="number" class="inputPrice" id="priceValue" value="10000"></label>
-        </div>
-
-        <div class="filter-section">
-            <label class="Label-filter">Category</label>
-            <select id="Dropdown_Category">
-            </select>
-        </div>
-
-        <div class="filter-section">
-            <label class="Label-filter"><b>Country of Origin:</b></label>
-            <select id="Dropdown_country">
-            </select>
-        </div>
-
-        <div class="filter-section">
-            <label class="Label-filter"><b>Brand:</b></label>
-            <select id="Dropdown_brand">
-            </select>
-        </div>
-
-        <button class="clear-btn" id="btnClear"> Clear Filters</button>
-    </div>
-
-    <div class="small-container">
-        <div class="row row-2">
-            <h2> All Products</h2>
-            <div class="fliters-group">
-                <select class="btn filters-btn">
-                    <option value="" selected disabled><b>SORT</b></option>
-                    <i class="fas fa-chevron-down"></i>
-                    <option value="price_asc">Price: Low to High</option>
-                    <option value="price_desc">Price: High to Low</option>
-                    <option value="Title">Title</option>
-                    <option value="Latest"> Latest</option>
-                    <option value="Country"> Country </option>
-                </select>
-
-                <button class=" btn fliters-btn" id="BtnFliter">
-                    FILTERS
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-            </div>
-        </div>
 
         <div class="ProductPlace" id="PPlace">
 
@@ -97,7 +47,7 @@
                     </div>
                 </div>
                 <div class="compareBox">
-                    <h2> Compare Items </h2>
+                    <h3> Alternate Prices: </h3>
 
                     <div class="compareitem">
                         <h4 class="Retailer">RetailerName</h4>
@@ -141,7 +91,7 @@
                     </div>
                 </div>
                 <div class="compareBox">
-                    <h2> Compare Items </h2>
+                    <h3> Alternate Prices: </h3>
 
                     <div class="compareitem">
                         <h4 class="Retailer">RetailerName</h4>
@@ -157,10 +107,6 @@
                         <h4 class="Retailer">RetailerName</h4>
                         <h4 class="Price">R30</h4>
                     </div>
-
-                    <button class="btn btn-compare">
-                        <i class="fas fa-exchange-alt"></i> Compare
-                    </button>
                 </div>
             </div>
             <div class="prod-container">
@@ -188,7 +134,7 @@
                     </div>
                 </div>
                 <div class="compareBox">
-                    <h2> Compare Items </h2>
+                    <h3> Alternate Prices: </h3>
 
                     <div class="compareitem">
                         <h4 class="Retailer">RetailerName</h4>
@@ -205,9 +151,6 @@
                         <h4 class="Price">R30</h4>
                     </div>
 
-                    <button class="btn btn-compare">
-                        <i class="fas fa-exchange-alt"></i> Compare
-                    </button>
                 </div>
             </div>
         </div>
