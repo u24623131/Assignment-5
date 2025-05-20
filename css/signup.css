@@ -1,0 +1,215 @@
+.signup-page {
+    background: radial-gradient(circle, #646262 0%, #141414 50%, #000 100%);
+    margin: 0px; 
+    padding: 0px; 
+}
+
+.MainDiv{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    margin: 26px; 
+    color: #000;
+}
+.Top-Header{
+    display: flex;
+    align-items: center;
+}
+.Top-Header h2{
+    color: white;
+    font-family: 'Dancing Script', cursive;
+    font-size: 26px; 
+    margin: 5px; 
+}
+
+.Slogan{
+    color: #ff523b;
+    font-family: 'Dancing Script', cursive;
+    margin-bottom: 16px; 
+    font-size: 13px; 
+}
+
+.MainContainer{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 5px; 
+    transition: transform 0.5s;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 11px; 
+    width: 317px; 
+    height: 476px; 
+}
+
+.MainContainer hr{
+    border: none;
+    background-color: #ff523b;
+    position: absolute;
+    top: 48px; 
+    left: -2px; 
+    width: 317px;
+    height: 4px;
+    border-radius: 11px; 
+    margin-bottom: 11px; 
+}
+
+.LblPA{
+    position: relative;
+    font-family: 'Dancing Script', cursive;
+    font-size: 16px; 
+    margin: 8px; 
+    font-weight: bold;
+    color: white;
+    left: 26px;
+}
+.Containerdots{
+    display: flex;
+    gap: 3px; 
+}
+.divdot{
+    position: relative;
+    width: 5px; 
+    height: 5px; 
+    top: 11px; 
+    background-color:#ff523b;
+    top: 24px; 
+    left: 3%; 
+    border-radius: 100%; 
+}
+.Main_Form {
+    margin-top: 32px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+}
+
+.input-group {
+    position: relative;
+    width: 185px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-group i {
+    position: absolute;
+    left: 13px; 
+    top: 50%; 
+    transform: translateY(-50%);
+    font-size: 11px; 
+    color: #ccc;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.Main_Form input {
+    font-size: 11px; 
+    padding: 11px 11px 11px 29px; 
+    width: 100%; 
+    height: 32px; 
+    border: none;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px); 
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); 
+    border-radius: 21px; 
+    color: #ccc;
+    font-weight: bold;
+}
+
+.Main_Form select {
+    font-size: 11px; 
+    padding: 11px 11px 11px 29px;
+    width: 100%; 
+    height: 37px; 
+    border: none;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px); 
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); 
+    border-radius: 21px; 
+    color: #ccc;
+    font-weight: bold;
+}
+
+.Main_Form input::placeholder {
+    color: #ccc;
+    font-weight: bold;
+}
+
+.error-label {
+    color: red;
+    font-size: 8px;
+    font-weight: bold;
+    margin-top: 4px; 
+    text-align: left;
+    width: 100%; 
+    padding-left: 5px; 
+}
+
+.lbldescription {
+    position: relative;
+    margin-top: 16px; 
+    margin-left: 21px; 
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.ImgAnimal{
+    position: absolute;
+    top: 132px; 
+    left: 53px; 
+}
+
+.Items {
+    position: absolute;
+    top: 106px; 
+    right: 16px; 
+    width: 423px;
+    height: 423px; 
+    z-index: 5;
+    pointer-events: none;
+}
+
+.icon-circle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ff523b;
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 5px rgba(255, 82, 59, 0.6); 
+    color: #fff;
+    font-size: 13px; 
+    margin: 5px; 
+}
+
+.icon-circle:hover {
+    transform: scale(1.2);
+    background-color: #ff523b;
+    color: #000;
+}
+
+.btnSignUp{
+    font-size: 11px; 
+    font-weight: bold;
+    width: 106px; 
+    height: 26px;
+    margin: 0; 
+}
+
+.btnSignUp:hover{
+    background-color: #218838;
+}
