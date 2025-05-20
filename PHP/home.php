@@ -74,17 +74,17 @@
             <h2> Compare Items </h2>
 
             <div class="compareitem">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
             </div>
 
             <div class="compareitem">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
             </div>
 
             <div class="compareitem">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
             </div>
 
@@ -95,7 +95,7 @@
 
         <div class="ProductPlace" id="PPlace">
             <div class="col-4">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -119,7 +119,7 @@
             </div>
 
             <div class="col-4">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -144,7 +144,7 @@
 
 
             <div class="col-4">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -168,7 +168,55 @@
             </div>
 
             <div class="col-4">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>   
+                        <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="col-4">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -192,7 +240,30 @@
             </div>
 
             <div class="col-4">
-                <img src="images\toaster.jpeg">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>   
+                        <div class="col-4">
+                <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -214,6 +285,175 @@
                     </button>
                 </div>
             </div>
+
+
+            <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>   
+                        <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>  
+                        <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="col-4">
+                <img src="..\image\toaster.jpg">
+                <h4 id="Title">Toaster</h4>
+                <div class="retail">
+                    <i class="fas fa-chevron-left"></i>
+                    <p>Game</p>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <p class="brand">Russell Hobbs</p>
+                <div class="prices">
+                    <p class="Price-Cross Iprice">R499.99</p>
+                    <p class="Aprice">R299.99</p>
+                </div>
+                <p>Made in China</p>
+                <div class="btn-group">
+                    <button class="btn add-fav">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-compare">
+                        <i class="fas fa-plus-square"></i> Compare
+                    </button>
+                </div>
+            </div>  
         </div>
 
         <div class="page-btn">
