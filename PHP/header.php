@@ -35,32 +35,6 @@ session_start();
 
     <!-- Right Side: Login/Signup or Logged-in User -->
 </div>
-<!-- <div class="auth-buttons" style="margin-top: 10px;"> -->
-    <!-- <.?php //if (!isset($_SESSION['loggedIn'])): ?> -->
-        <!-- Show Login & Signup if not logged in -->
-        <!-- <button class="btn search-btn" id="btnLogin" onclick="window.location.href='login.php'"> -->
-            <!-- Login -->
-            <!-- <i class="fas fa-sign-in-alt"></i>
-        </button>
-
-        <button class="btn search-btn" id="btnSignup" onclick="window.location.href='signup.php'">
-            Sign Up
-            <i class="fas fa-user-plus"></i>
-        </button> -->
-    <!-- <.?php// else: ?> -->
-        <!-- Show Username if logged in -->
-        <!-- <div class="Detials">
-            <div class="btn search-btn detialsname" style="cursor: default;">
-                <i class="fas fa-user-circle"></i>
-                <strong><?// htmlspecialchars($_SESSION['name']) ?></strong>
-            </div>
-
-            <button class="btn search-btn LogOut-btn" id="LogOut">
-                <i class="fas fa-sign-out-alt"></i>
-        </div> -->
-
-    <!-- <.?php //endif; ?> -->
-<!-- </div> -->
 
 <button id="modeToggle" class="toggle-btn">
     <i class="fas fa-moon" id="modeIcon"></i>
