@@ -64,7 +64,7 @@
                 </select>
 
                 <button class=" btn fliters-btn" id="BtnFliter">
-                    FLITERS
+                    FILTERS
                     <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
@@ -72,7 +72,7 @@
 
         <div class="ProductPlace" id="PPlace">
 
-            <div class="prod-container" >
+            <div class="prod-container">
                 <div class="col-4">
                     <img src="..\image\toaster.jpg">
                     <h4 id="Title">Toaster</h4>
@@ -100,17 +100,17 @@
                     <h2> Compare Items </h2>
 
                     <div class="compareitem">
-                        <img src="..\image\toaster.jpg">
+                        <h4 id="Retailer">RetailerName</h4>
                         <h4 id="Title">Toaster</h4>
                     </div>
 
                     <div class="compareitem">
-                        <img src="..\image\toaster.jpg">
+                        <h4 id="Retailer">RetailerName</h4>
                         <h4 id="Title">Toaster</h4>
                     </div>
 
                     <div class="compareitem">
-                        <img src="..\image\toaster.jpg">
+                        <h4 id="Retailer">RetailerName</h4>
                         <h4 id="Title">Toaster</h4>
                     </div>
 

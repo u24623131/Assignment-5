@@ -403,7 +403,7 @@ select:focus {
 }
 
 .compareBox {
-    position: relative;
+    position: absolute;
     left: 34px;
     top: 302px;
     width: 190px;
