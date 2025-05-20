@@ -40,4 +40,4 @@ session_start();
 </div>
 
 
-<script src="js\header.js"></script>
+<script src="..\JS\header.js"></script>
