@@ -81,6 +81,10 @@ class API {
                 $this->handleLogin($input);
                 break;
             
+            case "DeleteAccount":
+                $this->deleteAccount($input);
+                break;  
+
             default:
                 http_response_code(400);
                 $this->response("400 Bad Request","error","Invalid request type");
@@ -158,8 +162,14 @@ class API {
         // hash password (using Argon2ID)
         $hash = password_hash($pass . $salt, PASSWORD_ARGON2ID);
 
-        // generate ApiKey
-        $apiKey = $this->generateApiKey();
+        // generate ApiKey and ensure that it is unique
+        do {
+            $apiKey = $this->generateApiKey();
+            $stmt = $this->DB_Connection->prepare("SELECT User_ID FROM Users WHERE API_Key = ?");
+            $stmt->bind_param("s", $apiKey);
+            $stmt->execute();
+            $stmt->store_result();
+        } while ($stmt->num_rows > 0);
 
         // insert into DB
         
@@ -254,8 +264,7 @@ class API {
         }
 
     }
-
-    //GAP: name = getAllProducts param = input
+    //GAP: name = getAllProducts param = input ... change as you see fit
     private function getAllProducts() {
         
     // Query the products
@@ -284,9 +293,46 @@ class API {
         http_response_code(500);
         $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
     }
+    }
+    //Delete Account: deleteAccount param = input
+    private function deleteAccount($input){
+
+        if(!isset($input['API_Key'])|| empty($input['API_Key'])){
+            http_response_code(400);
+                $this->response("400 Bad Request","error","API_Key is Missing");
+                return;
+        }
+        // find find that user via API key
+
+        $api = $input['API_Key'];
+         //find the user and ensure they exist
+        $stmt = $this->DB_Connection->prepare("DELETE FROM Users where API_Key = ?");
+
+        // if prepare didn't prep
+        if(!$stmt){
+            http_response_code(500);
+            error_log("Prepare Failed". $this->DB_Connection->error);
+            $this->response("500 Internal Server Error", "error","Database Error:".$this->DB_Connection->error);
+            return;
+        }
+        // binding
+        $stmt->bind_param("s", $api );
+        //execute
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                http_response_code(200);
+                $this->response("200 OK", "success", "User was deleted");
+            } else {
+                http_response_code(404);
+                $this->response("404 Not Found", "error", "User not found, cannot delete");
+            }
+            return;
+        }
+        else {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Execution failed during deleteAccount");
 }
-
-
+    }
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
         $headerText = "HTTP/1.1 ".$codeAndMessage;
@@ -311,6 +357,12 @@ class API {
         echo $json;
         exit;
 
+    }
+    private function getUserByApiKey($apiKey) {
+    $stmt = $this->DB_Connection->prepare("SELECT * FROM Users WHERE API_Key = ?");
+    $stmt->bind_param("s", $apiKey);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
     }
     private function isValidPassword($password) {
        return preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/", $password);
