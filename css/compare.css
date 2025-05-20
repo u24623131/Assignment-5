@@ -225,9 +225,18 @@ p {
     transform: rotate(20deg);
 }
 
-.prod-container{
+.ProductPlace {
+    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 0;
+    justify-content: center;
+    width: 100%;
+    flex-direction: row;
+}
+
+.prod-container {
     padding: 8px;
-    min-width: 250px;
     width: 450px;
     margin-left: 0;
     margin-right: 0;
@@ -245,6 +254,7 @@ p {
     flex-direction: row;
     justify-content: space-between;
 }
+
 /**/
 
 
@@ -265,7 +275,7 @@ p {
     height: min-content;
 }
 
-.compareitem{
+.compareitem {
     padding: 8px;
     width: auto;
     margin-left: 0;
@@ -324,6 +334,11 @@ p {
 }
 
 .col-4:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.compareitem:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
