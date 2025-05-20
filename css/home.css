@@ -194,8 +194,8 @@
     font-weight: bold;
     font-family: 'Courier New', Courier, monospace;
     font-style: italic;
-    font-size: 11px;
-    color: #ccc;
+    font-size: 15px;
+    color: #563434;
     margin-bottom: 3px;
 
 }
@@ -258,8 +258,9 @@
 }
 
 .col-4 p:last-of-type {
-    font-size: 10px;
-    color: #bbb;
+    font-size: 15px;
+    font-weight: bold;
+    color: rgb(85, 83, 83);
     margin-top: 3px;
     margin-bottom: 10px;
 
