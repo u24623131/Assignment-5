@@ -190,7 +190,7 @@
                     </button>
                 </div>
             </div>   
-                        <div class="col-4">
+            <div class="col-4">
                 <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
@@ -465,10 +465,10 @@
         </div>
 
     </div>
+    <script src="..\JS\home.js"></script>
     <?php
     include 'footer.php';
     ?>
-
 </body>
 
 </html>
