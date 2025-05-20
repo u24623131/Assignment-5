@@ -15,12 +15,12 @@ session_start();
         <div class="Nav-container">
             <nav>
                 <ul style="list-style: none;" id="\">
-                    <li><a class="<?= ($currentPage == 'home') ? 'active' : '' ?>" href="product.php"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a class="<?= ($currentPage == 'comparison') ? 'active' : '' ?>" href="sales.php"> Comparison</a></li>
-                    <li><a class="<?= ($currentPage == 'favorites') ? 'active' : '' ?>" href="wishlist.php"><i class="fas fa-heart nav-icons"></i> Favorites</a></li>
-                    <li><a class="<?= ($currentPage == 'profile') ? 'active' : '' ?>" href="cart.php"><i class="fas fa-user"></i> Profile</a></li>
-                    <li><a class="<?= ($currentPage == 'login') ? 'active' : '' ?>" href="#"><i class="fas fa-sign-in-alt"></i></i> Login</a></li>
-                    <li><a class="<?= ($currentPage == 'signup') ? 'active' : '' ?>" href="#"><i class="fas fa-user-plus"></i></i> Signup</a></li>
+                    <li><a class="<?= ($currentPage == 'home') ? 'active' : '' ?>" href="home.php"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a class="<?= ($currentPage == 'comparison') ? 'active' : '' ?>" href="compare.php"> Comparison</a></li>
+                    <li><a class="<?= ($currentPage == 'favorites') ? 'active' : '' ?>" href="favorites.php"><i class="fas fa-heart nav-icons"></i> Favorites</a></li>
+                    <li><a class="<?= ($currentPage == 'profile') ? 'active' : '' ?>" href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a class="<?= ($currentPage == 'login') ? 'active' : '' ?>" href="login.php"><i class="fas fa-sign-in-alt"></i></i> Login</a></li>
+                    <li><a class="<?= ($currentPage == 'signup') ? 'active' : '' ?>" href="signup.php"><i class="fas fa-user-plus"></i></i> Signup</a></li>
                 </ul>
             </nav>
 
