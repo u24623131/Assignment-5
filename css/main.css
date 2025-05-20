@@ -1,0 +1,32 @@
+/* Main styling and common attributes */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: white;
+}
+body{
+    font-family: 'Poppins',sans-serif;
+    background: radial-gradient(circle, #fff 0%, #bbb 50%, #000 100%);
+}
+
+.btn{
+    display: inline-block;
+    background: #ff523b;
+    color: #fff;
+    padding: 5px 20px;
+    margin: 20px 0;
+    border-radius: 20px;
+    transition: background 0.5s;
+    border: none;
+}
+
+
+.btn:hover{
+    background: #563434 ;
+}
+
+/* Hidden class to toggle visibility */
+.hidden {
+    display: none;
+}
