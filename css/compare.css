@@ -1,0 +1,227 @@
+/* Main styling and common attributes */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: white;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle, #fff 0%, #bbb 50%, #000 100%);
+}
+
+.btn {
+    display: inline-block;
+    background: #ff523b;
+    color: #fff;
+    padding: 5px 20px;
+    margin: 20px 0;
+    border-radius: 20px;
+    transition: background 0.5s;
+    border: none;
+}
+
+
+.btn:hover {
+    background: #563434;
+}
+
+/* Hidden class to toggle visibility */
+.hidden {
+    display: none;
+}
+
+/*Header styling */
+
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 13px;
+    justify-content: space-between;
+}
+
+
+.Nav-container {
+    display: flex;
+    margin: 0;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+nav {
+    text-align: right;
+}
+
+
+nav ul {
+    display: inline-block;
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    margin: 0 13px;
+    position: relative;
+}
+
+nav li a {
+    display: inline-block;
+    margin: 0px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+nav ul li i {
+    margin-right: 0;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 75px;
+}
+
+.search-input {
+    width: 200px;
+    height: 20px;
+    border: none;
+    border-radius: 7px;
+    text-align: center;
+    background: none;
+    border-bottom: 1px solid #ff523b;
+}
+
+.search-input::placeholder {
+    color: white;
+}
+
+#MenuItems li a:hover {
+    color: #ff523b;
+    font-weight: bold;
+}
+
+#MenuItems li a.active {
+    color: #ff523b;
+    font-weight: bold;
+}
+
+#MenuItems li a.active::after {
+    content: "";
+    width: 10px;
+    height: 1px;
+    background: #ff523b;
+    position: absolute;
+    bottom: -1px;
+    left: 7px;
+}
+
+a {
+    text-decoration: none;
+}
+
+p {
+    color: white;
+}
+
+.container {
+    top: 0px;
+    z-index: 1;
+    position: sticky;
+    max-width: 100%;
+    margin: auto;
+    padding-left: 17px;
+    padding-right: 17px;
+    /* border-bottom: 2px solid black; */
+    background-color: rgb(50, 50, 50);
+    box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Login/Signup or Logged-in User Place Holder syling   */
+
+.auth-buttons {
+    position: absolute;
+    /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
+    top: 34px;
+    left: 101px;
+    display: flex;
+    gap: 20px;
+}
+
+.auth-buttons button {
+    height: 23px;
+    font-size: 10px;
+}
+
+.Detials {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+
+}
+
+.Detials button {
+    margin: 0px;
+}
+
+.LogOut-btn {
+    position: relative;
+    width: 67px;
+    align-content: center;
+    left: 34px;
+}
+
+.toggle-btn {
+    position: absolute;
+    /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
+    top: 30px;
+    right: 25px;
+    width: 34px;
+    height: 34px;
+    border-radius: 34px;
+    border: none;
+    background-color: #ff523b;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    z-index: 1;
+}
+
+.toggle-btn:hover {
+    background-color: #e0e0e0;
+    transform: rotate(20deg);
+}
+
+.prod-container{
+    padding: 8px;
+    min-width: 250px;
+    width: 250px;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+    transition: transform 0.5s;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 13px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+/**/
