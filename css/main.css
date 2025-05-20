@@ -30,3 +30,157 @@ body{
 .hidden {
     display: none;
 }
+
+*Header styling */
+
+.navbar{
+    display: flex;
+    align-items: center ;
+    padding: 13px;
+    justify-content: space-between;
+}
+.logo{
+}
+.Nav-container{
+    display: flex;
+    margin: 0;
+    align-items: center;
+    justify-content: flex-end; 
+    gap: 20px; 
+}
+nav{
+    text-align: right ;
+}
+
+
+nav ul{
+    display: inline-block;
+    list-style-type: none;
+    display: flex; 
+    align-items: center;
+    padding: 0; 
+    margin: 0; 
+}
+nav ul li{
+    display: inline-block; 
+    margin: 0 13px; 
+    position: relative;
+}
+
+nav li a{
+    display: inline-block;
+    margin: 0px;
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+}
+
+
+nav ul li i {
+    margin-right: 0; 
+}
+
+.search-box{
+    display: flex;
+    align-items: center; 
+    gap: 5px;
+}
+.search-input{
+    width: 134px;
+    height: 13px;
+    border: none;
+    border-radius: 7px;
+    text-align: center;
+    background:none;
+    border-bottom: 1px solid #ff523b;
+}
+
+#MenuItems li a:hover{
+    color: #ff523b;
+    font-weight: bold;
+}
+#MenuItems li a.active{
+    color: #ff523b;
+    font-weight: bold;
+}
+
+#MenuItems li a.active::after{
+    content: "";
+    width: 10px;
+    height:1px;
+    background: #ff523b;
+    position: absolute;
+    bottom: -1px;
+    left: 7px;
+}
+a{
+    text-decoration: none;
+}
+p{
+    color: white;
+}
+.container{
+    position: sticky;
+    max-width: 871px;
+    margin:auto;
+    padding-left: 17px;
+    padding-right: 17px;
+}
+
+/* Login/Signup or Logged-in User Place Holder syling   */
+
+.auth-buttons{
+    position: absolute; /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
+    top: 34px;
+    left: 101px;
+    display: flex;
+    gap: 20px;
+  }
+
+  .auth-buttons button{
+    height: 23px;
+    font-size: 10px;
+  }
+
+  .Detials{
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+
+  }
+
+  .Detials button{
+    margin: 0px;
+  }
+
+  .LogOut-btn{
+    position: relative;
+    width: 67px;
+    align-content: center;
+    left: 34px;
+  }
+
+  .toggle-btn {
+    position: absolute; /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
+    top: 44px;
+    right: 201px;
+    width: 34px;
+    height: 34px;
+    border-radius: 34px;
+    border: none;
+    background-color: #ff523b;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+  }
+
+  .toggle-btn:hover {
+    background-color: #e0e0e0;
+    transform: rotate(20deg);
+  }
+
+/**/
