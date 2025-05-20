@@ -204,7 +204,7 @@ p {
 .toggle-btn {
     position: absolute;
     /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
-    top: 30px;
+    top: 49px;
     right: 25px;
     width: 34px;
     height: 34px;

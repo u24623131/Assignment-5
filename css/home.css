@@ -114,7 +114,7 @@
 .fliters-group {
     display: flex;
     gap: 13px;
-    height: 20px;
+    line-height:    20px;
 }
 
 /* Product and the containers styling */

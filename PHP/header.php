@@ -9,7 +9,7 @@ session_start();
 <div class="container">
     <div class="navbar">
         <div class="logo">
-            <img src="images/Logo.png" width="125">
+            <img src="../image/toaster.jpg" width="100px">
         </div>
 
         <div class="Nav-container">
