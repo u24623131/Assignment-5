@@ -1,6 +1,14 @@
 <?php
-require_once(__DIR__."/config.php"); //feel free to change accordingly
-header("Content-Type: application/json");
+// Clear any output BOM chars / whitespace
+if (ob_get_level()) ob_end_clean();
+
+// use function PHPSTORM_META\type;
+
+require_once(__DIR__."/config.php"); //feel free to change accordingly // no need
+header("Content-Type: application/json"); // specifies that json data is outputted
+header("Access-Control-Allow-Origin: *"); // allows any origin to access api
+header("Access-Control-Allow-Methods: POST"); // ensures that only post-method requests can be  to access api
+
 class API {
     private $DB_Connection;
     public static function instance() {
@@ -11,12 +19,17 @@ class API {
 	}
     private function __construct() {
         $this->DB_Connection = Database::getInstance()->getConnection();
+        // error checking
+        if($this->DB_Connection->connect_error){
+            error_log("DB Connection Error: " . $this->DB_Connection->connect_error);
+        }
     }
 	public function __destruct() {
         $this->DB_Connection = null;
     }
 
     public function handleRequest() {
+
         if($_SERVER['REQUEST_METHOD'] !== 'POST'){
             http_response_code(405);
             $this->response("405 Method Not Allowed","error","Method not allowed");
@@ -30,7 +43,18 @@ class API {
             return;
         }
 
-        $input = json_decode(file_get_contents("php://input"), true);
+        $input = json_decode(file_get_contents("php://input"), true); //noted
+
+        //ensuring blank JSON data does not get try to get processed (waste of resources)
+        if (!$input) {
+            http_response_code(400);
+            echo json_encode([
+                "status" => "error",
+                "message" => "Missing JSON input",
+                "json_error" => json_last_error_msg()
+            ]);
+            exit;
+        }
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             http_response_code(400);
@@ -46,15 +70,15 @@ class API {
 
         switch ($input["type"]) {
             case "Register":
-                // $this->handleRegister($input);
+                $this->handleRegister($input);
                 break;
 
             case "GetAllProducts":
-                // $this->getAllProducts($input);
+                $this->getAllProducts();
                 break;
 
             case "Login":
-                // $this->handleLogin($input);
+                $this->handleLogin($input);
                 break;
             
             default:
@@ -64,6 +88,204 @@ class API {
         }
 
     }
+    //Register: name = handleRegister, param = input
+    private function handleRegister($input){
+        // required = Name Surname Email 
+        $required = ['Name','Surname','Email', 'Password', 'User_Type'];
+
+        foreach($required as $req){
+            if(empty($input[$req]) || !isset($input[$req])){
+                http_response_code(400);
+                $this->response("400 Bad Request","error",$req." is Missing");
+                return;
+            } 
+        }
+
+        // assign values
+        $name = trim($input['Name']);
+        $surname = trim($input['Surname']);
+        $email = trim($input['Email']);
+        $pass = trim($input['Password']);
+        $userType = trim($input['User_Type']);
+
+        // Optional: Cell_num 
+        $cellNo = NULL;
+        // check if it exists
+        if(isset($input['Cell_No']) &&  strlen(trim($input['Cell_No'])) > 0){
+            if($this->isValidCellNo($input['Cell_No'])){
+                $cellNo = trim($input['Cell_No']);
+            }
+            else{
+                http_response_code(400);
+                $this->response("400","error","Invalid Cell_No: must be 10 digits and numeric (eg. 0123456789)");
+                return;
+            }
+        }
+            
+        // validate 
+
+        // email
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error",  "Incorrect Email Structure (according to API)");
+            return;
+        }
+        else if($this->emailUsed($email)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error",  "Email was already used");
+            return;
+        }
+
+        // Password
+        if(!$this->isValidPassword($pass)){
+            http_response_code(400);
+            $this->response("400 Bad Request", "error","Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.");
+            return;
+        }
+
+        // UserType 
+        if(!$this->isValidUserType($userType)){
+            http_response_code(400);
+            $this->response("400 Bad Request", "error","Incorrect user type, only 'normal' or Admin");
+            return;
+        }
+
+        // Data is now Valid
+
+        // generate salt (16 random chars and Letters) 
+        $salt = bin2hex(random_bytes(16));
+
+        // hash password (using Argon2ID)
+        $hash = password_hash($pass . $salt, PASSWORD_ARGON2ID);
+
+        // generate ApiKey
+        $apiKey = $this->generateApiKey();
+
+        // insert into DB
+        
+        $stmt = $this->DB_Connection->prepare("INSERT INTO Users(Name, Surname, Email, Cell_No, User_Type, Password, Salt, API_Key) VALUES(?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("ssssssss",
+        $name,
+        $surname,
+        $email,
+        $cellNo,
+        $userType,
+        $hash,
+        $salt,
+        $apiKey);
+
+        //execute() returns bool
+        if($stmt->execute()){
+            http_response_code(200);
+            $this->response("200 OK", "success",  [
+                                "message" => "$name was added",
+                                "apiKey" => $apiKey
+                                ]);
+            return;
+        } 
+        else{
+            error_log("MySQL Error: " . $stmt->error); // for extra error checking
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", $name." was Not added onto the the database, Execute Error in handleRegistration");
+            return;
+        }
+
+    }
+    //Login: name = handleLogin param =input
+    private function handleLogin($input){
+        // requires email and password
+        $required = ['Email', 'Password'];
+
+        //ensure that they're Not empty
+        foreach($required as $req){
+            if(empty($input[$req]) || !isset($input[$req])){
+                http_response_code(400);
+                $this->response("400 Bad Request","error",$req." is Missing");
+                return;
+            } 
+        }
+
+        //assign email and password to vars
+        $email = trim($input['Email']);
+        $pass = trim($input['Password']);
+        
+        //find the user and ensure they exist
+        $stmt = $this->DB_Connection->prepare("SELECT Password, Salt, API_Key from Users where Email = ?");
+
+        // if prepare didn't prep
+        if(!$stmt){
+            http_response_code(500);
+            error_log("Prepare Failed". $this->DB_Connection->error);
+            $this->response("500 Internal Server Error", "error","Database Error:".$this->DB_Connection->error);
+            return;
+        }
+        // binding
+        $stmt->bind_param("s", $email);
+        //execute
+        if($stmt->execute()){
+            // store the results tbl
+            $result = $stmt->get_result();
+
+            if($result->num_rows === 0){
+            http_response_code(401);
+            $this->response	("401 Unauthorized ","error", "User does not exist! Register first");
+            return;
+            }
+
+            // store as an associatve arr
+            $user = $result->fetch_assoc();
+            $saltedPass = $pass.$user["Salt"];
+
+            if (password_verify($saltedPass, $user["Password"])) {
+                http_response_code(200);
+                $this->response("200 OK", "success", ["API_Key" => $user["API_Key"]]);
+            } 
+            else {
+                http_response_code(401);
+                $this->response("401 Unauthorized", "error", "Incorrect password.");
+            }
+
+    }
+    else{
+            error_log("MySQL Error: " . $stmt->error); // for extra error checking
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Statement was not executed in HandleLogin");
+            return;
+        }
+
+    }
+
+    //GAP: name = getAllProducts param = input
+    private function getAllProducts() {
+        
+    // Query the products
+    $result = $this->DB_Connection->query("SELECT * FROM Products");
+
+    // Check if the query was successful
+    if ($result) {
+        if ($result && $result->num_rows > 0) {
+
+            // Fetch all rows 
+            $products = [];
+            while ($row = $result->fetch_assoc()) {
+                $products[] = $row;
+            }
+
+            http_response_code(200);
+            $this->response("200 OK", "success", ["Products" => $products]);
+
+        }
+        else {
+            http_response_code(200);
+            $this->response("200 OK", "success", ["Products" => []]);
+        }
+    }
+    else {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
+    }
+}
+
 
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
@@ -90,12 +312,38 @@ class API {
         exit;
 
     }
+    private function isValidPassword($password) {
+       return preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/", $password);
+       //Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.
+    }
+    private function isValidUserType($userType){
+       return in_array(strtolower($userType), ['normal', 'admin']);
+    }
+    private function isValidCellNo($cellNum){
+     $trimmed= trim(($cellNum));
+     return preg_match("/^\+?[0-9]{10,15}$/", $trimmed);
+    }
+    private function emailUsed($email){
+        $stmt = $this->DB_Connection->prepare("SELECT User_ID FROM Users WHERE Email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            return true;
+        }
+        return false;
+    }
+    private function generateApiKey($length = 32) {
+        return bin2hex(random_bytes($length / 2)); // length of 16
+    }
 }
 
-header("Access-Control-Allow-Origin: *"); // Allows any website (any “origin”) to make requests to this endpoint
-header("Access-Control-Allow-Methods: POST"); // Tells the browser that only POST requests are permitted from cross‑origin callers.
-header("Access-Control-Allow-Headers: Content-Type"); // Declares which custom headers the client is allowed to send.
-//Sending HTTP headers that enable Cross-Origin Resource Sharing(CORS) so that browsers will let web pages on other domains talk to the API
+//Already included on top:
+// header("Access-Control-Allow-Origin: *"); // Allows any website (any “origin”) to make requests to this endpoint
+// header("Access-Control-Allow-Methods: POST"); // Tells the browser that only POST requests are permitted from cross‑origin callers.
+// header("Access-Control-Allow-Headers: Content-Type"); // Declares which custom headers the client is allowed to send.
+// //Sending HTTP headers that enable Cross-Origin Resource Sharing(CORS) so that browsers will let web pages on other domains talk to the API
 
 if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     // Only run this if api.php is called directly. Doing this prevents the double-running of handleRequest()
@@ -105,8 +353,12 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     }catch(Exception $e){
         http_response_code(500);
         error_log("UNCAUGHT ERROR: " . $e->getMessage());
-        echo json_encode(["status"=> "error","timestamp" => round(microtime(true) * 1000),"data"=> "Internal server error"]); // feel free to change
+        echo json_encode([
+            "status"=> "error",
+            "timestamp" => round(microtime(true) * 1000),
+            "data"=> "Internal server error",
+            "debug_info" => $e->getMessage() 
+        ]);    
     }
 }
 
-?>
