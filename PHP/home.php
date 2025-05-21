@@ -456,6 +456,7 @@
             </div>  
         </div>
 
+        
         <div class="page-btn">
             <span>1</span>
             <span>2</span>
@@ -463,7 +464,6 @@
             <span>4</span>
             <span>&#8594;</span>
         </div>
-
     </div>
     <script src="..\JS\home.js"></script>
     <?php
