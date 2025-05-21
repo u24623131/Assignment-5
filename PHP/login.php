@@ -49,7 +49,7 @@
 
         </div>
     </div>
+    <script src="..\JS\login.js"></script>
     <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
-    <script src="js\login.js"></script> 
 </body>
 </html>
