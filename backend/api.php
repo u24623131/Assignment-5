@@ -101,6 +101,14 @@ class API {
                 $this->getUserFavourite($input);
                 break;
                 
+            case "AddProduct":
+                $this->addProduct($input);
+                break;
+
+            case "DeleteProduct":
+                //$this->deleteProduct($input);
+                break;
+
             default:
                 http_response_code(400);
                 $this->response("400 Bad Request","error","Invalid request type");
@@ -554,6 +562,136 @@ class API {
         $this->response("200 OK", "success", $favourites);
     }
 
+        private function addProduct($input){
+        // ensure apiKey is NOT NULL
+        if(empty($input['apiKey'])|| !isset($input['apiKey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error",$input['apiKey']." is Missing");
+            return;
+        }
+
+        // assign Apikey to var
+        $apiK = $input['apiKey'];
+
+        //check if user is an admin
+        if(!$this->isAdmin($apiK)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","User is not an admin");
+            return;
+        }
+
+        // insert into both products && prices
+ 
+        $required = ['Title', 'Category', 'Description','Brand', 'Image_URL'];
+        foreach ($required as $r){
+            if(empty($input[$r])|| !isset($input[$r])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error",$r." is Missing");
+            return;
+            }
+        }
+        if(!is_array($input['Retailers'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error"," Retail_ID must be an array");
+            return;
+        }
+        //validate each retailer
+        $retArr = $input['Retailers'];
+
+
+        foreach($retArr as $r){
+            if(!$this->isValidRetailer($r)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error",$r." is not a verified retailer");
+            return;
+            }
+        }
+
+         if(!is_array($input['Prices'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error"," Retail_ID must be an array");
+            return;
+        }
+        $priceArr = $input['Prices'];
+
+        foreach($retArr as $r){
+            if(!$this->isValidRetailer($r)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error",$r."is not a retailer in the system");
+            return;
+            }
+        }
+
+        if(count($retArr)!== count($priceArr)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error"," Number of Retailers must be the same as number of Prices");
+            return;
+        }
+
+        // Insert into Table products to obtain product Num
+        $title = $input['Title'];
+        $cat = $input['Category'];
+        $brand= $input['Brand'];
+        $url =$input['Image_URL'];
+        $desc = $input['Description'];
+
+        // ensure that product does NOT already Exist
+        $firstStep = $this->DB_Connection->prepare("SELECT * FROM Products WHERE Title =?");
+        if(!$firstStep){
+            http_response_code(500);
+            $this->response("500 Bad Request","error"," Could not prepare");
+            return;
+        }
+        $firstStep->bind_param("s",$title);
+        $firstStep->execute();
+
+        if($firstStep->get_result()->num_rows>0){
+                http_response_code(400);
+                $this->response("400 Bad Request","error","Product already Exists in Products Table");
+                return;
+        }
+
+        // insert into product once
+        $secondStep = $this->DB_Connection->prepare("INSERT INTO Products(Title, Category, Description, Brand, Image_URL) VALUES(?, ?, ?, ?,?)");
+        if(!$secondStep){
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error"," Could not prepare");
+            return;
+        }
+        $secondStep->bind_param("sssss",$title,$cat,$desc, $brand,$url);
+        $secondStep->execute();
+
+        $finalStep = $this->DB_Connection->prepare("SELECT Product_No FROM Products WHERE Title = ? ");
+        if(!$finalStep){
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error"," Could not prepare");
+            return;
+        }
+        $finalStep->bind_param("s",$title);
+        $finalStep->execute();
+
+        $p_id =$finalStep->get_result()->fetch_assoc()['Product_No'];
+        
+       foreach($retArr as  $name){
+        $i=0; 
+        $id =$this->getRetailerInfo($name)['Retailer_ID']; 
+        $fin = $this->DB_Connection->prepare("INSERT INTO Prices(Retailer_ID, Product_No, Price) VALUES(?,?,?)");
+        if(!$fin){
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error"," Could not prepare");
+            return;
+        }     
+        $fin->bind_param("iid",$id,$p_id, $priceArr[$i]);
+        $fin->execute();
+        $i++;
+    }
+    http_response_code(200);
+    $this->response("200 OK","success","product(s) & prices added");
+                return;
+        
+    }
+    
+    private function deleteProduct($input){}
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
         $headerText = "HTTP/1.1 ".$codeAndMessage;
@@ -578,6 +716,42 @@ class API {
         echo $json;
         exit;
 
+    }
+        private function isAdmin($apikey){
+        $stmt= $this->DB_Connection->prepare("SELECT User_Type FROM Users WHERE API_Key = ?");
+        $stmt->bind_param("s",$apikey);
+       if($stmt->execute()){
+            if($stmt->get_result()->fetch_assoc()['User_Type'] === 'admin'){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        http_response_code(400);
+        $this->response("400 Error", 'error',"isAdmin did Not Execute");
+        exit;
+    }
+    private function getRetailerInfo($name){
+    $stmt = $this->DB_Connection->prepare("SELECT * FROM Retailers WHERE Name = ?");
+    $stmt->bind_param("s", $name);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
+    }
+    private function isValidRetailer($retailer){
+        $stmt= $this->DB_Connection->prepare(query: "SELECT * FROM Retailers WHERE Name = ?");
+        $stmt->bind_param("s",$retailer);
+       if($stmt->execute()){
+            if($stmt->get_result()->num_rows>0){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        http_response_code(400);
+        $this->response("500 Error", 'error',"isValid Retailer Did Not Execute)");
+        exit;
     }
     private function getUserByApiKey($apiKey) {
     $stmt = $this->DB_Connection->prepare("SELECT * FROM Users WHERE API_Key = ?");
