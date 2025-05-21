@@ -93,7 +93,7 @@
             </button>
         </div>
 
-        <div class="ProductPlace" id="PPlace">
+    <div class="ProductPlace" id="PPlace">
             <div class="col-4">
                 <div class="product-left-section">
                     <div class="discount-tag">16% OFF</div>
@@ -124,10 +124,8 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-                <div class="ProductPlace" id="PPlace">
-            <div class="col-4">
+              <div class="col-4">
                 <div class="product-left-section">
                     <div class="discount-tag">16% OFF</div>
                     <img src="..\image\ST.png">
@@ -157,9 +155,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-                <div class="ProductPlace" id="PPlace">
-            <div class="col-4">
+
+              <div class="col-4">
                 <div class="product-left-section">
                     <div class="discount-tag">16% OFF</div>
                     <img src="..\image\ST.png">
@@ -189,6 +186,7 @@
                     </div>
                 </div>
             </div>
+            
         </div>
 
         <div class="page-btn">

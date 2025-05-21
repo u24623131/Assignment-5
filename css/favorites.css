@@ -219,14 +219,14 @@
 
 .ProductPlace {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(800px, 1fr)); 
     gap: 30px; 
     margin-bottom: 30px;
 }
 
 .col-4 {
     padding: 10px; 
-    min-width: 300px; 
+    min-width: 800px; 
     width: 100%; 
     text-align: left; 
     transition: transform 0.5s;
