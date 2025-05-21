@@ -64,7 +64,7 @@
                 </select>
 
                 <button class=" btn fliters-btn" id="BtnFliter">
-                    FLITERS
+                    FILTERS
                     <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
