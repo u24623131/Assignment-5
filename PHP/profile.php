@@ -86,7 +86,7 @@ include("header.php");
 
         </div>
     </div>
-    <script src="js\signup.js"></script>
+    <script src="../JS/profile.js"></script>
 </body>
 
 </html>
