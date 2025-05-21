@@ -4,6 +4,8 @@ session_start();
 
 // Optionally set current page dynamically to highlight nav (if used)
 // $currentPage = basename($_SERVER['PHP_SELF'], ".php");
+$_SESSION['login'] = true;
+$isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
 ?>
 
 <div class="container">
@@ -15,12 +17,15 @@ session_start();
         <div class="Nav-container">
             <nav>
                 <ul style="list-style: none;" id="\">
-                    <li><a class="<?= ($currentPage == 'home') ? 'active' : '' ?>" href="home.php"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a class="<?= ($currentPage == 'comparison') ? 'active' : '' ?>" href="compare.php"> Comparison</a></li>
-                    <li><a class="<?= ($currentPage == 'favorites') ? 'active' : '' ?>" href="favorites.php"><i class="fas fa-heart nav-icons"></i> Favorites</a></li>
-                    <li><a class="<?= ($currentPage == 'profile') ? 'active' : '' ?>" href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a class="<?= ($currentPage == 'home') ? 'active' : '' ?>" href="<?= $isLoggedIn ? 'home.php' : 'login.php' ?>"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a class="<?= ($currentPage == 'comparison') ? 'active' : '' ?>" href="<?= $isLoggedIn ? 'compare.php' : 'login.php' ?>"> Comparison</a></li>
+                    <li><a class="<?= ($currentPage == 'favorites') ? 'active' : '' ?>" href="<?= $isLoggedIn ? 'favorites.php' : 'login.php' ?>"><i class="fas fa-heart nav-icons"></i> Favorites</a></li>
+                    <li><a class="<?= ($currentPage == 'profile') ? 'active' : '' ?>" href="<?= $isLoggedIn ? 'profile.php' : 'login.php' ?>"><i class="fas fa-user"></i> Profile</a></li>    
+                
+
+                    <?php if ($_SESSION['login'] == false){?>
                     <li><a class="<?= ($currentPage == 'login') ? 'active' : '' ?>" href="login.php"><i class="fas fa-sign-in-alt"></i></i> Login</a></li>
-                    <li><a class="<?= ($currentPage == 'signup') ? 'active' : '' ?>" href="signup.php"><i class="fas fa-user-plus"></i></i> Signup</a></li>
+                    <li><a class="<?= ($currentPage == 'signup') ? 'active' : '' ?>" href="signup.php"><i class="fas fa-user-plus"></i></i> Signup</a></li><?php } ?>
                 </ul>
             </nav>
 
