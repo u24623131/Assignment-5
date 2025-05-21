@@ -31,40 +31,47 @@ include("header.php");
                 <div class="divdot"></div>
                 <div class="divdot"></div>
             </div>
-            <label class="LblPA"> PROFILE</label>
-            <label class="LblPA"> Update details:</label>
+            <label class="LblPA"> PROFILE - UPDATE details</label>
+            <br>
+            <label class="LblPA" id="curDet"> Current details:</label>
+            <label class="LblPA" id="newDet"> New details:</label>
             <hr>
             <form id="register-form" class="Main_Form">
 
                 <div class="input-group">
                     <label class="LblPA"> Name:</label>
+                    <input type="text" class="CurVal" disabled required placeholder="Current Name Val:">
                     <i id="nameIcon" class="fa fa-user"></i>
-                    <input type="text" id="name" name="name" required placeholder="Name:">
+                    <input type="text" id="name" class="NewVal" name="name" required placeholder="Name:">
                     <label class="error-label" id="name-error"></label>
                 </div>
 
                 <div class="input-group">
                     <label class="LblPA"> Surname:</label>
+                    <input type="text" class="CurVal" disabled required placeholder="Current Surname Val:">
                     <i class="fa fa-user"></i>
-                    <input type="text" id="surname" name="surname" required placeholder="Surname:">
+                    <input type="text" id="surname" class="NewVal" name="surname" required placeholder="Surname:">
                     <label class="error-label" id="surname-error"></label>
                 </div>
 
                 <div class="input-group">
                     <label class="LblPA"> Email:</label>
+                    <input type="text" class="CurVal" disabled required placeholder="Current Email Val:">
                     <i class="fa fa-envelope"></i>
-                    <input type="email" id="email" name="email" required placeholder="Email:">
+                    <input type="email" id="email" class="NewVal" name="email" required placeholder="Email:">
                     <label class="error-label" id="email-error"></label>
                 </div>
 
                 <div class="input-group">
                     <label class="LblPA"> Password:</label>
+                    <input type="password" class="CurVal" disabled required placeholder="Current Password Val (***):">
                     <i class="fa fa-lock"></i>
-                    <input type="password" id="password" name="password" required placeholder="Password:">
+                    <input type="password" id="password" class="NewVal" name="password" required placeholder="Password:">
                     <label class="error-label" id="password-error"></label>
                 </div>
                 <div class="input-group">
                     <label class="LblPA"> Account Type:</label>
+                    <input type="text" class="CurVal" id="CurAcc" disabled required placeholder="Current Account Type Val:">
                     <i class="fa fa-user-tag"></i>
                     <select id="type" name="type" class="Select_Type" required>
                         <option value="Customer">Customer</option>
