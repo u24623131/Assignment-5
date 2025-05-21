@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Products - ArtStore  </title>
+    <title>Login - ArtStore  </title>
     <link rel="stylesheet" href="../CSS/main.css">
     <link rel="stylesheet" href="../CSS/login.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -50,6 +50,5 @@
         </div>
     </div>
     <script src="..\JS\login.js"></script>
-    <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
 </body>
 </html>
