@@ -206,7 +206,7 @@ class API {
             http_response_code(200);
             $this->response("200 OK", "success",  [
                                 "message" => "$name was added",
-                                "apiKey" => $apiKey
+                                "apikey" => $apiKey
                                 ]);
             return;
         } 
@@ -237,7 +237,7 @@ class API {
         $pass = trim($input['Password']);
         
         //find the user and ensure they exist
-        $stmt = $this->DB_Connection->prepare("SELECT Password, Salt, API_Key from Users where Email = ?");
+        $stmt = $this->DB_Connection->prepare("SELECT Password, Salt, API_Key FROM Users WHERE Email = ?");
 
         // if prepare didn't prep
         if(!$stmt){
@@ -265,7 +265,7 @@ class API {
 
             if (password_verify($saltedPass, $user["Password"])) {
                 http_response_code(200);
-                $this->response("200 OK", "success", ["API_Key" => $user["API_Key"]]);
+                $this->response("200 OK", "success", ["apikey" => $user["API_Key"]]);
             } 
             else {
                 http_response_code(401);
@@ -314,16 +314,16 @@ class API {
     //Delete Account: deleteAccount param = input
     private function deleteAccount($input){
 
-        if(!isset($input['API_Key'])|| empty($input['API_Key'])){
+        if(!isset($input['apikey'])|| empty($input['apikey'])){
             http_response_code(400);
                 $this->response("400 Bad Request","error","API_Key is Missing");
                 return;
         }
         // find find that user via API key
 
-        $api = $input['API_Key'];
+        $api = $input['apikey'];
          //find the user and ensure they exist
-        $stmt = $this->DB_Connection->prepare("DELETE FROM Users where API_Key = ?");
+        $stmt = $this->DB_Connection->prepare("DELETE FROM Users WHERE API_Key = ?");
 
         // if prepare didn't prep
         if(!$stmt){
@@ -409,7 +409,7 @@ class API {
     }
     private function AddFavourite($input) {
     // Required keys
-    $req = ['apiKey', 'Product_No'];
+    $req = ['apikey', 'Product_No'];
 
     // Check for missing parameters
     foreach ($req as $r) {
@@ -421,7 +421,7 @@ class API {
     }
 
     // Get user from API key
-    $userInfo = $this->getUserByApiKey($input['apiKey']);
+    $userInfo = $this->getUserByApiKey($input['apikey']);
     if (!$userInfo || !isset($userInfo['User_ID'])) {
         http_response_code(response_code: 404);
         $this->response("404 Not Found", "error", "User not found");
@@ -501,14 +501,14 @@ class API {
     }
     private function getUserFavourite($input) {
         // Validate input
-        if (!isset($input['apiKey']) || empty($input['apiKey'])) {
+        if (!isset($input['apikey']) || empty($input['apikey'])) {
             http_response_code(400);
-            $this->response("400 Bad Request", "error", "apiKey is missing");
+            $this->response("400 Bad Request", "error", "apikey is missing");
             return;
         }
 
         // Get user from API key
-        $userInfo = $this->getUserByApiKey($input['apiKey']);
+        $userInfo = $this->getUserByApiKey($input['apikey']);
         if (!$userInfo || !isset($userInfo['User_ID'])) {
             http_response_code(404);
             $this->response("404 Not Found", "error", "User not found");
