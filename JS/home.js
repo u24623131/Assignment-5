@@ -1,6 +1,5 @@
 // fliters
     var btnFliter = document.getElementById("BtnFliter");
-    
     btnFliter.addEventListener("click",function(){
         var filterMenu = document.getElementById("filterMenu");
         if (filterMenu.style.display === "none" || filterMenu.style.display === "") {
@@ -9,13 +8,10 @@
             filterMenu.style.display = "none"; // Hide sidebar
         }
     })
-
     var btnClose = document.getElementById("btnClose");
     btnClose.addEventListener("click",function(){
         filterMenu.style.display = "none";
     })
-
-    
     document.addEventListener("DOMContentLoaded", function() {
         let priceRange = document.getElementById("priceRange");
         let priceValue = document.getElementById("priceValue");
