@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        <div class="compareBox">
+        <div class="compareBox" id ="compareList">
             <h2> Compare Items </h2>
 
             <div class="compareitem">
@@ -119,7 +119,7 @@
             </div>
 
             <div class="col-4">
-                <img src="..\image\toaster.jpg">
+                <img src="..\image\FishTank.jpeg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
