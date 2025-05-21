@@ -48,12 +48,12 @@ class API {
         //ensuring blank JSON data does not get try to get processed (waste of resources)
         if (!$input) {
             http_response_code(400);
-            echo json_encode([
+            $this->response("400 Bad Request","success",[
                 "status" => "error",
                 "message" => "Missing JSON input",
                 "json_error" => json_last_error_msg()
             ]);
-            exit;
+            return;
         }
 
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -351,7 +351,7 @@ class API {
 }
     }
     private function handleProductByRetailer($input){ // called when you click a button
-        $required = ['retailer', 'productNum'];
+        $required = ['apikey','retailer', 'productNum'];
         forEach($required as $field){
             if(empty($input[$field])){
                 http_response_code(400); // Bad Request
@@ -388,7 +388,7 @@ class API {
                     "Category" => $productData['Category'],
                     "Description" => $productData['Description'],
                     "Brand" => $productData['Brand'],
-                    "ImageUrl" => $productData['Image_UTL'],
+                    "ImageUrl" => $productData['Image_URL'],
                     "Price" => $price['Price']
                 ]);
             }else{
@@ -404,7 +404,7 @@ class API {
 
     }
     private function handleProductsByCustomerId($input){
-        $required = ['customerID'];
+        $required = ['apikey','customerID'];
         // do the whole string concatination thing per product associated with the customer id (Apparently the product numbers are in an array?)
     }
     private function AddFavourite($input) {
