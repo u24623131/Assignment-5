@@ -658,4 +658,73 @@ Required Fields:
   "timestamp": 1747767153746,
   "data": "productTitle2 is required"
 }
+==================================================================
+                             SEARCH
+==================================================================
+
+Required Fields:
+  - type     : "Search"
+  - apikey   : Valid API key
+  - search   : Object with one or more of the following fields:
+                 • Title
+                 • Category
+                 • Description
+                 • Brand
+
+Optional Field:
+  - limit    : Maximum number of results to return (default: 50, max: 50)
+
+Notes:
+  - Partial matches are supported (e.g. "Dron" matches "Drone")
+  - All fields in `search` must be strings
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "Search",
+  "apikey": "0ce38b841cd526f2b18b9707aed7f772",
+  "search": {
+    "Title": "Drone",
+    "Brand": "DJI"
+  },
+  "limit": 10
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777000,
+  "data": [
+    {
+      "Product_No": 3,
+      "Title": "DJI Mini Drone",
+      "Category": "Electronics",
+      "Description": "Compact and lightweight drone",
+      "Brand": "DJI",
+      "Image_URL": "minidrone.jpg"
+    },
+    ...
+  ]
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "Invalid column name 'Price'. Valid columns: Title, Category, Description, Brand"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "search must be an array"
+}
 

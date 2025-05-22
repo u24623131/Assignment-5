@@ -137,9 +137,9 @@ class API {
                 $this->UpdateReview($input);
                 break;
 
-            // case "Search":
-            //     $this->Search($input); 
-            //     break;
+            case "Search":
+                $this->Search($input); 
+                break;
 
             default:
                 http_response_code(400);
@@ -1082,6 +1082,81 @@ class API {
             $this->response("500 Internal Server Error", "error", "Failed to update review");
         }
     }
+    private function Search($input){ 
+    // Ensure 'apikey' is provided
+    if (empty($input['apikey']) || !isset($input['apikey'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "apikey is missing");
+        return;
+    }
+     $apiKey = $input['apikey'];
+
+    if (!$this->getUserByApiKey($apiKey)) {
+        http_response_code(403);
+        $this->response("403 Forbidden", "error", "Invalid API key");
+        return;
+    }
+
+    if (empty($input['search']) || !isset($input['search'])) {
+        http_response_code(400);
+        $this->response("403 Forbidden", "error", "search is missing");
+        return;
+    }
+
+    if (!is_array($input['search'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "search must be an array");
+        return;
+    }
+
+    // Allowed columns
+    $validCol = ['Title', 'Category', 'Description', 'Brand'];
+    $search = $input['search'];
+    $conditions = [];
+    $params = [];
+    $types = "";
+
+    // Construct query dynamically
+    foreach ($search as $key => $value) {
+        if (!in_array($key, $validCol)) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Invalid column name '$key'. Valid columns: " . implode(", ", $validCol));
+            return;
+        }
+
+        
+        $conditions[] = "$key LIKE ?";
+        $params[] = "%" . $value . "%";
+        $types .= "s"; 
+    }
+
+    $sql = "SELECT * FROM Products";
+    if (count($conditions) > 0) {
+        $sql .= " WHERE " . implode(" AND ", $conditions);
+    }
+
+    $stmt = $this->DB_Connection->prepare($sql);
+    if (!$stmt) {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Could not prepare SQL statement");
+        return;
+    }
+
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $products = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $products[] = $row;
+    }
+
+    $stmt->close();
+
+    http_response_code(200);
+    $this->response("200 OK", "success", $products);
+}
     //--------------------- HELPER FUNCTIONS -----------------//
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
