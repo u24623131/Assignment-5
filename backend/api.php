@@ -105,8 +105,24 @@ class API {
                 $this->addProduct($input);
                 break;
 
+            case "UpdateProductDetails":
+                $this->handleUpdateProductDetails($input);
+                break;
+
+            case "UpdateProductPrices":
+                $this->handleUpdateProductPrices($input);
+                break;
+
             case "DeleteProduct":
-                //$this->deleteProduct($input);
+                $this->deleteProduct($input);
+                break;
+
+            case "ProductCompare":
+                $this->handleProductCompare($input);
+                break;
+
+            case "Filter":
+                $this->handleFilter($input);
                 break;
 
             default:
@@ -358,8 +374,8 @@ class API {
         $this->response("500 Internal Server Error", "error", "Execution failed during deleteAccount");
 }
     }
-    private function handleProductByRetailer($input){ // called when you click a button
-        $required = ['apikey','retailer', 'productNum'];
+    private function handleProductByRetailer($input){ // called when you click a button?
+        $required = ['apikey','retailer', 'productTitle'];
         forEach($required as $field){
             if(empty($input[$field])){
                 http_response_code(400); // Bad Request
@@ -369,47 +385,65 @@ class API {
         }
 
         $retailer = $input['retailer'];
-        $productNum = $input['productNum'];
-
-        // check if retailer actualy exists in comparison table (avoid db errors early)
-        // get product details using productID
-        // get price using both
-        $getSql = "SELECT Price FROM Prices WHERE Retailer_ID = ? AND Product_No = ?";
-        $getStmt = $this->DB_Connection->prepare($getSql);
-        $getStmt->bind_param("ii", $retailer, $productNum);
-        $getStmt->execute();
-        $resultPrice = $getStmt->get_result();
-        $getStmt->close();
-
-        if ($resultPrice && $price = $resultPrice->fetch_assoc()) {
-            //Fetch other product data
-            $sql = "SELECT * FROM Products WHERE Product_No = ?";
-            $stmt = $this->DB_Connection->prepare($sql);
-            $stmt->bind_param("i", $productNum);
-            $stmt->execute();
-            $resProductData = $stmt->get_result();
-            if ($resProductData && $productData = $resProductData->fetch_assoc()) {
-                http_response_code(200);
-                $this->response("200 OK","success",[
-                    "ProductNo" => $productData['Product_No'],
-                    "Title" => $productData['Title'],
-                    "Category" => $productData['Category'],
-                    "Description" => $productData['Description'],
-                    "Brand" => $productData['Brand'],
-                    "ImageUrl" => $productData['Image_URL'],
-                    "Price" => $price['Price']
-                ]);
-            }else{
-                http_response_code(500);
-                $this->response("500 Internal Server Error","error",["Could not fetch product data"]);
-            }
-            $stmt->close();
-        }else{
-            // Return error
-            http_response_code(500);
-            $this->response("500 Internal Server Error","error",["Could not get price of desired item"]);
+        if (!$this->isValidRetailer($retailer)) {
+            http_response_code(400); // Bad Request
+            $this->response("400 Bad Request","error","Invalid retailer");
+            return;
         }
+        $retailerId = $this->getRetailerInfo($retailer)['Retailer_ID'];
 
+        $productTitle = $input['productTitle'];
+
+        //fetch product number using title
+        $checkSql ="SELECT Product_No FROM Products WHERE Title = ?";
+        $checkStmt = $this->DB_Connection->prepare($checkSql);
+        $checkStmt->bind_param("s",$productTitle);
+        $checkStmt->execute();
+        $res = $checkStmt->get_result();
+        $checkStmt->close();
+        if ($res && $res->num_rows > 0) {
+            // get price using both the retailer_id and product number
+            $productNum = $res->fetch_assoc();
+            $getSql = "SELECT Price FROM Prices WHERE Retailer_ID = ? AND Product_No = ?";
+            $getStmt = $this->DB_Connection->prepare($getSql);
+            $getStmt->bind_param("ii", $retailerId, $productNum['Product_No']);
+            $getStmt->execute();
+            $resultPrice = $getStmt->get_result();
+            $getStmt->close();
+
+            if ($resultPrice && $resultPrice->num_rows > 0) {
+                $price = $resultPrice->fetch_assoc();
+                //Fetch other product data
+                $sql = "SELECT * FROM Products WHERE Product_No = ?";
+                $stmt = $this->DB_Connection->prepare($sql);
+                $stmt->bind_param("i", $productNum['Product_No']);
+                $stmt->execute();
+                $resProductData = $stmt->get_result();
+                $stmt->close();
+                if ($resProductData && $productData = $resProductData->fetch_assoc()) {
+                    http_response_code(200);
+                    $this->response("200 OK","success",[
+                        "ProductNo" => $productData['Product_No'],
+                        "Title" => $productData['Title'],
+                        "Category" => $productData['Category'],
+                        "Description" => $productData['Description'],
+                        "Brand" => $productData['Brand'],
+                        "ImageUrl" => $productData['Image_URL'],
+                        "Price" => (float)$price['Price']
+                    ]);
+                }else{
+                    http_response_code(500);
+                    $this->response("500 Internal Server Error","error","Could not fetch product data");
+                }
+            }else{
+                // Return error
+                http_response_code(500);
+                $this->response("500 Internal Server Error","error","Price for product from specified retailer does not exst");
+            }
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error","$productTitle does not exist in the database");
+        }
     }
     private function handleProductsByCustomerId($input){
         $required = ['apikey','customerID'];
@@ -561,17 +595,16 @@ class API {
         http_response_code(200);
         $this->response("200 OK", "success", $favourites);
     }
-
-        private function addProduct($input){
+    private function addProduct($input){
         // ensure apiKey is NOT NULL
-        if(empty($input['apiKey'])|| !isset($input['apiKey'])){
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
             http_response_code(400);
-            $this->response("400 Bad Request","error",$input['apiKey']." is Missing");
+            $this->response("400 Bad Request","error",$input['apikey']." is Missing");
             return;
         }
 
         // assign Apikey to var
-        $apiK = $input['apiKey'];
+        $apiK = $input['apikey'];
 
         //check if user is an admin
         if(!$this->isAdmin($apiK)){
@@ -690,8 +723,128 @@ class API {
                 return;
         
     }
-    
-    private function deleteProduct($input){}
+
+    private function handleUpdateProductDetails($input){ //assuming that titles are unique
+        $required = ['apikey', 'productTitle'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+        if(!$this->isAdmin($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","User is not an admin");
+            return;
+        }
+
+        // find product id of product to be updated
+        // check which parameters are available to change
+
+    }
+
+    private function handleUpdateProductPrices($input){
+        $required = ['apikey', 'retailer','productTitle','newPrice'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+        if(!$this->isAdmin($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","User is not an admin");
+            return;
+        }
+        // get retailer id
+        $retailer = $this->getRetailerInfo($input['retailer']);
+        if (!$retailer) {
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Retailer does not exist");
+            return;
+        }
+        // get product id
+        $stmt = $this->DB_Connection->prepare("SELECT * FROM Products WHERE Title = ?");
+        $stmt->bind_param("s", $input['productTitle']);
+        $stmt->execute();
+        $product = $stmt->get_result();
+        $stmt->close();
+        if (!$product)  {
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Product does not exist");
+            return;
+        }
+        $productID = $product->fetch_assoc();
+
+        $newPrice = (float)$input['newPrice'];
+
+        // update price
+        $updateSql = "UPDATE Prices SET Price = ? WHERE Retailer_ID = ? AND Product_No =?";
+        $updateStmt = $this->DB_Connection->prepare($updateSql);
+        $updateStmt->bind_param("dii", $newPrice,$retailer['Retailer_ID'], $productID['Product_No']);
+        if ($updateStmt->execute()) {
+            http_response_code(200);
+            $this->response("200 OK","success","Product price has been updated: $newPrice" );
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error","Prices update error");
+        }
+        $updateStmt->close();
+    }
+    private function deleteProduct($input){
+        $required = ['apikey', 'productTitle'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+        if(!$this->isAdmin($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","User is not an admin");
+            return;
+        }
+
+        $productTitle = $input['productTitle'];
+
+        $deleteSql = "DELETE FROM Products WHERE Title = ?";
+        $deleteStmt = $this->DB_Connection->prepare($deleteSql);
+        $deleteStmt->bind_param("s", $productTitle);
+        if ($deleteStmt->execute()) {
+            http_response_code(500);
+            $this->response("200 OK","success",["message" => "Product $productTitle has been deleted."]);
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error",["message" => "Could not delete product: $productTitle"]);
+        }
+        $deleteStmt->close();
+    }
+    private function handleProductCompare($input){
+        $required = ['apikey', 'productTitle1', 'productTitle2'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+
+        $productTitle1 = $input['productTitle1'];
+        $productTitle2 = $input['productTitle2'];
+
+        // fetch product with prices + retailsers in 1 query!!! (Joins?)
+        $product1Data = $this->fetchProductData($productTitle1);
+        $product2Data = $this->fetchProductData($productTitle2);
+
+        $product1Result = $this->formatResponseData($product1Data);
+        $product2Result = $this->formatResponseData($product2Data);
+
+        $this->response("200 OK", "success", ["product1" => $product1Result, "product2" => $product2Result]);
+    }
+    private function handleFilter($input){}
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
         $headerText = "HTTP/1.1 ".$codeAndMessage;
@@ -717,7 +870,9 @@ class API {
         exit;
 
     }
-        private function isAdmin($apikey){
+
+    //--------------------- HELPER FUNCTIONS ----------------- 
+    private function isAdmin($apikey){
         $stmt= $this->DB_Connection->prepare("SELECT User_Type FROM Users WHERE API_Key = ?");
         $stmt->bind_param("s",$apikey);
        if($stmt->execute()){
@@ -783,6 +938,44 @@ class API {
     }
     private function generateApiKey($length = 32) {
         return bin2hex(random_bytes($length / 2)); // length of 16
+    }
+    private function fetchProductData($title){
+        $sql = "SELECT p.Title AS productTitle, pr.Price AS Price, r.Name AS retailerName, p.Product_No, p.Category, p.Description, p.Brand, p.Image_URL FROM Products p JOIN Prices pr ON p.Product_No = pr.Product_No JOIN Retailers r ON pr.Retailer_ID = r.Retailer_ID WHERE p.Title = ?";
+        $stmt = $this->DB_Connection->prepare($sql);
+        $stmt->bind_param("s", $title);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        if (!$data || count($data)===0) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Failed to retrieve data from '$title'");
+            exit;
+        }
+
+        return $data;
+    }
+    private function formatResponseData($data){
+        $retailers = array_column($data, 'retailerName');
+        $prices = array_column($data, 'Price');
+        $title = array_column($data, 'productTitle')[0];
+        $productNum = array_column($data, 'Product_No')[0];
+        $category = array_column($data, 'Category')[0];
+        $description = array_column($data, 'Description')[0];
+        $imgUrl = array_column($data, 'Image_URL')[0];
+        $brand = array_column($data, 'Brand')[0];
+
+        return [
+            "ProductNo" => $productNum,
+            "Title" => $title,
+            "Category" => $category,
+            "Description" => $description,
+            "Brand" => $brand,
+            "ImageUrl" => $imgUrl,
+            "retailers" => $retailers,
+            "prices" => $prices
+        ];
     }
 }
 
