@@ -727,4 +727,125 @@ Notes:
   "timestamp": 1747778888002,
   "data": "search must be an array"
 }
+==================================================================
+                      GET USER DETAILS
+==================================================================
+
+Required Fields:
+  - type     : "GetUserDetails"
+  - apikey   : Valid API key
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "GetUserDetails",
+  "apikey": "0ce38b841cd526f2b18b9707aed7f772"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777000,
+  "data": {
+    "User_ID": 12,
+    "Name": "John",
+    "Surname": "Doe",
+    "Email": "john.doe@example.com",
+    "Cell_No": "0821234567"
+  }
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is not valid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "Failed to fetch user data"
+}
+
+==================================================================
+                     UPDATE USER DETAILS
+==================================================================
+
+Required Fields:
+  - type     : "UpdateUserDetails"
+  - apikey   : Valid API key
+
+Optional Fields (at least one required):
+  - name     : New name
+  - surname  : New surname
+  - email    : New email (must not be in use)
+  - cell_no  : New cellphone number (must be valid)
+  - password : New password (must be strong)
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "UpdateUserDetails",
+  "apikey": "0ce38b841cd526f2b18b9707aed7f772",
+  "name": "Jane",
+  "surname": "Smith",
+  "email": "jane.smith@example.com",
+  "cell_no": "0839876543",
+  "password": "SecurePass1!"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777000,
+  "data": "User details updated successfully"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is not valid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "No fields to update"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
+  "data": "Email is already used"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888004,
+  "data": "Invalid Cellphone number"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888005,
+  "data": "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol."
+}
 

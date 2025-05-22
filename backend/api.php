@@ -141,6 +141,13 @@ class API {
                 $this->Search($input); 
                 break;
 
+            case "GetUserDetails"://for client page
+                $this->getUserDetails($input);
+                break;
+
+            case "UpdateUserDetails":
+                $this->updateUserDetails($input);
+                break;
             default:
                 http_response_code(400);
                 $this->response("400 Bad Request","error","Invalid request type");
@@ -1156,7 +1163,145 @@ class API {
 
     http_response_code(200);
     $this->response("200 OK", "success", $products);
-}
+    }
+    private function getUserDetails($input){
+        // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+        
+        $api = $input['apikey'];
+
+        if(!$this->isValidApikey($api)){
+            http_response_code(404);
+            $this->response("404 Not Found","error","apikey is not valid");
+            return;
+        }
+
+        $query = "SELECT User_ID, Name, Surname, Email, Cell_No FROM Users WHERE API_Key = ?";
+        $stmt = $this->DB_Connection->prepare($query);
+        $stmt->bind_param("s", $api);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+            http_response_code(200);
+            $this->response("200 OK", "success", $user);
+            return;
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to fetch user data");
+            return;
+        }
+    }
+    private function updateUserDetails($input){
+
+         // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+        
+        $api = $input['apikey'];
+
+        if(!$this->isValidApikey($api)){
+            http_response_code(404);
+            $this->response("404 Not Found","error","apikey is not valid");
+            return;
+        }
+
+        $fields = [];
+        $params = [];
+        $types = "";
+
+        if (!empty($input['name']) && isset($input['name'])) {
+            $fields[] = "Name = ?";
+            $params[] = $input['name'];
+            $types .= "s";
+        }
+
+        if (!empty($input['surname']) && isset($input['surname'])) {
+            $fields[] = "Surname = ?";
+            $params[] = $input['surname'];
+            $types .= "s";
+        }
+
+        if (!empty($input['email']) && isset($input['email'])) {
+            if(!$this->emailUsed($input['email'])){
+                $fields[] = "Email = ?";
+                $params[] = $input['email'];
+                $types .= "s";
+            }
+            else{
+                http_response_code(400);
+                $this->response("400 Bad Request","error","Email is already used");
+                return;
+            }
+        }
+
+        if (!empty($input['cell_no']) && isset($input['cell_no'])) {
+            if($this->isValidCellNo($input['cell_no'])){
+                $fields[] = "Cell_No = ?";
+                $params[] = $input['cell_no'];
+                $types .= "s";
+            }else{
+                http_response_code(400);
+                $this->response("400 Bad Request","error","Invalid Cellphone number");
+                return;
+            }
+    }
+
+        if (!empty($input['password'])) {
+        if (!$this->isValidPassword($input['password'])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.");
+            return;
+        }
+            // generate salt (16 random chars and Letters) 
+            $salt = bin2hex(random_bytes(16));
+
+            // Hash password using Argon2ID (no manual salt needed)
+            $hash = password_hash($input['password'].$salt, PASSWORD_ARGON2ID);
+
+            $fields[] = "Password = ?";
+            $params[] = $hash;
+            $types .= "s";
+    }
+
+        if (count($fields) === 0) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "No fields to update");
+            return;
+        }
+
+        // Prepare the SQL query
+        $query = "UPDATE Users SET " . implode(", ", $fields) . " WHERE API_Key = ?";
+        $params[] = $api;
+        $types .= "s";
+
+        $stmt = $this->DB_Connection->prepare($query);
+        if (!$stmt) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare statement");
+            return;
+        }
+
+        $stmt->bind_param($types, ...$params);
+
+        if ($stmt->execute()) {
+            http_response_code(200);
+            $this->response("200 OK", "success", "User details updated successfully");
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to update user details");
+        }
+
+        $stmt->close();
+    }
     //--------------------- HELPER FUNCTIONS -----------------//
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
@@ -1253,6 +1398,17 @@ class API {
     }
     private function generateApiKey($length = 32) {
         return bin2hex(random_bytes($length / 2)); // length of 16
+    }
+    private function isValidApikey($apikey){
+        $stmt = $this->DB_Connection->prepare("SELECT * FROM Users WHERE API_Key = ?");
+        $stmt->bind_param("s", $apikey);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            return true;
+        }
+        return false;
     }
     private function fetchProductData($title){
         $sql = "SELECT p.Title AS productTitle, pr.Price AS Price, r.Name AS retailerName, p.Product_No, p.Category, p.Description, p.Brand, p.Image_URL FROM Products p JOIN Prices pr ON p.Product_No = pr.Product_No JOIN Retailers r ON pr.Retailer_ID = r.Retailer_ID WHERE p.Title = ?";
@@ -1366,4 +1522,3 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
         ]);    
     }
 }
-
