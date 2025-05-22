@@ -1459,7 +1459,19 @@ class API {
 
     }
     private function isInRetail($name){
-
+        $stmt= $this->DB_Connection->prepare("SELECT * FROM Retailers WHERE Name = ?");
+        $stmt->bind_param("s",$name);
+       if($stmt->execute()){
+            if($stmt->get_result()->fetch_assoc()){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        http_response_code(400);
+        $this->response("400 Error", 'error',"isInRetail did Not Execute");
+        exit;
     }
     private function isAdmin($apikey){
         $stmt= $this->DB_Connection->prepare("SELECT User_Type FROM Users WHERE API_Key = ?");
