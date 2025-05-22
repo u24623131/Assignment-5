@@ -97,6 +97,22 @@ class API {
                 $this->AddFavourite($input);
                 break;
 
+            case "RemoveFromFavourite":
+                $this->RemoveFromFavourite($input);
+                break;
+            
+            case "AddRetailer":
+                $this->AddRetailer($input);
+                break;
+
+            case "RemoveRetailer":
+                // $this->RemoveRetailer($input);
+                break;
+            
+            case "UpdateRetailer":
+                // $this->UpdateRetailer($input);
+                break;
+
             case "getUserFavourite":
                 $this->getUserFavourite($input);
                 break;
@@ -148,6 +164,7 @@ class API {
             case "UpdateUserDetails":
                 $this->updateUserDetails($input);
                 break;
+
             default:
                 http_response_code(400);
                 $this->response("400 Bad Request","error","Invalid request type");
@@ -903,7 +920,7 @@ class API {
             return;
         }
         // store data 
-        $userId = $this->getUserByApiKey($input['apikey'])['User_ID'];
+    $userId = $this->getUserByApiKey($input['apikey'])['User_ID'];
         
     $productInfo = $this->getProductInfo($input['Title']);
 
@@ -1302,6 +1319,119 @@ class API {
 
         $stmt->close();
     }
+    private function RemoveFromFavourite($input){
+    if (empty($input['apikey']) || !isset($input['apikey'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "apikey is Missing");
+        return;
+    }
+
+    if (empty($input['Title']) || !isset($input['Title'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "Title is Missing");
+        return;
+    }
+
+    $api = htmlspecialchars(trim($input['apikey']));
+    $title = htmlspecialchars(trim($input['Title']));
+
+    $userId = $this->getUserByApiKey($api)['User_ID'];
+    if (!$userId) {
+        http_response_code(403);
+        $this->response("403 Forbidden", "error", "Invalid API Key");
+        return;
+    }
+
+    $productInfo = $this->getProductInfo($title);
+    if (!$productInfo || !isset($productInfo['Product_No'])) {
+        http_response_code(404);
+        $this->response("404 Not Found", "error", "Product not found");
+        return;
+    }
+
+    $prodId = intval($productInfo['Product_No']);
+
+    if (!$this->userAddedToFavourites($api, $title)) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "User did not add product to favourites");
+        return;
+    }
+
+    $stmt = $this->DB_Connection->prepare("DELETE FROM favourites WHERE product_id = ? AND user_id = ?");
+    if (!$stmt) {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to prepare statement");
+        return;
+    }
+
+    $stmt->bind_param("ii", $prodId, $userId);
+    $success = $stmt->execute();
+    $stmt->close();
+
+    if ($success) {
+        http_response_code(200);
+        $this->response("200 OK", "success", "Product removed from favourites");
+    } else {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to delete favourite");
+    }
+    }
+
+    private function AddRetailer($input) {
+    if (empty($input['apikey']) || !isset($input['apikey'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "apikey is Missing");
+        return;
+    }
+
+    $apikey = htmlspecialchars(trim($input['apikey']));
+    if (!$this->isAdmin($apikey)) {
+        http_response_code(403);
+        $this->response("403 Forbidden", "error", "User is not an admin");
+        return;
+    }
+
+    if (empty($input['retailName']) || !isset($input['retailName'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "retailName is Missing");
+        return;
+    }
+
+    $retailName = htmlspecialchars(trim($input['retailName']));
+    $retailAddress = isset($input['retailAddress']) ? htmlspecialchars(trim($input['retailAddress'])) : '';
+
+    if ($this->isInRetail($retailName)) {
+        http_response_code(403);
+        $this->response("403 Forbidden", "error", "Retailer already exists");
+        return;
+    }
+
+    $stmt = $this->DB_Connection->prepare("INSERT INTO Retailers(Name, Phy_Address) VALUES(?, ?)");
+    if (!$stmt) {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Could not prepare insert statement");
+        return;
+    }
+
+    $stmt->bind_param("ss", $retailName, $retailAddress);
+
+    if ($stmt->execute()) {
+        http_response_code(200);
+        $this->response("200 OK", "success", "Retailer added successfully");
+    } else {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to insert retailer");
+    }
+
+    $stmt->close();
+    }
+
+    private function RemoveRetailer($input){
+    
+    }
+    private function UpdateRetailer($input){
+        
+    }
     //--------------------- HELPER FUNCTIONS -----------------//
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
@@ -1326,6 +1456,9 @@ class API {
 
         echo $json;
         exit;
+
+    }
+    private function isInRetail($name){
 
     }
     private function isAdmin($apikey){
@@ -1499,7 +1632,42 @@ class API {
         }
 
         return $stmt->get_result()->num_rows > 0;
-}
+    }
+
+    private function userAddedToFavourites($apikey, $title) {
+    $user = $this->getUserByApiKey(htmlspecialchars(trim($apikey)));
+    $product = $this->getProductInfo(htmlspecialchars(trim($title)));
+
+    if (!$user || !isset($user['User_ID']) || !$product || !isset($product['Product_No'])) {
+        return false;
+    }
+
+    $userId = intval($user['User_ID']);
+    $productId = intval($product['Product_No']);
+
+    $stmt = $this->DB_Connection->prepare("SELECT 1 FROM favourites WHERE product_id = ? AND user_id = ?");
+    if (!$stmt) {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to prepare statement");
+        return false;
+    }
+
+    $stmt->bind_param("ii", $productId, $userId);
+
+    if (!$stmt->execute()) {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to execute statement");
+        $stmt->close();
+        return false;
+    }
+
+    $result = $stmt->get_result();
+    $exists = $result && $result->num_rows > 0;
+    $stmt->close();
+    return $exists;
+    }
+
+    
     private function adminRemoveReview($title, $apikey) {
         return $this->userRemoveReview($apikey, $title); 
     }
