@@ -69,12 +69,9 @@ class API {
         }
 
         switch ($input["type"]) {
+            //Account Management
             case "Register":
                 $this->handleRegister($input);
-                break;
-
-            case "GetAllProducts":
-                $this->getAllProducts();
                 break;
 
             case "Login":
@@ -83,42 +80,23 @@ class API {
             
             case "DeleteAccount":
                 $this->deleteAccount($input);
-                break; 
-                
+                break;
+
+            case "GetUserDetails"://for client page
+                $this->getUserDetails($input);
+                break;
+
+            case "UpdateUserDetails":
+                $this->updateUserDetails($input);
+                break;
+
+            //Product manipulation    
             case "ProductByRetailer":
                 $this->handleProductByRetailer($input);
                 break;
 
             case "ProductsByCustomerId":
                 $this->handleProductsByCustomerId($input);
-                break;
-            
-            case "AddToFavourite":
-                $this->AddFavourite($input);
-                break;
-
-            case "RemoveFromFavourite":
-                $this->RemoveFromFavourite($input);
-                break;
-            
-            case "AddRetailer":
-                $this->AddRetailer($input);
-                break;
-
-            case "RemoveRetailer":
-                // $this->RemoveRetailer($input);
-                break;
-            
-            case "UpdateRetailer":
-                // $this->UpdateRetailer($input);
-                break;
-
-            case "getUserFavourite":
-                $this->getUserFavourite($input);
-                break;
-                
-            case "AddProduct":
-                $this->addProduct($input);
                 break;
 
             case "UpdateProductDetails":
@@ -133,14 +111,45 @@ class API {
                 $this->deleteProduct($input);
                 break;
 
+            case "AddProduct":
+                $this->addProduct($input);
+                break;
+
+            case "GetAllProducts":
+                $this->getAllProducts();
+                break;
+
             case "ProductCompare":
                 $this->handleProductCompare($input);
                 break;
 
-            case "Filter":
-                $this->handleFilter($input);
+            // Favourites manipulation
+            case "AddToFavourite":
+                $this->AddFavourite($input);
                 break;
 
+            case "RemoveFromFavourite":
+                $this->RemoveFromFavourite($input);
+                break;
+                
+            case "getUserFavourite":
+                $this->getUserFavourite($input);
+                break;
+
+            //Retailer Manipulation
+            case "AddRetailer":
+                $this->AddRetailer($input);
+                break;
+
+            case "RemoveRetailer":
+                // $this->RemoveRetailer($input);
+                break;
+            
+            case "UpdateRetailer":
+                $this->UpdateRetailer($input);
+                break;
+
+            //Review Manpulation
             case "AddReview":
                 $this->AddReview($input);
                 break;
@@ -153,16 +162,13 @@ class API {
                 $this->UpdateReview($input);
                 break;
 
+            //Manipulation 
+            case "Filter":
+                // $this->handleFilter($input); 
+                break;
+
             case "Search":
                 $this->Search($input); 
-                break;
-
-            case "GetUserDetails"://for client page
-                $this->getUserDetails($input);
-                break;
-
-            case "UpdateUserDetails":
-                $this->updateUserDetails($input);
                 break;
 
             default:
@@ -1429,9 +1435,56 @@ class API {
     private function RemoveRetailer($input){
     
     }
-    private function UpdateRetailer($input){
-        
+    private function UpdateRetailer($input) {
+    if (empty($input['apikey']) || !isset($input['apikey'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "apikey is Missing");
+        return;
     }
+
+    $apikey = htmlspecialchars(trim($input['apikey']));
+    if (!$this->isAdmin($apikey)) {
+        http_response_code(403);
+        $this->response("403 Forbidden", "error", "User is not an admin");
+        return;
+    }
+
+    if (empty($input['retailName']) || !isset($input['retailName'])) {
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "retailName is Missing");
+        return;
+    }
+
+    $oldName = htmlspecialchars(trim($input['retailName']));
+    if (!$this->isInRetail($oldName)) {
+        http_response_code(404);
+        $this->response("404 Not Found", "error", "Retailer does not exist");
+        return;
+    }
+
+    $newName = isset($input['newRetailName']) ? htmlspecialchars(trim($input['newRetailName'])) : $oldName;
+    $retailAddress = isset($input['retailAddress']) ? htmlspecialchars(trim($input['retailAddress'])) : '';
+
+    $stmt = $this->DB_Connection->prepare("UPDATE Retailers SET Name = ?, Phy_Address = ? WHERE Name = ?");
+    if (!$stmt) {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Could not prepare update statement");
+        return;
+    }
+
+    $stmt->bind_param("sss", $newName, $retailAddress, $oldName);
+
+    if ($stmt->execute()) {
+        http_response_code(200);
+        $this->response("200 OK", "success", "Retailer updated successfully");
+    } else {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to update retailer");
+    }
+
+    $stmt->close();
+    }
+
     //--------------------- HELPER FUNCTIONS -----------------//
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
