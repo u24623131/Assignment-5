@@ -5,6 +5,8 @@
 ============================= SETUP ==============================
 -> Only POST requests allowed
 -> MUST HAVE .env FILE (Available on Discord)
+	--> if file name is not .env (e.g. "env") rename and add a . 
+	    to the name (e.g.".env")
 -> Install Composer: https://getcomposer.org/download/
 -> After Composer is installed, run in terminal:
 
@@ -348,3 +350,312 @@ Required Fields:
   "timestamp": 1747767153738,
   "data": "User not found"
 }
+
+==================================================================
+                          ADD PRODUCT
+==================================================================
+
+Required Fields:
+  - type        : "addProduct"
+  - apikey      : Valid admin API key
+  - Title       : Product title
+  - Category    : Product category
+  - Description : Product description
+  - Brand       : Product brand
+  - Image_URL   : URL to product image
+  - Retailers   : Array of retailer names
+  - Prices      : Array of corresponding prices (float)
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "addProduct",
+  "apikey": "admin_api_key_here",
+  "Title": "Product X",
+  "Category": "Electronics",
+  "Description": "Latest gadget",
+  "Brand": "BrandX",
+  "Image_URL": "imagex.jpg",
+  "Retailers": ["Retailer1", "Retailer2"],
+  "Prices": [199.99, 189.99]
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000000,
+  "data": "product(s) & prices added"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767000001,
+  "data": "Title is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767000002,
+  "data": "User is not an admin"
+}
+
+==================================================================
+                     UPDATE PRODUCT PRICES
+==================================================================
+
+Required Fields:
+  - type        : "updateProductPrice"
+  - apikey      : Valid admin API key
+  - productTitle: Title of the product
+  - retailer    : Name of the retailer
+  - newPrice    : New price to be updated
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "updateProductPrice",
+  "apikey": "admin_api_key_here",
+  "productTitle": "Product X",
+  "retailer": "Retailer1",
+  "newPrice": 179.99
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000003,
+  "data": "Product price has been updated: 179.99"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767000004,
+  "data": "Product does not exist"
+}
+
+==================================================================
+                       DELETE PRODUCT
+==================================================================
+
+Required Fields:
+  - type        : "deleteProduct"
+  - apikey      : Valid admin API key
+  - productTitle: Title of the product to delete
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "deleteProduct",
+  "apikey": "admin_api_key_here",
+  "productTitle": "Product X"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000005,
+  "data": {
+    "message": "Product Product X has been deleted."
+  }
+}
+
+==================================================================
+                     ADD PRODUCT REVIEW
+==================================================================
+
+Required Fields:
+  - type   : "addReview"
+  - apikey : Valid user API key
+  - Title  : Product title
+  - Rating : Integer (0 to 5)
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "addReview",
+  "apikey": "user_api_key_here",
+  "Title": "Product X",
+  "Rating": 4
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000006,
+  "data": "Review was inserted"
+}
+
+==================================================================
+                    REMOVE PRODUCT REVIEW
+==================================================================
+
+Required Fields:
+  - type       : "removeReview"
+  - apikey     : API key of requester (user or admin)
+  - Title      : Product title
+  - userapikey : [ONLY FOR ADMIN] Target user's API key
+
+------------------ REQUEST EXAMPLE (User) ------------------
+
+{
+  "type": "removeReview",
+  "apikey": "user_api_key_here",
+  "Title": "Product X"
+}
+
+------------------ REQUEST EXAMPLE (Admin) ------------------
+
+{
+  "type": "removeReview",
+  "apikey": "admin_api_key_here",
+  "Title": "Product X",
+  "userapikey": "user_api_key_here"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000007,
+  "data": "Removed user's review"
+}
+
+==================================================================
+                      GET USER FAVOURITES
+==================================================================
+
+Required Fields:
+  - type   : "getUserFavourite"
+  - apiKey : Valid API key
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "getUserFavourite",
+  "apiKey": "0ce38b841cd526f2b18b9707aed7f772"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": [
+    {
+      "Product_No": 1,
+      "Title": "Product 1",
+      "Category": "Category 1",
+      "Description": "Description 1",
+      "Brand": "Brand 1",
+      "Image_UTL": "image1.jpg"
+    },
+    {
+      "Product_No": 5,
+      "Title": "Product 5",
+      "Category": "Category 5",
+      "Description": "Description 5",
+      "Brand": "Brand 5",
+      "Image_UTL": "image5.jpg"
+    }
+  ]
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "apiKey is missing"
+}
+==================================================================
+                      PRODUCT COMPARISON
+==================================================================
+
+Required Fields:
+  - type          : "productCompare"
+  - apiKey        : Valid API key
+  - productTitle1 : Title of the first product to compare
+  - productTitle2 : Title of the second product to compare
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "productCompare",
+  "apiKey": "0ce38b841cd526f2b18b9707aed7f772",
+  "productTitle1": "Product A",
+  "productTitle2": "Product B"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": {
+    "product1": {
+      "Product_No": 2,
+      "Title": "Product A",
+      "Category": "Category A",
+      "Description": "Description A",
+      "Brand": "Brand A",
+      "Image_URL": "productA.jpg",
+      "Prices": [
+        {
+          "Retailer": "Retailer 1",
+          "Price": 99.99
+        },
+        {
+          "Retailer": "Retailer 2",
+          "Price": 94.50
+        }
+      ]
+    },
+    "product2": {
+      "Product_No": 7,
+      "Title": "Product B",
+      "Category": "Category B",
+      "Description": "Description B",
+      "Brand": "Brand B",
+      "Image_URL": "productB.jpg",
+      "Prices": [
+        {
+          "Retailer": "Retailer 3",
+          "Price": 109.95
+        },
+        {
+          "Retailer": "Retailer 4",
+          "Price": 105.00
+        }
+      ]
+    }
+  }
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "apiKey is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153742,
+  "data": "productTitle1 is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153746,
+  "data": "productTitle2 is required"
+}
+

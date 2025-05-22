@@ -125,6 +125,22 @@ class API {
                 $this->handleFilter($input);
                 break;
 
+            case "AddReview":
+                $this->AddReview($input);
+                break;
+
+            case "RemoveReview":
+                $this->RemoveReview($input);
+                break;
+
+            case "UpdateReview":
+                $this->UpdateReview($input);
+                break;
+
+            // case "Search":
+            //     $this->Search($input); 
+            //     break;
+
             default:
                 http_response_code(400);
                 $this->response("400 Bad Request","error","Invalid request type");
@@ -723,7 +739,6 @@ class API {
                 return;
         
     }
-
     private function handleUpdateProductDetails($input){ //assuming that titles are unique
         $required = ['apikey', 'productTitle'];
         forEach($required as $field){
@@ -743,7 +758,6 @@ class API {
         // check which parameters are available to change
 
     }
-
     private function handleUpdateProductPrices($input){
         $required = ['apikey', 'retailer','productTitle','newPrice'];
         forEach($required as $field){
@@ -845,6 +859,230 @@ class API {
         $this->response("200 OK", "success", ["product1" => $product1Result, "product2" => $product2Result]);
     }
     private function handleFilter($input){}
+
+    private function AddReview($input){ // only logged in normal users can leave reviews
+        // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+
+        // assign Apikey to var
+        $apiK = $input['apikey'];
+
+        //check if user is an admin
+        if($this->isAdmin($apiK)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Admins may not insert reviews");
+            return;
+        }
+
+        // need rating,product name and using api key to find user
+        $toReview = ['Title','Rating'];
+        foreach($toReview as $r){
+            if(empty($input[$r])|| !isset($input[$r])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error", $r." is Empty");
+            return;
+            }
+        }
+
+        // ensure that rating is a number 
+
+       if(!is_numeric($input['Rating'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error", "Rating must be a number");
+            return;
+        }
+        // store data 
+        $userId = $this->getUserByApiKey($input['apikey'])['User_ID'];
+        
+    $productInfo = $this->getProductInfo($input['Title']);
+
+    if(!$productInfo){
+        http_response_code(400);
+        $this->response("400 Bad Request","error", $input['Title']." may not exist");
+        return;
+    }
+
+    $prodId = $productInfo['Product_No'];
+
+    $rating = (int) $input['Rating'];
+    if($rating > 5){
+        http_response_code(400);
+        $this->response("400 Bad Request","error", "Rating may not be greater than 5");
+        return;
+    }
+    if($rating < 0){
+        http_response_code(400);
+        $this->response("400 Bad Request","error", "Rating may not be negative");
+        return;
+    }
+        // all data is assumed at this point to be valid 
+        $stmt = $this->DB_Connection->prepare('INSERT INTO Reviews(Rating, Prod_ID, U_ID) VALUES(?,?,?)');
+        if(!$stmt){
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error", "Could not prepare review statement");
+            return;
+        }
+        
+        $stmt->bind_param("iii",$rating,$prodId,$userId);
+
+        if($stmt->execute()){
+            http_response_code(200);
+            $this->response("200 OK","success", "Review was inserted");
+            return;
+        }
+        else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error", "Review was not inserted");
+            return;
+        }
+    }
+    private function RemoveReview($input){
+        // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+
+        // assign Apikey to var
+        $apiK = $input['apikey'];
+
+        if(empty($input['Title'])|| !isset($input['Title'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error", "Title is Missing");
+            return;
+        }
+        $prodId = $this->getProductInfo($input['Title'])['Product_No'];
+
+        //check if user is an admin
+        if(!$this->isAdmin($apiK)){
+            // make sure they made a review on that product 
+            if($this->madeReviewOnProduct($apiK,$input['Title'])){
+                if($this->userRemoveReview($apiK,$prodId)){
+                    http_response_code(200);
+                    $this->response("200 OK","success", "Removed your review");
+                    return;
+                }
+                else{
+                    http_response_code(400);
+                    $this->response("400 Bad Request","error", "Could Not remove your review");
+                    return;
+                }
+            }
+        else{
+            http_response_code(400);
+            $this->response("400 Bad Request","error", "User did not make product review");
+            return;
+        }
+        }
+            if(empty($input['userapikey'])|| !isset($input['userapikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","userapikey is Missing");
+            return;
+        }
+
+        $userApi = $input['userapikey'];
+
+        if($this->adminRemoveReview($input['Title'],$userApi)){
+            http_response_code(200);
+            $this->response("200 OK","success", "Removed user's review");
+            return;
+           }
+        else{
+            http_response_code(400);
+            $this->response("400 Bad Request","error", "Could Not remove user's review");
+            return;
+           }
+
+    }
+    private function UpdateReview($input){
+        // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+
+        // assign Apikey to var
+        $apiK = $input['apikey'];
+
+        //check if user is an admin
+        if($this->isAdmin($apiK)){
+            http_response_code(403);
+            $this->response("403 Forbidden","error","Admins may not Update reviews but they may remove");
+            return;
+        }
+        $userId = $this->getUserByApiKey($apiK)['User_ID'];
+        
+        $toReview = ['Title','Rating'];
+
+        foreach($toReview as $r){
+            if(empty($input[$r])|| !isset($input[$r])){
+            http_response_code(404);
+            $this->response("404 Not Found","error", $r." is Empty");
+            return;
+            }
+        }
+               
+        $productInfo = $this->getProductInfo($input['Title']);
+
+        if(!$productInfo){
+            http_response_code(404);
+            $this->response("404 Not Found","error", $input['Title']." may not exist");
+            return;
+        }
+
+        $prodId = $productInfo['Product_No'];
+
+        
+       if(!is_numeric($input['Rating'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error", "Rating must be a number");
+            return;
+        }
+        
+        
+        if(!$this->madeReviewOnProduct($apiK,$input['Title'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","You did not review this product");
+            return;
+        }
+
+        $rating = (int) $input['Rating'];
+        if($rating > 5){
+            http_response_code(400);
+            $this->response("400 Bad Request","error", "Rating may not be greater than 5");
+            return;
+        }
+        if($rating < 0){
+            http_response_code(400);
+            $this->response("400 Bad Request","error", "Rating may not be negative");
+            return;
+        }
+        
+
+        $updateSql = "UPDATE Reviews SET Rating = ? WHERE U_ID = ? AND Prod_ID =?";
+        $stmt = $this->DB_Connection->prepare($updateSql);
+        if (!$stmt) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare update query");
+            return;
+        }
+        $stmt->bind_param("iii",$rating, $userId,$prodId);
+
+         if ($stmt->execute()) {
+            http_response_code(200);
+            $this->response("200 OK", "success", "Review updated successfully");
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to update review");
+        }
+    }
+    //--------------------- HELPER FUNCTIONS -----------------//
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
         $headerText = "HTTP/1.1 ".$codeAndMessage;
@@ -870,8 +1108,6 @@ class API {
         exit;
 
     }
-
-    //--------------------- HELPER FUNCTIONS ----------------- 
     private function isAdmin($apikey){
         $stmt= $this->DB_Connection->prepare("SELECT User_Type FROM Users WHERE API_Key = ?");
         $stmt->bind_param("s",$apikey);
@@ -910,10 +1146,14 @@ class API {
     }
     private function getUserByApiKey($apiKey) {
     $stmt = $this->DB_Connection->prepare("SELECT * FROM Users WHERE API_Key = ?");
-    $stmt->bind_param("s", $apiKey);
-    $stmt->execute();
-    return $stmt->get_result()->fetch_assoc();
-    }
+    if (!$stmt) return null;
+
+        $stmt->bind_param("s", $apiKey);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return ($result && $result->num_rows > 0) ? $result->fetch_assoc() : null;
+    }   
     private function isValidPassword($password) {
        return preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/", $password);
        //Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.
@@ -956,6 +1196,16 @@ class API {
 
         return $data;
     }
+    private function getProductInfo($title) {
+        $stmt = $this->DB_Connection->prepare("SELECT * FROM Products WHERE Title = ?");
+        if (!$stmt) return null;
+
+        $stmt->bind_param("s", $title);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return ($result && $result->num_rows > 0) ? $result->fetch_assoc() : null;
+    }
     private function formatResponseData($data){
         $retailers = array_column($data, 'retailerName');
         $prices = array_column($data, 'Price');
@@ -977,13 +1227,53 @@ class API {
             "prices" => $prices
         ];
     }
-}
+    //getProdReviews returns a table(2D array's)
+   private function getProductReviews($title) {
+        $product = $this->getProductInfo($title);
+        if (!$product) return [];
 
-//Already included on top:
-// header("Access-Control-Allow-Origin: *"); // Allows any website (any “origin”) to make requests to this endpoint
-// header("Access-Control-Allow-Methods: POST"); // Tells the browser that only POST requests are permitted from cross‑origin callers.
-// header("Access-Control-Allow-Headers: Content-Type"); // Declares which custom headers the client is allowed to send.
-// //Sending HTTP headers that enable Cross-Origin Resource Sharing(CORS) so that browsers will let web pages on other domains talk to the API
+        $productId = $product['Product_No'];
+        $stmt = $this->DB_Connection->prepare("SELECT * FROM Reviews WHERE Prod_ID = ?");
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+    private function userRemoveReview($apikey, $title) {
+        $user = $this->getUserByApiKey($apikey);
+        $product = $this->getProductInfo($title);
+        if (!$user || !$product) return false;
+
+        $userId = $user['User_ID'];
+        $productId = $product['Product_No'];
+
+        $stmt = $this->DB_Connection->prepare("DELETE FROM Reviews WHERE Prod_ID = ? AND U_ID = ?");
+        $stmt->bind_param("ii", $productId, $userId);
+        return $stmt->execute();
+    }
+    private function madeReviewOnProduct($apikey, $title) {
+        $user = $this->getUserByApiKey($apikey);
+        $product = $this->getProductInfo($title);
+        if (!$user || !$product) return false;
+
+        $userId = $user['User_ID'];
+        $productId = $product['Product_No'];
+
+        $stmt = $this->DB_Connection->prepare("SELECT 1 FROM Reviews WHERE Prod_ID = ? AND U_ID = ?");
+        $stmt->bind_param("ii", $productId, $userId);
+        
+        if (!$stmt->execute()) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to check for review: " . $stmt->error);
+            return false;
+        }
+
+        return $stmt->get_result()->num_rows > 0;
+}
+    private function adminRemoveReview($title, $apikey) {
+        return $this->userRemoveReview($apikey, $title); 
+    }
+}
+    
 
 if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     // Only run this if api.php is called directly. Doing this prevents the double-running of handleRequest()
