@@ -8,7 +8,8 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: radial-gradient(circle, #fff 0%, #bbb 50%, #000 100%);
+    /* background: radial-gradient(circle, #fff 0%, #bbb 50%, #000 100%); */
+    background: radial-gradient(circle, #646262 0%, #141414 50%, #000 100%);
 }
 
 .btn {
