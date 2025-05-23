@@ -1,4 +1,6 @@
 <?php
+
+use GrahamCampbell\ResultType\Result;
 // Clear any output BOM chars / whitespace
 if (ob_get_level()) ob_end_clean();
 
@@ -164,7 +166,7 @@ class API {
 
             //Manipulation 
             case "Filter":
-                // $this->handleFilter($input); 
+                $this->handleFilter($input); 
                 break;
 
             case "Search":
@@ -785,7 +787,35 @@ class API {
         }
 
         // find product id of product to be updated
-        // check which parameters are available to change
+        $searchSql = "SELECT * FROM Products WHERE Title = ?";
+        $searchStm = $this->DB_Connection->prepare($searchSql);
+        $searchStm->bind_param("s", $input['productTitle']);
+        $searchStm->execute();
+        $searchResult = $searchStm->get_result();
+        $searchStm->close();
+        if ($searchResult && $productDetails = $searchResult->fetch_assoc()) {
+            // check which parameters are available to change
+            $newTitle = isset($input['newTitle']) ? $input['newTitle'] : $productDetails['Title'];
+            $newCategory = isset($input['newCategory']) ? $input['newCategory'] : $productDetails['Category'];
+            $newDescryption = isset($input['newDescription']) ? $input['newDescription'] : $productDetails['Description'];
+            $newBrand = isset($input['newBrand']) ? $input['newBrand'] : $productDetails['Brand'];
+            $newImgUrl = isset($input['newImageUrl']) ? $input['newImageUrl'] : $productDetails['Image_URL'];
+
+            $updateSql = "UPDATE Products SET Title = ?, Category = ?, Description = ?, Brand = ?, Image_URL = ?  WHERE Product_No = ?";
+            $updateStmt = $this->DB_Connection->prepare($updateSql);
+            $updateStmt->bind_param("sssssi", $newTitle, $newCategory, $newDescryption, $newBrand,$newImgUrl, $productDetails['Product_No']);
+            if ($updateStmt->execute()) {
+                http_response_code(200);
+                $this->response("200 OK","success","Product successfully updated" );
+            }else{
+                http_response_code(500);
+                $this->response("500 Internal Server Error","error","Product update failed");
+            }
+            $updateStmt->close();
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error","Could not fetch product details");
+        }
 
     }
     private function handleUpdateProductPrices($input){
@@ -888,7 +918,74 @@ class API {
 
         $this->response("200 OK", "success", ["product1" => $product1Result, "product2" => $product2Result]);
     }
-    private function handleFilter($input){}
+    private function handleFilter($input){
+        $required = ['apikey', 'filter']; // rn it's 1 filterAt a time
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+
+        $all = isset($input['filter']['All']) ? $input['filter']['All']: '';
+        $byTitle = isset($input['filter']['byTitle']) ? $input['filter']['byTitle']: '';
+        $byCategory = isset($input['filter']['byCategory']) ? $input['filter']['byCategory']: '';
+        $byDescription = isset($input['filter']['byDescription']) ? $input['filter']['byDescription']: '';
+        $byBrand = isset($input['filter']['byBrand']) ? $input['filter']['byBrand']: '';
+        // $byPrice = isset($input['filter']['byPrice']) ? $input['filter']['byPrice']: ''; // price needs to be a [min, max] array
+
+        $searchSql = "SELECT * FROM Products WHERE ";
+        $searchVar = "";
+        if ($all != '') {
+            $searchSql .= "1=1";
+        }else if ($byTitle != '') {
+            $searchSql .= "Title = ?";
+            $searchVar = $byTitle;
+        }else if($byCategory != ''){
+            $searchSql .= "Category = ?";
+            $searchVar = $byCategory;
+        }elseif ($byDescription != '') {
+            $searchSql .= "Description = ?";
+            $searchVar = $byDescription;
+        }elseif ($byBrand != '') {
+            $searchSql .= "Brand = ?";
+            $searchVar = $byBrand;
+        }else{
+            $searchSql .= "1=1";
+        }
+
+        if ($searchVar != "") {
+            $searchStmt = $this->DB_Connection->prepare($searchSql);
+            $searchStmt->bind_param("s", $searchVar);
+            $searchStmt->execute();
+            $searchResult = $searchStmt->get_result();
+            if ($searchResult) {
+                http_response_code(200);
+                $this->response("200 OK","success", $searchResult->fetch_all(MYSQLI_ASSOC));
+                return;
+            }else{
+                http_response_code(400);
+                $this->response("400 Bad Request","error","No result matches the filter");
+                return;
+            }
+        }else{
+            $searchStmt = $this->DB_Connection->prepare($searchSql);
+            $searchStmt->execute();
+            $searchResult = $searchStmt->get_result();
+            if ($searchResult) {
+                http_response_code(200);
+                $this->response("200 OK","success", $searchResult->fetch_all(MYSQLI_ASSOC));
+                return;
+            }else{
+                http_response_code(400);
+                $this->response("400 Bad Request","error","No result matches the filter");
+                return;
+            }
+        }
+
+
+    }
 
     private function AddReview($input){ // only logged in normal users can leave reviews
         // ensure apiKey is NOT NULL
