@@ -34,10 +34,34 @@ include("header.php");
             <label class="LblPA"> MANAGE - UPDATE Database Entries</label>
             <br>
             <label class="LblPA" id="curDet"> Category to Manage:</label>
-            <button id="prodCat">Products<br></button>
-            <button id="retCat">Retailers<br></button>
-            <button id="userCat">Users<br></button>
+            <div id="catTManage">
+                <button class="btn" id="prodCat">Products<br></button>
+                <button class="btn" id="retCat">Retailers<br></button>
+                <button class="btn" id="userCat">Users<br></button>
+            </div>
             <hr>
+
+            <label class="LblPA" id="addRet">Add Retailer:</label>
+            <form id="addRet" class="Main_Form">
+                <label class="LblPA" class="lbl"> Retailer Name:</label>
+                <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Retailer Name:">
+                <label class="LblPA" class="lbl"> Retailer Address: (Optional)</label>
+                <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="Retailer Address:">
+                <button class="btn btnAddRet" type="button" id="btnAddRet">Add Retailer</button>
+            </form>
+
+            <br>
+            <label class="LblPA" id="upRet">Update Retailer:</label>
+            <form id="updateRet" class="Main_Form">
+                <label class="LblPA" class="lbl"> Current Retailer Name:</label>
+                <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Current Retailer Name:">
+                <label class="LblPA" class="lbl"> New Retailer Name: (Optional)</label>
+                <input class="curVal retNameInput" type="text" name="retailName" required placeholder="New Retailer Name:">
+                <label class="LblPA" class="lbl"> New Retailer Address: (Optional)</label>
+                <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="New Retailer Address:">
+                <button class="btn btnUpdateRet" type="button" id="btnUpdateRet">Update Retailer</button>
+            </form>
+            <br>
             <!-- <form id="register-form" class="Main_Form">
 
                 <div class="input-group">
