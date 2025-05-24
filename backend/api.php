@@ -144,7 +144,7 @@ class API {
                 break;
 
             case "RemoveRetailer":
-                // $this->RemoveRetailer($input);
+                $this->RemoveRetailer($input);
                 break;
             
             case "UpdateRetailer":
@@ -889,7 +889,7 @@ class API {
         $deleteStmt->bind_param("s", $productTitle);
         if ($deleteStmt->execute()) {
             http_response_code(500);
-            $this->response("200 OK","success",["message" => "Product $productTitle has been deleted."]);
+            $this->response("200 OK","success",["message" => "Product '$productTitle' has been deleted."]);
         }else{
             http_response_code(500);
             $this->response("500 Internal Server Error","error",["message" => "Could not delete product: $productTitle"]);
@@ -1530,7 +1530,33 @@ class API {
     }
 
     private function RemoveRetailer($input){
-    
+        $required = ['apikey', 'retailer'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+        if(!$this->isAdmin($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","User is not an admin");
+            return;
+        }
+
+        $retailer = $input['retailer'];
+
+        $deleteSql = "DELETE FROM Retailers WHERE Name = ?";
+        $deleteStmt = $this->DB_Connection->prepare($deleteSql);
+        $deleteStmt->bind_param("s", $retailer);
+        if ($deleteStmt->execute()) {
+            http_response_code(500);
+            $this->response("200 OK","success",["message" => "Retailer '$retailer' has been deleted."]);
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error",["message" => "Could not delete product: $retailer"]);
+        }
+        $deleteStmt->close();
     }
     private function UpdateRetailer($input) {
     if (empty($input['apikey']) || !isset($input['apikey'])) {
