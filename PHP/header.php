@@ -5,6 +5,7 @@ session_start();
 // Optionally set current page dynamically to highlight nav (if used)
 // $currentPage = basename($_SERVER['PHP_SELF'], ".php");
 $_SESSION['login'] = true;
+$_SESSION['admin'] = true;
 $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
 ?>
 
@@ -22,6 +23,8 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
                     <li><a class="<?= ($currentPage == 'favorites') ? 'active' : '' ?>" href="<?= $isLoggedIn ? 'favorites.php' : 'login.php' ?>"><i class="fas fa-heart nav-icons"></i> Favorites</a></li>
                     <li><a class="<?= ($currentPage == 'profile') ? 'active' : '' ?>" href="<?= $isLoggedIn ? 'profile.php' : 'login.php' ?>"><i class="fas fa-user"></i> Profile</a></li>
 
+                    <?php if ($_SESSION['admin'] == true) { ?>
+                        <li><a class="<?= ($currentPage == 'manage') ? 'active' : '' ?>" href="manage.php"><i class="fas fa-user-plus"></i></i> Manage</a></li><?php } ?>
 
                     <?php if ($_SESSION['login'] == false) { ?>
                         <li><a class="<?= ($currentPage == 'login') ? 'active' : '' ?>" href="login.php"><i class="fas fa-sign-in-alt"></i></i> Login</a></li>
