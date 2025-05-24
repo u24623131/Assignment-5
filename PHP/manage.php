@@ -64,7 +64,7 @@ include("header.php");
                 <br>
             </div> -->
 
-            <div id="FormSpace">
+            <!-- <div id="FormSpace">
                 <label class="LblPA" id="delAcc">Delete Account:</label>
                 <form id="addRet" class="Main_Form">
                     <label class="LblPA" class="lbl"> Account's API Key:</label>
@@ -82,10 +82,51 @@ include("header.php");
                     <button class="btn btnDelRev" type="button" id="btnDelRev">Remove Review</button>
                 </form>
                 <br>
+            </div> -->
+
+            <div id="FormSpace">
+                <label class="LblPA" id="delProd">Delete Product:</label>
+                <form id="addRet" class="Main_Form">
+                    <label class="LblPA" class="lbl"> Product's Title:</label>
+                    <input class="curVal delProdTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <button class="btn btnDelProd" type="button" id="btnDelProd">Delete Product</button>
+                </form>
+
+                <br>
+                <label class="LblPA" id="upProd">Update Product's Price:</label>
+                <form id="updateRet" class="Main_Form">
+                    <label class="LblPA" class="lbl"> Product's Title:</label>
+                    <input class="curVal upProdTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <label class="LblPA" class="lbl"> Retailer's Name:</label>
+                    <input class="curVal upProdRetNameInput" type="text" name="retailName" required placeholder="Retailer's Name:">
+                    <label class="LblPA" class="lbl"> New Price:</label>
+                    <input class="curVal upPriceInput" type="text" name="retailName" required placeholder="New Price:">
+                    <button class="btn btnUpProdPrice" type="button" id="btnUpProdPrice">Update Price</button>
+                </form>
+                <br>
+
+                <label class="LblPA" id="upProd">Add Product:</label>
+                <form id="updateRet" class="Main_Form">
+                    <label class="LblPA" class="lbl"> Product's Title:</label>
+                    <input class="curVal addProdTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <label class="LblPA" class="lbl"> Product's Category:</label>
+                    <input class="curVal addProdCatInput" type="text" name="retailName" required placeholder="Product's Category:">
+                    <label class="LblPA" class="lbl"> Product's Description:</label>
+                    <input class="curVal addProdDescInput" type="text" name="retailName" required placeholder="Products's Description:">
+                    <label class="LblPA" class="lbl"> Product's Brand:</label>
+                    <input class="curVal addProdBrandInput" type="text" name="retailName" required placeholder="Product's Brand:">
+                    <label class="LblPA" class="lbl"> Image's URL:</label>
+                    <input class="curVal addImgUrlInput" type="text" name="retailName" required placeholder="Product's Image's Url:">
+                    <label class="LblPA" class="lbl"> Retailers That Sell The Product:</label>
+                    <input class="curVal addProdRetailersInput" type="text" name="retailName" required placeholder="Retailers Selling Product:">
+                    <label class="LblPA" class="lbl"> Prices of Product At Corresponding Retailers:</label>
+                    <input class="curVal addProdPricesInput" type="text" name="retailName" required placeholder="Product's Prices Corresponding To Retailers:">
+                    <button class="btn btnAddProd" type="button" id="btnAddProd">Add Product</button>
+                </form>
+                <br>
             </div>
         </div>
-    </div>
-    <script src="../JS/profile.js"></script>
+        <script src="../JS/profile.js"></script>
 </body>
 
 </html>

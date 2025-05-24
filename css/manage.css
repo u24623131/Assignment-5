@@ -62,6 +62,30 @@
     bottom: 15px;
 }
 
+#btnUpProdPrice {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 670px;
+}
+
+#btnAddProd {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 15px;
+}
+
+#btnDelProd {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 970px;
+}
+
 #btnUpdateRet {
     width: 20%;
     margin-left: 32px;
@@ -135,6 +159,61 @@
     margin-left: 32px;
 }
 
+.addProdTitleInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.addProdCatInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.addProdDescInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.addProdBrandInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.addImgUrlInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.addProdRetailersInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.addProdPricesInput {
+    width: 40%;
+    margin-left: 32px;
+}
+
+.upProdTitleInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.upProdRetNameInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.upPriceInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.delProdTitleInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
 .retAddressInput {
     width: 30%;
     margin-left: 32px;
@@ -191,7 +270,7 @@
 .Main_Form input.CurVal {
     font-size: 11px;
     padding: 11px 11px 11px 11px;
-    width: 30%;
+    /* width: 30%; */
     height: 32px;
     border: none;
     text-align: left;
