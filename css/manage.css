@@ -46,7 +46,7 @@
     height: auto;
 }
 
-#btnAddRet{
+#btnAddRet {
     width: 20%;
     margin-left: 32px;
     position: absolute;
@@ -54,12 +54,28 @@
     bottom: 325px;
 }
 
-#btnUpdateRet{
+#btnDelRev {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 15px;
+}
+
+#btnUpdateRet {
     width: 20%;
     margin-left: 32px;
     position: absolute;
     right: 20px;
     bottom: 17px;
+}
+
+#btnDelAcc {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 222px;
 }
 
 
@@ -110,17 +126,27 @@
     gap: 11px;
 }
 
-.lbl{
+.lbl {
     margin-left: 32px;
 }
 
-.retNameInput{
-    width:30%;
+.retNameInput {
+    width: 30%;
     margin-left: 32px;
 }
 
-.retAddressInput{
-    width:30%;
+.retAddressInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.delAccAPIInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.prodTitleInput {
+    width: 30%;
     margin-left: 32px;
 }
 
@@ -279,7 +305,7 @@
     color: #000;
 }
 
-#catTManage{
+#catTManage {
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -294,7 +320,9 @@
     margin: 0;
 }
 
-#userCat, #prodCat, #retCat{
+#userCat,
+#prodCat,
+#retCat {
     width: 20%;
     display: flex;
 }

@@ -40,76 +40,49 @@ include("header.php");
                 <button class="btn" id="userCat">Users<br></button>
             </div>
             <hr>
+            <!-- <div id="FormSpace">
+                <label class="LblPA" id="addRet">Add Retailer:</label>
+                <form id="addRet" class="Main_Form">
+                    <label class="LblPA" class="lbl"> Retailer Name:</label>
+                    <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Retailer Name:">
+                    <label class="LblPA" class="lbl"> Retailer Address: (Optional)</label>
+                    <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="Retailer Address:">
+                    <button class="btn btnAddRet" type="button" id="btnAddRet">Add Retailer</button>
+                </form>
 
-            <label class="LblPA" id="addRet">Add Retailer:</label>
-            <form id="addRet" class="Main_Form">
-                <label class="LblPA" class="lbl"> Retailer Name:</label>
-                <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Retailer Name:">
-                <label class="LblPA" class="lbl"> Retailer Address: (Optional)</label>
-                <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="Retailer Address:">
-                <button class="btn btnAddRet" type="button" id="btnAddRet">Add Retailer</button>
-            </form>
+                <br>
+                <label class="LblPA" id="upRet">Update Retailer:</label>
+                <form id="updateRet" class="Main_Form">
+                    <label class="LblPA" class="lbl"> Current Retailer Name:</label>
+                    <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Current Retailer Name:">
+                    <label class="LblPA" class="lbl"> New Retailer Name: (Optional)</label>
+                    <input class="curVal retNameInput" type="text" name="retailName" required placeholder="New Retailer Name:">
+                    <label class="LblPA" class="lbl"> New Retailer Address: (Optional)</label>
+                    <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="New Retailer Address:">
+                    <button class="btn btnUpdateRet" type="button" id="btnUpdateRet">Update Retailer</button>
+                </form>
+                <br>
+            </div> -->
 
-            <br>
-            <label class="LblPA" id="upRet">Update Retailer:</label>
-            <form id="updateRet" class="Main_Form">
-                <label class="LblPA" class="lbl"> Current Retailer Name:</label>
-                <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Current Retailer Name:">
-                <label class="LblPA" class="lbl"> New Retailer Name: (Optional)</label>
-                <input class="curVal retNameInput" type="text" name="retailName" required placeholder="New Retailer Name:">
-                <label class="LblPA" class="lbl"> New Retailer Address: (Optional)</label>
-                <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="New Retailer Address:">
-                <button class="btn btnUpdateRet" type="button" id="btnUpdateRet">Update Retailer</button>
-            </form>
-            <br>
-            <!-- <form id="register-form" class="Main_Form">
+            <div id="FormSpace">
+                <label class="LblPA" id="delAcc">Delete Account:</label>
+                <form id="addRet" class="Main_Form">
+                    <label class="LblPA" class="lbl"> Account's API Key:</label>
+                    <input class="curVal delAccAPIInput" type="text" name="retailName" required placeholder="Account To Delete's API Key:">
+                    <button class="btn btnDelAcc" type="button" id="btnDelAcc">Delete Account</button>
+                </form>
 
-                <div class="input-group">
-                    <label class="LblPA"> Name:</label>
-                    <input type="text" class="CurVal" disabled required placeholder="Current Name Val:">
-                    <i id="nameIcon" class="fa fa-user"></i>
-                    <input type="text" id="name" class="NewVal" name="name" required placeholder="Name:">
-                    <label class="error-label" id="name-error"></label>
-                </div>
-
-                <div class="input-group">
-                    <label class="LblPA"> Surname:</label>
-                    <input type="text" class="CurVal" disabled required placeholder="Current Surname Val:">
-                    <i class="fa fa-user"></i>
-                    <input type="text" id="surname" class="NewVal" name="surname" required placeholder="Surname:">
-                    <label class="error-label" id="surname-error"></label>
-                </div>
-
-                <div class="input-group">
-                    <label class="LblPA"> Email:</label>
-                    <input type="text" class="CurVal" disabled required placeholder="Current Email Val:">
-                    <i class="fa fa-envelope"></i>
-                    <input type="email" id="email" class="NewVal" name="email" required placeholder="Email:">
-                    <label class="error-label" id="email-error"></label>
-                </div>
-
-                <div class="input-group">
-                    <label class="LblPA"> Password:</label>
-                    <input type="password" class="CurVal" disabled required placeholder="Current Password Val (***):">
-                    <i class="fa fa-lock"></i>
-                    <input type="password" id="password" class="NewVal" name="password" required placeholder="Password:">
-                    <label class="error-label" id="password-error"></label>
-                </div>
-                <div class="input-group">
-                    <label class="LblPA"> Account Type:</label>
-                    <input type="text" class="CurVal" id="CurAcc" disabled required placeholder="Current Account Type Val:">
-                    <i class="fa fa-user-tag"></i>
-                    <select id="type" name="type" class="Select_Type" required>
-                        <option value="Customer">Customer</option>
-                        <option value="Courier">Courier</option>
-                        <option value="Inventory Manager">Inventory Manager</option>
-                    </select>
-                    <label class="error-label" id="type-error"></label>
-                </div>
-                <button class="btn btnSignUp" type="button" id="btnSignUp">Save</button>
-            </form>
-            <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
--->
+                <br>
+                <label class="LblPA" id="upRet">Remove User's Review:</label>
+                <form id="updateRet" class="Main_Form">
+                    <label class="LblPA" class="lbl"> Account's API Key:</label>
+                    <input class="curVal delAccAPIInput" type="text" name="retailName" required placeholder="Account To Delete's API Key:">
+                    <label class="LblPA" class="lbl"> Product Title:</label>
+                    <input class="curVal prodTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <button class="btn btnDelRev" type="button" id="btnDelRev">Remove Review</button>
+                </form>
+                <br>
+            </div>
         </div>
     </div>
     <script src="../JS/profile.js"></script>
