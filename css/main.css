@@ -8,7 +8,6 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    /* background: radial-gradient(circle, #fff 0%, #bbb 50%, #000 100%); */
     background: radial-gradient(circle, #646262 0%, #141414 50%, #000 100%);
 }
 
@@ -33,31 +32,48 @@ body {
     display: none;
 }
 
-/*Header styling */
+/* Header styling */
+
+.container {
+    top: 0px;
+    z-index: 1;
+    position: sticky;
+    max-width: 100%;
+    height: 100px;
+    margin: auto;
+    padding: 13px 17px; /* Combined padding for consistency */
+    border-top: 1px solid #ff523b;
+    border-bottom: 1px solid #ff523b;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: black;
+    box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.7);
+    display: flex; 
+    align-items: center; /* Vertically align items in the center */
+    justify-content: space-between; 
+}
 
 .navbar {
     display: flex;
     align-items: center;
-    padding: 13px;
+    width: 100%; /* Take full width of its parent */
     justify-content: space-between;
 }
 
-
-.Nav-container {
+/* Login/Signup Buttons (Left) */
+.navLS {
     display: flex;
-    margin: 0;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start; /* Align login/signup to the left */
     gap: 20px;
+    flex: 1; /* Allow login/signup to take available space */
+    position: relative;
+    left: 40px;
 }
 
-nav {
-    text-align: right;
-}
-
-
-nav ul {
-    display: inline-block;
+.navLS ul {
     list-style-type: none;
     display: flex;
     align-items: center;
@@ -65,144 +81,156 @@ nav ul {
     margin: 0;
 }
 
-nav ul li {
-    display: inline-block;
-    margin: 0 13px;
+.navLS ul li {
+    font-weight: 400;
+    border-bottom: 2px solid transparent; /* Start with transparent border */
+    padding-bottom: 10px;
+    gap: 10px;
+    transition: border-bottom 0.3s;
+}
+
+.navLS ul li:hover {
+    border-bottom: 2px solid #ff523b; /* Show border on hover */
+}
+
+.navLS ul li a {
+    text-decoration: none;
+    color: white;
+    padding: 5px 5px; /* Add padding for a button-like feel */
+    border: 1px solid #ff523b; /* Add a subtle border */
+
+}
+
+.navLS ul li a:hover {
+    background-color: #ff523b;
+    color: #fff;
+}
+#asignup{
+    background-color: #ff523b;
+}
+#asignup:hover {
+    background-color: transparent;
+    color: #fff;
+}
+.navLS .btn{
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+.navLS ul li a .fas{
+    margin-right: 3px;
+}
+
+.logo {
+    
+    margin-top: 5px;
+    text-align: center; 
+    padding: 0 20px; /* Add some horizontal padding around the logo */
     position: relative;
+    left: -150px ;
+}
+
+.logo img {
+    display: block; /* Remove extra space below image */
+    margin: 0 auto; /* Center image within its flex item */
+}
+
+.Nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    /* gap: 20px; Removed this as gap on ul is better */
+    flex: 1; /* Allow navigation to take more space than search/login */
+    position: relative;
+    left: -100px;
+}
+
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    gap: 30px; /* Reduced gap between navigation items */
+}
+
+nav ul li {
+    position: relative;
+    font-weight: 400; /* Slightly bolder for better readability */
+    padding-bottom: 5px; /* Maintain the underline effect */
 }
 
 nav li a {
-    display: inline-block;
-    margin: 0px;
     display: flex;
     align-items: center;
     gap: 5px;
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s, font-weight 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ff523b;
+    font-weight: bold;
+}
+nav ul li a:hover .fas {
+    color: #ff523b;
+}
+
+nav ul li .active { 
+    color: #ff523b;
+    font-weight: bold;
+}
+
+nav ul li .active::after {
+    content: "";
+    width: 100%; /* Make underline span full width of the text */
+    height: 2px; /* Thicker underline */
+    background: #ff523b;
+    position: absolute;
+    bottom: -3px; /* Adjust position */
+    left: 0;
+    transition: width 0.3s ease; /* Smooth transition for underline */
 }
 
 
-nav ul li i {
-    margin-right: 0;
-}
-
+/* Search Bar (Right) */
 .search-box {
     display: flex;
     align-items: center;
     gap: 5px;
-    margin-right: 75px;
+    justify-content: flex-end; /* Align search box to the right */
+    flex: 1; /* Allow search box to take available space */
+    position : relative ;
+    left: -120px;
 }
 
 .search-input {
     width: 200px;
     height: 20px;
     border: none;
-    border-radius: 7px;
+    border-radius: 10px;
     text-align: center;
     background: none;
     border-bottom: 1px solid #ff523b;
+    padding: 5px 10px; /* Add some padding for better aesthetics */
+    color: white;
 }
 
 .search-input::placeholder {
-    color: white;
+    color: rgba(255, 255, 255, 0.7); /* Slightly transparent placeholder */
 }
 
-#MenuItems li a:hover {
-    color: #ff523b;
-    font-weight: bold;
+.search-btn {
+    padding: 7px 15px; /* Adjust button padding */
+    margin: 0; /* Remove default button margin */
 }
 
-#MenuItems li a.active {
-    color: #ff523b;
-    font-weight: bold;
-}
 
-#MenuItems li a.active::after {
-    content: "";
-    width: 10px;
-    height: 1px;
-    background: #ff523b;
-    position: absolute;
-    bottom: -1px;
-    left: 7px;
-}
-
-a {
-    text-decoration: none;
-}
-
-p {
-    color: white;
-}
-
-.container {
-    top: 0px;
-    z-index: 1;
-    position: sticky;
-    max-width: 100%;
-    margin: auto;
-    padding-left: 17px;
-    padding-right: 17px;
-    /* border-bottom: 2px solid black; */
-    background-color: rgb(50, 50, 50);
-    box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.7);
-}
-
-/* Login/Signup or Logged-in User Place Holder syling   */
-
-.auth-buttons {
-    position: absolute;
-    /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
-    top: 34px;
-    left: 101px;
-    display: flex;
-    gap: 20px;
-}
-
-.auth-buttons button {
-    height: 23px;
-    font-size: 10px;
-}
-
-.Detials {
-    display: flex;
-    flex-direction: column;
-    gap: 0px;
-
-}
-
-.Detials button {
-    margin: 0px;
-}
-
-.LogOut-btn {
-    position: relative;
-    width: 67px;
-    align-content: center;
-    left: 34px;
-}
-
+/* Removed redundant/unused styles */
+.auth-buttons,
+.Detials,
+.LogOut-btn,
 .toggle-btn {
-    position: absolute;
-    /* Keep absolute positioning for now, but consider integrating into the header flexbox if possible */
-    top: 49px;
-    right: 25px;
-    width: 34px;
-    height: 34px;
-    border-radius: 34px;
-    border: none;
-    background-color: #ff523b;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
-    z-index: 1;
+    display: none; /* Hide them for now */
 }
-
-.toggle-btn:hover {
-    background-color: #e0e0e0;
-    transform: rotate(20deg);
-}
-
-/**/
