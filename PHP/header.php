@@ -52,15 +52,6 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
             </button>
         </div>
     </div>
-<<<<<<< HEAD
-
-    <!-- Right Side: Login/Signup or Logged-in User -->
-    <button id="modeToggle" class="toggle-btn">
-        <!-- <h4>Toggle Dark Mode:</h4> -->
-        <i class="fas fa-moon" id="modeIcon"></i>
-    </button>
-=======
->>>>>>> a3e29b9546b0458197ef430054ac3979bc504673
 </div>
 
 <script src="..\JS\header.js"></script>
