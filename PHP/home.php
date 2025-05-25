@@ -16,7 +16,7 @@
 
 <body>
     <?php
-    $currentPage = 'product';
+    $currentPage = 'home';
     include 'header.php';
     ?>
     <div id="filterMenu" class="filter-sidebar">
@@ -74,7 +74,7 @@
             <h2> Compare Items </h2>
 
             <div class="compareitem">
-                <img src="..\image\toaster.jpg">
+                <img src="..\image\Bounty.jpeg">
                 <h4 id="Title">Toaster</h4>
             </div>
 
@@ -95,7 +95,7 @@
 
         <div class="ProductPlace" id="PPlace">
             <div class="col-4">
-                <img src="..\image\toaster.jpg">
+                <img src="..\image\Bounty.jpeg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -119,7 +119,7 @@
             </div>
 
             <div class="col-4">
-                <img src="..\image\FishTank.jpeg">
+                <img src="..\image\Beacon Maynards Wine Gums.png">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -144,7 +144,7 @@
 
 
             <div class="col-4">
-                <img src="..\image\toaster.jpg">
+                <img src="https://res.cloudinary.com/dlbhbt0c5/image/upload/v1748123804/Wilson_s_Toffees_bqy5vo.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>
@@ -168,7 +168,7 @@
             </div>
 
             <div class="col-4">
-                <img src="..\image\toaster.jpg">
+                <img src="..\image\Strawberry Fanta.jpeg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>

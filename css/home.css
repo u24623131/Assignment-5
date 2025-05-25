@@ -195,7 +195,7 @@
     font-family: 'Courier New', Courier, monospace;
     font-style: italic;
     font-size: 15px;
-    color: #563434;
+    color: #ff523b;
     margin-bottom: 3px;
 
 }
@@ -245,7 +245,7 @@
 
 .Iprice {
     font-weight: bold;
-    color: #563434;
+    color: #ff523b;
     font-size: 10px;
 
 }
@@ -260,7 +260,7 @@
 .col-4 p:last-of-type {
     font-size: 15px;
     font-weight: bold;
-    color: rgb(85, 83, 83);
+    color: white ;
     margin-top: 3px;
     margin-bottom: 10px;
 
