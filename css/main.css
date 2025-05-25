@@ -41,7 +41,7 @@ body {
     max-width: 100%;
     height: 100px;
     margin: auto;
-    padding: 13px 17px; /* Combined padding for consistency */
+    padding: 13px 17px;
     border-top: 1px solid #ff523b;
     border-bottom: 1px solid #ff523b;
     border-bottom-left-radius: 10px;
@@ -51,14 +51,14 @@ body {
     background-color: black;
     box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.7);
     display: flex; 
-    align-items: center; /* Vertically align items in the center */
+    align-items: center; 
     justify-content: space-between; 
 }
 
 .navbar {
     display: flex;
     align-items: center;
-    width: 100%; /* Take full width of its parent */
+    width: 100%; 
     justify-content: space-between;
 }
 
@@ -66,9 +66,9 @@ body {
 .navLS {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Align login/signup to the left */
+    justify-content: flex-start; 
     gap: 20px;
-    flex: 1; /* Allow login/signup to take available space */
+    flex: 1; 
     position: relative;
     left: 40px;
 }
@@ -83,21 +83,21 @@ body {
 
 .navLS ul li {
     font-weight: 400;
-    border-bottom: 2px solid transparent; /* Start with transparent border */
+    border-bottom: 2px solid transparent; 
     padding-bottom: 10px;
     gap: 10px;
     transition: border-bottom 0.3s;
 }
 
 .navLS ul li:hover {
-    border-bottom: 2px solid #ff523b; /* Show border on hover */
+    border-bottom: 2px solid #ff523b;
 }
 
 .navLS ul li a {
     text-decoration: none;
     color: white;
-    padding: 5px 5px; /* Add padding for a button-like feel */
-    border: 1px solid #ff523b; /* Add a subtle border */
+    padding: 5px 5px; 
+    border: 1px solid #ff523b; 
 
 }
 
@@ -124,22 +124,22 @@ body {
     
     margin-top: 5px;
     text-align: center; 
-    padding: 0 20px; /* Add some horizontal padding around the logo */
+    padding: 0 20px; 
     position: relative;
     left: -150px ;
 }
 
 .logo img {
-    display: block; /* Remove extra space below image */
-    margin: 0 auto; /* Center image within its flex item */
+    display: block; 
+    margin: 0 auto; 
 }
 
 .Nav-container {
     display: flex;
     align-items: center;
     justify-content: flex-start; 
-    /* gap: 20px; Removed this as gap on ul is better */
-    flex: 1; /* Allow navigation to take more space than search/login */
+
+    flex: 1; 
     position: relative;
     left: -100px;
 }
@@ -151,13 +151,13 @@ nav ul {
     align-items: center;
     padding: 0;
     margin: 0;
-    gap: 30px; /* Reduced gap between navigation items */
+    gap: 30px;
 }
 
 nav ul li {
     position: relative;
-    font-weight: 400; /* Slightly bolder for better readability */
-    padding-bottom: 5px; /* Maintain the underline effect */
+    font-weight: 400; 
+    padding-bottom: 5px; 
 }
 
 nav li a {
@@ -184,13 +184,13 @@ nav ul li .active {
 
 nav ul li .active::after {
     content: "";
-    width: 100%; /* Make underline span full width of the text */
-    height: 2px; /* Thicker underline */
+    width: 100%; 
+    height: 2px; 
     background: #ff523b;
     position: absolute;
-    bottom: -3px; /* Adjust position */
+    bottom: -3px;
     left: 0;
-    transition: width 0.3s ease; /* Smooth transition for underline */
+    transition: width 0.3s ease; 
 }
 
 
@@ -199,8 +199,8 @@ nav ul li .active::after {
     display: flex;
     align-items: center;
     gap: 5px;
-    justify-content: flex-end; /* Align search box to the right */
-    flex: 1; /* Allow search box to take available space */
+    justify-content: flex-end; 
+    flex: 1; 
     position : relative ;
     left: -120px;
 }
@@ -213,24 +213,15 @@ nav ul li .active::after {
     text-align: center;
     background: none;
     border-bottom: 1px solid #ff523b;
-    padding: 5px 10px; /* Add some padding for better aesthetics */
+    padding: 5px 10px; 
     color: white;
 }
 
 .search-input::placeholder {
-    color: rgba(255, 255, 255, 0.7); /* Slightly transparent placeholder */
+    color: rgba(255, 255, 255, 0.7); 
 }
 
 .search-btn {
-    padding: 7px 15px; /* Adjust button padding */
-    margin: 0; /* Remove default button margin */
-}
-
-
-/* Removed redundant/unused styles */
-.auth-buttons,
-.Detials,
-.LogOut-btn,
-.toggle-btn {
-    display: none; /* Hide them for now */
+    padding: 7px 15px; 
+    margin: 0; 
 }

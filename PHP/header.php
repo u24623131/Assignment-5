@@ -13,7 +13,7 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
     <div class="navbar">
         <div class="navLS">
             <ul>
-                <?php if (!$isLoggedIn) { // Use $isLoggedIn variable ?>
+                <?php if (!$isLoggedIn) {  ?>
                     <li><a  href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                     <li><a id = "asignup" href="signup.php"><i class="fas fa-user-plus"></i>Signup</a></li>
                 <?php } else { ?>
@@ -52,12 +52,6 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
             </button>
         </div>
     </div>
-
-    <!-- Right Side: Login/Signup or Logged-in User -->
-    <button id="modeToggle" class="toggle-btn">
-        <!-- <h4>Toggle Dark Mode:</h4> -->
-        <i class="fas fa-moon" id="modeIcon"></i>
-    </button>
 </div>
 
 <script src="..\JS\header.js"></script>
