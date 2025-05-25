@@ -1,27 +1,29 @@
 <?php
-    include("header.php");
+include("header.php");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ArtStore  </title>
+    <title>Login - ArtStore </title>
     <link rel="stylesheet" href="../CSS/main.css">
     <link rel="stylesheet" href="../CSS/login.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel= "stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 </head>
+
 <body class="signup-page">
-    <div class = "MainDiv">
+    <div class="MainDiv">
         <div class="Top-Header">
-            <h2 >Safari</h2> 
+            <h2>Safari</h2>
             <h2>Speed</h2>
         </div>
-        <p class = "Slogan">Shop Fast. Live Wild. Delivered Quick</p>
+        <p class="Slogan">Shop Fast. Live Wild. Delivered Quick</p>
 
         <div class="MainContainer">
             <div class="Containerdots">
@@ -29,7 +31,7 @@
                 <div class="divdot"></div>
                 <div class="divdot"></div>
             </div>
-            <label class="LblPA" > LOGIN </label>
+            <label class="LblPA"> LOGIN </label>
             <hr>
             <form id="Login-form" class="Main_Form">
                 <div class="input-group">
@@ -56,6 +58,7 @@
 
         </div>
     </div>
-    <script src="..\JS\login.js"></script>
+    <script src="../JS/login.js"></script>
 </body>
+
 </html>
