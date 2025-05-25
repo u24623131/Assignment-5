@@ -98,7 +98,7 @@ class API {
                 break;
 
             case "ProductsByCustomerId":
-                $this->handleProductsByCustomerId($input);
+                // $this->handleProductsByCustomerId($input);
                 break;
 
             case "UpdateProductDetails":
@@ -249,7 +249,11 @@ class API {
         $salt = bin2hex(random_bytes(16));
 
         // hash password (using Argon2ID)
-        $hash = password_hash($pass . $salt, PASSWORD_ARGON2ID);
+        $hash = password_hash($pass . $salt, PASSWORD_ARGON2ID,[
+            'memory_cost' => 65536, // Uses 64mb RAM per hash which slows down brute force attacks
+            'time_cost' => 4, // increased number of iterations means that hashing occurs more slowly but also means that the result would be harder to crack
+            'threads' => 2 // 2 CPU threads to balance speed and security
+        ]);
 
         // generate ApiKey and ensure that it is unique
         do {
@@ -986,7 +990,6 @@ class API {
 
 
     }
-
     private function AddReview($input){ // only logged in normal users can leave reviews
         // ensure apiKey is NOT NULL
         if(empty($input['apikey'])|| !isset($input['apikey'])){
@@ -1479,7 +1482,6 @@ class API {
         $this->response("500 Internal Server Error", "error", "Failed to delete favourite");
     }
     }
-
     private function AddRetailer($input) {
     if (empty($input['apikey']) || !isset($input['apikey'])) {
         http_response_code(400);
@@ -1528,7 +1530,6 @@ class API {
 
     $stmt->close();
     }
-
     private function RemoveRetailer($input){
         $required = ['apikey', 'retailer'];
         forEach($required as $field){
@@ -1545,18 +1546,22 @@ class API {
         }
 
         $retailer = $input['retailer'];
-
-        $deleteSql = "DELETE FROM Retailers WHERE Name = ?";
-        $deleteStmt = $this->DB_Connection->prepare($deleteSql);
-        $deleteStmt->bind_param("s", $retailer);
-        if ($deleteStmt->execute()) {
-            http_response_code(500);
-            $this->response("200 OK","success",["message" => "Retailer '$retailer' has been deleted."]);
+        if ($this->isInRetail($retailer)) {
+            $deleteSql = "DELETE FROM Retailers WHERE Name = ?";
+            $deleteStmt = $this->DB_Connection->prepare($deleteSql);
+            $deleteStmt->bind_param("s", $retailer);
+            if ($deleteStmt->execute()) {
+                http_response_code(500);
+                $this->response("200 OK","success",["message" => "Retailer '$retailer' has been deleted."]);
+            }else{
+                http_response_code(500);
+                $this->response("500 Internal Server Error","error",["message" => "Could not delete product: $retailer"]);
+            }
+            $deleteStmt->close();
         }else{
-            http_response_code(500);
-            $this->response("500 Internal Server Error","error",["message" => "Could not delete product: $retailer"]);
+            http_response_code(400);
+            $this->response("400 Bad Request","error",["message" => "Retailer '$retailer' not found."]);
         }
-        $deleteStmt->close();
     }
     private function UpdateRetailer($input) {
     if (empty($input['apikey']) || !isset($input['apikey'])) {
