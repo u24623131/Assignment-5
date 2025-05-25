@@ -103,12 +103,18 @@
     align-items: center;
     width: 100%;
     border-radius: 8px;
-    border: 2px solid transparent;
-    transition: border-color 0.3s ease;
 }
 
-.input-container.error {
-    border-color: #e53e3e;
+.Main_Form select option {
+    background-color: #333; /* Darker background for options */
+    color: #fff; /* White text for options */
+    padding: 5px; /* May or may not work depending on browser */
+}
+
+/* You might also try styling the currently selected option when the dropdown is open */
+.Main_Form select option:checked {
+    background-color: #ff523b; /* Highlight selected option */
+    color: #000;
 }
 
 /* FIXED: Icons positioned relative to input-container, not input-group */
@@ -127,8 +133,8 @@
 .error-message-container {
     position: absolute;
     top: 100%; /* Position right below the input */
-    left: 0;
-    width: 100%;
+    left: -25%;
+    width: 150%;
     min-height: 20px; /* Reserve space even when empty */
 }
 
@@ -145,6 +151,7 @@
     border-radius: 4px !important;
     border-left: 3px solid #ff4444 !important;
     word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
     margin-top: 2px !important;
     display: none; /* Hidden by default */
 }

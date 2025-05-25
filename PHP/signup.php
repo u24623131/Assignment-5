@@ -36,7 +36,6 @@ include("header.php");
             <form id="register-form" class="Main_Form">
 
                 <div class="input-group">
-
                     <div class="input-container" id="name-container">
                         <i class="fas fa-user icon"></i>
                         <input type="text" name="name" placeholder="Name:" required>

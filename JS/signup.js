@@ -12,8 +12,8 @@ if (document.readyState === 'loading') {
 function initializeForm() {
     // Get form elements
     let fname = document.getElementsByName("name")[0];
-    let surname = document.getElementsByName("email")[0]; // First email field is surname
-    let email = document.getElementsByName("email")[1];   // Second email field is actual email
+    let surname = document.getElementsByName("surname")[0]; // First email field is surname
+    let email = document.getElementsByName("email")[0];   // Second email field is actual email
     let phoneNr = document.getElementsByName("phone")[0];
     let password = document.getElementsByName("password")[0];
     let type = document.getElementsByName("type")[0];
