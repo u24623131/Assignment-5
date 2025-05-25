@@ -33,15 +33,22 @@
             <hr>
             <form id="Login-form" class="Main_Form">
                 <div class="input-group">
-                    <i class="fa fa-id-card"></i>
-                    <input type="text" id="email" name="email" required placeholder="Email:">
-                    <label class="error-label" id="email-error"></label>
+                    <div class="input-container" id="email-container">
+                        <i class="fas fa-envelope icon"></i>
+                        <input type="email" name="Email" placeholder="Email:" required>
+                    </div>
+                    <div class="error-message-container">
+                        <div class="error-message" id="email-error"></div>
+                    </div>
                 </div>
-
                 <div class="input-group">
-                    <i class="fa fa-lock"></i>
-                    <input type="password" id="password" name="password" required placeholder="Password:">
-                    <label class="error-label" id="password-error"></label>
+                    <div class="input-container" id="password-container">
+                        <i class="fas fa-lock icon"></i>
+                        <input type="password" name="Password" placeholder="Password:" required>
+                    </div>
+                    <div class="error-message-container">
+                        <div class="error-message" id="password-error"></div>
+                    </div>
                 </div>
                 <button class="btn btnSignUp" type="button" id="btnLogin">Login</button>
                 <p id="login-result" style="margin-top: 10px;"></p>
