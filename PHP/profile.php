@@ -61,6 +61,14 @@ include("header.php");
                     <input type="email" id="email" class="NewVal" name="email" required placeholder="Email:">
                     <label class="error-label" id="email-error"></label>
                 </div>
+                
+                <div class="input-group">
+                    <label class="LblPA"> Phone Number:</label>
+                    <input type="text" class="CurVal" disabled required placeholder="Current Phone Number Val:">
+                    <i id="pIcon" class="fa fa-phone"></i>
+                    <input type="email" id="phoneNumber" class="NewVal" name="phoneNumber" required placeholder="Phone Number:">
+                    <label class="error-label" id="phoneNumber-error"></label>
+                </div>
 
                 <div class="input-group">
                     <label class="LblPA"> Password:</label>

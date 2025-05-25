@@ -2,23 +2,22 @@ const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
 document.addEventListener("DOMContentLoaded", function () {
-    let email = document.getElementsByName("email")[0];
-    let password = document.getElementsByName("password")[0];
-    let submit = document.getElementsByName("submit")[0]; // or getElementById("submit");
+    let email = document.getElementsByName("Email")[0];
+    let password = document.getElementsByName("Password")[0];
+    let submit = document.getElementById("btnLogin"); // or getElementById("submit");
 
     if (submit) {
         submit.addEventListener("click", function (event) {
             event.preventDefault();
             // Logging to check the values
-
-            if (regexEmail.test(email.value)) {
-                let errorContainer = document.getElementById("errorContEmail");
+ if (regexEmail.test(email.value)) {
+                let errorContainer = document.getElementById("email-error");
                 if (errorContainer != null) {
                     errorContainer.innerHTML = "";
                 }
             }
             else {
-                let errorContainer = document.getElementById("errorContEmail");
+                let errorContainer = document.getElementById("email-error");
 
                 // Optional: Clear any previous messages
                 errorContainer.innerHTML = "";
@@ -34,20 +33,20 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (regexPassword.test(password.value)) {
-                let errorContainer = document.getElementById("errorContPwd");
+                let errorContainer = document.getElementById("password-error");
                 if (errorContainer != null) {
                     errorContainer.innerHTML = "";
                 }
             }
             else {
-                let errorContainer = document.getElementById("errorContPwd");
+                let errorContainer = document.getElementById("password-error");
 
                 // Optional: Clear any previous messages
                 errorContainer.innerHTML = "";
 
                 // Create a <p> element
                 let errorMsg = document.createElement("p");
-                errorMsg.innerHTML = "Password must conform to the following:<br>8 characters or more<br>Contain both upper and lowercase letters of the alphabet<br>Contain atleast one number or special character(!@#$%^&*()_+-=[]{};':\"|,.<>\\\/?)";
+                errorMsg.innerHTML = "Password must be 8+ characters with upper/lowercase letters and numbers/symbols!";
                 errorMsg.style.fontSize = "12px";
                 errorMsg.style.color = "red"; // You can style it however you want
 
@@ -57,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             if (regexEmail.test(email.value) && regexPassword.test(password.value)) {
-                    fetch("../../api.php", {
+                    fetch("../api.php", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -78,41 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.error(data.data);
                     }
                 });
-
-            //     fetch("../../api.php", {
-            //         method: "POST",
-            //         headers: {
-            //             "Content-Type": "application/json"
-            //         },
-            //         body: JSON.stringify({
-            //             type: "Login",
-            //             email: email.value,
-            //             password: password.value
-            //         })
-            //     })
-            //         .then(async response => {
-            //             const responseText = await response.text();
-
-            //             if (!response.ok) {
-            //                 // Likely HTML or error message from server
-            //                 throw new Error(`HTTP error! status: ${response.status}, body: ${responseText}`);
-            //             }
-
-            //             try {
-            //                 const data = JSON.parse(responseText);
-
-            //                 if (data.status === "success") {
-            //                     window.location.href = "index.php";
-            //                 } else {
-            //                     console.error(data.data);
-            //                 }
-            //             } catch (e) {
-            //                 console.error("Invalid JSON response:", responseText);
-            //             }
-            //         })
-            //         .catch(err => {
-            //             console.error("Fetch error:", err.message);
-            //         });
             }
         });
     } else {

@@ -4,7 +4,7 @@ include '..\config.php';
 
 // Optionally set current page dynamically to highlight nav (if used)
 // $currentPage = basename($_SERVER['PHP_SELF'], ".php");
-$_SESSION['login'] = false; // Example: Set to false for testing login/signup display
+$_SESSION['login'] = true; // Example: Set to false for testing login/signup display
 $_SESSION['admin'] = true;
 $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
 ?>
