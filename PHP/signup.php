@@ -49,7 +49,12 @@
                     <input type="email" id="email" name="email" required placeholder="Email:">
                     <label class="error-label" id="email-error"></label>
                 </div>
-
+                
+                <div class="input-group">
+                    <i class="fa fa-phone"></i>
+                    <input type="phoneNr" id="phoneNr" name="phoneNr" required placeholder="Phone Number: (Optional)">
+                    <label class="error-label" id="phoneNr-error"></label>
+                </div>
                 <div class="input-group">
                     <i class="fa fa-lock"></i>
                     <input type="password" id="password" name="password" required placeholder="Password:">
