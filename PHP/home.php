@@ -168,7 +168,7 @@
             </div>
 
             <div class="col-4">
-                <img src="..\image\Strawberry Fanta.jpeg">
+                <img src="https://res.cloudinary.com/dlbhbt0c5/image/upload/v1748123804/Wilson_s_Toffees_bqy5vo.jpg">
                 <h4 id="Title">Toaster</h4>
                 <div class="retail">
                     <i class="fas fa-chevron-left"></i>

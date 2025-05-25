@@ -20,7 +20,7 @@
         });
     });
 
-function createProductCard(productName, initialPrice, finalPrice, imageSource, countryOfOrigin, brandName, retailerName) {
+function createProductCard(productName, initialPrice, finalPrice, imageSource, category, brandName, retailerName) {
     // 1. Create the main product card container
     const productCardElement = document.createElement("div");
     productCardElement.className = "col-4";
@@ -78,10 +78,10 @@ function createProductCard(productName, initialPrice, finalPrice, imageSource, c
 
     productCardElement.appendChild(priceContainer);
 
-    // country of origin
-    const countryOriginElement = document.createElement("p");
-    countryOriginElement.textContent = `Made in ${countryOfOrigin}`;
-    productCardElement.appendChild(countryOriginElement);
+    // Snack Category
+    const snackcategory = document.createElement("p");
+    snackcategory.textContent = ` ${category}`;
+    productCardElement.appendChild(snackcategory);
 
     //button group
     const buttonGroup = document.createElement("div");
@@ -103,6 +103,8 @@ function createProductCard(productName, initialPrice, finalPrice, imageSource, c
     compareButton.appendChild(compareIcon);
     compareButton.appendChild(document.createTextNode(" Compare")); 
     buttonGroup.appendChild(compareButton);
+
+    productCardElement.appendChild(buttonGroup);
 
     return productCardElement;
 }
@@ -150,3 +152,81 @@ document.addEventListener("click" ,function(event){
     }
 })
 
+// Fetch Data from the database 
+
+
+var getAllProducts = {
+  type : "GetAllProducts"
+};
+
+sendRequest();
+
+async function sendRequest() {
+    console.log("SENDING REQUEST");
+    const reqURL = '../api.php';
+
+    try {
+        const response = await fetch(reqURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(getAllProducts)
+        });
+        //  if (!response.ok) {
+        //     // Read the response body in the case of an error
+        //     const errorText = await response.text();
+        //     // Throw a new error containing the status code and the error from the server
+        //     throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+        // }
+        // const responseData = await response.text();
+        // console.log(responseData);
+        const result = await response.json();
+        console.dir(result, { depth: null }); 
+        displayProduct(JSON.stringify(result));
+    } catch (error) {
+        console.error("Request failed", error);
+    }
+}
+
+function displayProduct(data) {
+    // hideLoading();
+    const ProductContainer = document.querySelector('.ProductPlace');
+    while (ProductContainer.firstChild) {
+        ProductContainer.removeChild(ProductContainer.firstChild);
+    }
+    const parsedData = JSON.parse(data);
+    const products = parsedData.data.Products;
+    
+    if (!Array.isArray(products) || products.length === 0) {
+        const noResultsMessage = document.createElement('p');
+        noResultsMessage.textContent = "No products found.";
+        noResultsMessage.classList.add('no-results-message');
+        ProductContainer.appendChild(noResultsMessage);
+    }  else {
+        console.log("Display Product...");
+        // const filterPrice = document.getElementById("priceValue").value ;
+
+        // const filteredProducts = parsedData.data.filter(product => {
+        // const productPrice = parseFloat(product.final_price);
+        // return productPrice <= filterPrice ;
+        // });
+
+        // if (filteredProducts.length === 0) {
+        // const noResultsMessage2 = document.createElement('p');
+        // noResultsMessage2.textContent = "No products found.";
+        // noResultsMessage2.classList.add('no-results-message');
+        // ProductContainer.appendChild(noResultsMessage2);
+        // return;}
+        
+        console.log("Parsed data: " + products);
+        products.forEach(Product => {
+            console.log(Product.Image_URL)
+            var productToAdd = createProductCard(Product.Title,0, 0
+                ,Product.Image_URL ,Product.Category ,Product.Brand , "Game");
+            PPlace.appendChild(productToAdd)
+            } )
+        }
+        
+        // setFilters(data);
+    }
