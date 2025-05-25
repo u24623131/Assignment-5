@@ -11,12 +11,12 @@ if (document.readyState === 'loading') {
 
 function initializeForm() {
     // Get form elements
-    let fname = document.getElementsByName("name")[0];
-    let surname = document.getElementsByName("surname")[0]; // First email field is surname
-    let email = document.getElementsByName("email")[0];   // Second email field is actual email
-    let phoneNr = document.getElementsByName("phone")[0];
-    let password = document.getElementsByName("password")[0];
-    let type = document.getElementsByName("type")[0];
+    let fname = document.getElementsByName("Name")[0];
+    let surname = document.getElementsByName("Surname")[0]; // First email field is surname
+    let email = document.getElementsByName("Email")[0];   // Second email field is actual email
+    let phoneNr = document.getElementsByName("Cell_No")[0];
+    let password = document.getElementsByName("Password")[0];
+    let type = document.getElementsByName("User_Type")[0];
     let submit = document.getElementById("btnSignUp");
 
     if (!submit) {
@@ -27,7 +27,7 @@ function initializeForm() {
     // Function to show error messages
     function showError(errorId, message) {
         const errorElement = document.getElementById(errorId);
-        
+
         if (!errorElement) {
             console.error(`❌ Error element ${errorId} not found!`);
             return false;
@@ -124,6 +124,33 @@ function initializeForm() {
         }
 
         if (isValid) {
+
+
+            const form = document.getElementById("register-form"); // assuming your form has this ID
+            const formData = new FormData(form);
+            const json = Object.fromEntries(formData.entries());
+            if (json.Cell_No === "") { // Check if the value is an empty string
+                delete json.Cell_No; // Remove the property from the object
+            }
+            json.type = "Register";
+            console.log(json); // To check if form data is correctly formatted
+
+            fetch("../../api.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(json), // This is the form data in JSON
+            })
+                .then(res => {
+                    if (res.ok) {
+                        console.log("Submitted successfully.");
+                    } else {
+                        console.error("API error:", res.status);
+                    }
+                })
+                .catch(err => console.error("Network error:", err));
+
             console.log("✅ All validations passed. Would proceed with API call.");
             alert("Form is valid!");
         } else {

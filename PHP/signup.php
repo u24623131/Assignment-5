@@ -38,7 +38,7 @@ include("header.php");
                 <div class="input-group">
                     <div class="input-container" id="name-container">
                         <i class="fas fa-user icon"></i>
-                        <input type="text" name="name" placeholder="Name:" required>
+                        <input type="text" name="Name" placeholder="Name:" required>
                     </div>
                     <div class="error-message-container">
                         <div class="error-message" id="errContName"></div>
@@ -48,7 +48,7 @@ include("header.php");
                 <div class="input-group">
                     <div class="input-container" id="surname-container">
                         <i class="fas fa-user icon"></i>
-                        <input type="text" name="surname" placeholder="Surname:" required>
+                        <input type="text" name="Surname" placeholder="Surname:" required>
                     </div>
                     <div class="error-message-container">
                         <div class="error-message" id="errContSurname"></div>
@@ -58,7 +58,7 @@ include("header.php");
                 <div class="input-group">
                     <div class="input-container" id="email-container">
                         <i class="fas fa-envelope icon"></i>
-                        <input type="email" name="email" placeholder="Email:" required>
+                        <input type="email" name="Email" placeholder="Email:" required>
                     </div>
                     <div class="error-message-container">
                         <div class="error-message" id="email-error"></div>
@@ -68,7 +68,7 @@ include("header.php");
                 <div class="input-group">
                     <div class="input-container" id="phone-container">
                         <i class="fas fa-phone icon"></i>
-                        <input type="tel" name="phone" placeholder="Phone Number: (Optional)">
+                        <input type="tel" name="Cell_No" placeholder="Phone Number: (Optional)">
                     </div>
                     <div class="error-message-container">
                         <div class="error-message" id="phone-error"></div>
@@ -78,7 +78,7 @@ include("header.php");
                 <div class="input-group">
                     <div class="input-container" id="password-container">
                         <i class="fas fa-lock icon"></i>
-                        <input type="password" name="password" placeholder="Password:" required>
+                        <input type="password" name="Password" placeholder="Password:" required>
                     </div>
                     <div class="error-message-container">
                         <div class="error-message" id="password-error"></div>
@@ -87,7 +87,7 @@ include("header.php");
                 <div class="input-group">
                     <div class="input-container" id="userType-container">
                         <i class="fa fa-user-tag"></i>
-                        <select id="type" name="type" class="Select_Type" required>
+                        <select id="type" name="User_Type" class="Select_Type" required>
                             <option value="Customer">Customer</option>
                             <option value="Courier">Courier</option>
                             <option value="Inventory Manager">Inventory Manager</option>
