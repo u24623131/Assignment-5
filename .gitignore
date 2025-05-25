@@ -106,3 +106,4 @@ vendor/vlucas/phpdotenv/src/Store/File/Reader.php
 vendor/vlucas/phpdotenv/src/Util/Regex.php
 vendor/vlucas/phpdotenv/src/Util/Str.php
 .env
+composer.lock
