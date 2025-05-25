@@ -4,8 +4,8 @@ session_start();
 
 // Optionally set current page dynamically to highlight nav (if used)
 // $currentPage = basename($_SERVER['PHP_SELF'], ".php");
-$_SESSION['login'] = true; // Example: Set to false for testing login/signup display
-$_SESSION['admin'] = true;
+$_SESSION['login'] = false; // Example: Set to false for testing login/signup display
+$_SESSION['admin'] = false;
 $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
 ?>
 
@@ -52,6 +52,15 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
             </button>
         </div>
     </div>
+<<<<<<< HEAD
+
+    <!-- Right Side: Login/Signup or Logged-in User -->
+    <button id="modeToggle" class="toggle-btn">
+        <!-- <h4>Toggle Dark Mode:</h4> -->
+        <i class="fas fa-moon" id="modeIcon"></i>
+    </button>
+=======
+>>>>>>> a3e29b9546b0458197ef430054ac3979bc504673
 </div>
 
 <script src="..\JS\header.js"></script>
