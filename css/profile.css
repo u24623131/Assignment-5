@@ -119,6 +119,10 @@
     z-index: 2;
 }
 
+#pIcon{
+    bottom: -3px;
+}
+
 .Main_Form input.NewVal {
     font-size: 11px;
     padding: 11px 11px 11px 29px;
