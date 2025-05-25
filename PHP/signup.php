@@ -1,9 +1,10 @@
 <?php
-    include("header.php");
+include("header.php");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,16 +13,17 @@
     <link rel="stylesheet" href="../css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel= "stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 </head>
+
 <body class="signup-page">
-    <div class = "MainDiv">
+    <div class="MainDiv">
         <div class="Top-Header">
-            <h2 >Safari</h2> 
+            <h2>Safari</h2>
             <h2>Speed</h2>
         </div>
-        <p class = "Slogan">Shop Fast. Live Wild. Delivered Quick</p>
+        <p class="Slogan">Shop Fast. Live Wild. Delivered Quick</p>
 
         <div class="MainContainer">
             <div class="Containerdots">
@@ -29,51 +31,77 @@
                 <div class="divdot"></div>
                 <div class="divdot"></div>
             </div>
-            <label class="LblPA" > SIGN UP</label>
+            <label class="LblPA"> SIGN UP</label>
             <hr>
             <form id="register-form" class="Main_Form">
+
                 <div class="input-group">
-                    <i class="fa fa-user"></i>
-                    <input type="text" id="name" name="name" required placeholder="Name:">
-                    <label class="error-label" id="name-error"></label>
+
+                    <div class="input-container" id="name-container">
+                        <i class="fas fa-user icon"></i>
+                        <input type="text" name="name" placeholder="Name:" required>
+                    </div>
+                    <div class="error-message-container">
+                        <div class="error-message" id="errContName"></div>
+                    </div>
                 </div>
 
                 <div class="input-group">
-                    <i class="fa fa-user"></i>
-                    <input type="text" id="surname" name="surname" required placeholder="Surname:">
-                    <label class="error-label" id="surname-error"></label>
+                    <div class="input-container" id="surname-container">
+                        <i class="fas fa-user icon"></i>
+                        <input type="text" name="surname" placeholder="Surname:" required>
+                    </div>
+                    <div class="error-message-container">
+                        <div class="error-message" id="errContSurname"></div>
+                    </div>
                 </div>
 
                 <div class="input-group">
-                    <i class="fa fa-envelope"></i>
-                    <input type="email" id="email" name="email" required placeholder="Email:">
-                    <label class="error-label" id="email-error"></label>
+                    <div class="input-container" id="email-container">
+                        <i class="fas fa-envelope icon"></i>
+                        <input type="email" name="email" placeholder="Email:" required>
+                    </div>
+                    <div class="error-message-container">
+                        <div class="error-message" id="email-error"></div>
+                    </div>
                 </div>
-                
+
                 <div class="input-group">
-                    <i class="fa fa-phone"></i>
-                    <input type="phoneNr" id="phoneNr" name="phoneNr" required placeholder="Phone Number: (Optional)">
-                    <label class="error-label" id="phoneNr-error"></label>
+                    <div class="input-container" id="phone-container">
+                        <i class="fas fa-phone icon"></i>
+                        <input type="tel" name="phone" placeholder="Phone Number: (Optional)">
+                    </div>
+                    <div class="error-message-container">
+                        <div class="error-message" id="phone-error"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-container" id="password-container">
+                        <i class="fas fa-lock icon"></i>
+                        <input type="password" name="password" placeholder="Password:" required>
+                    </div>
+                    <div class="error-message-container">
+                        <div class="error-message" id="password-error"></div>
+                    </div>
                 </div>
                 <div class="input-group">
-                    <i class="fa fa-lock"></i>
-                    <input type="password" id="password" name="password" required placeholder="Password:">
-                    <label class="error-label" id="password-error"></label>
+                    <div class="input-container" id="userType-container">
+                        <i class="fa fa-user-tag"></i>
+                        <select id="type" name="type" class="Select_Type" required>
+                            <option value="Customer">Customer</option>
+                            <option value="Courier">Courier</option>
+                            <option value="Inventory Manager">Inventory Manager</option>
+                        </select>
+                        <!-- <label class="error-label" id="type-error"></label> -->
+                    </div>
                 </div>
-                <div class="input-group">
-                    <i class="fa fa-user-tag"></i>
-                    <select id="type" name="type" class="Select_Type" required>
-                        <option value="Customer">Customer</option> 
-                        <option value="Courier">Courier</option>
-                        <option value="Inventory Manager">Inventory Manager</option>
-                    </select>
-                    <label class="error-label" id="type-error"></label>
-                </div>
-                <button class="btn btnSignUp" type="button" id="btnSignUp">Sign Up</button>
+                <button class="btn btnSignUp" name="btnSignUp" type="button" id="btnSignUp">Sign Up</button>
             </form>
 
         </div>
     </div>
-    <script src="js\signup.js"></script> 
+    <script src="../JS/signup.js"></script>
 </body>
+
 </html>
