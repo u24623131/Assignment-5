@@ -1,6 +1,6 @@
 <?php
 session_start();
-//include 'config.php';
+include '..\config.php';
 
 // Optionally set current page dynamically to highlight nav (if used)
 // $currentPage = basename($_SERVER['PHP_SELF'], ".php");
