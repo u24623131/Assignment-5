@@ -306,14 +306,14 @@ Required Fields:
 ==================================================================
 
 Required Fields:
-  - type        : "getUserFavourite"
-  - apiKey      : Valid API key
+  - type       : "GetUserFavourite"
+  - apikey     : Valid API key
 
 ------------------ REQUEST EXAMPLE ------------------
 
 {
-  "type": "getUserFavourite",
-  "apiKey": "0ce38b841cd526f2b18b9707aed7f772"
+  "type": "GetUserFavourite",
+  "apikey": "0ce38b841cd526f2b18b9707aed7f772"
 }
 
 ------------------ SUCCESS RESPONSE ------------------
@@ -328,7 +328,9 @@ Required Fields:
       "Category": "Category 1",
       "Description": "Description 1",
       "Brand": "Brand 1",
-      "Image_UTL": "image1.jpg"
+      "Image_URL": "image1.jpg",
+      "Retailer_Names": ["Retailer A", "Retailer B"],
+      "Prices": [9.99, 10.49]
     },
     {
       "Product_No": 5,
@@ -336,7 +338,9 @@ Required Fields:
       "Category": "Category 5",
       "Description": "Description 5",
       "Brand": "Brand 5",
-      "Image_UTL": "image5.jpg"
+      "Image_URL": "image5.jpg",
+      "Retailer_Names": ["Retailer C"],
+      "Prices": [15.99]
     }
   ]
 }
@@ -346,7 +350,7 @@ Required Fields:
 {
   "status": "error",
   "timestamp": 1747767153738,
-  "data": "apiKey is missing"
+  "data": "apikey is missing"
 }
 
 {
@@ -354,6 +358,13 @@ Required Fields:
   "timestamp": 1747767153738,
   "data": "User not found"
 }
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "Query execution failed"
+}
+
 
 ==================================================================
                           ADD PRODUCT
@@ -479,6 +490,7 @@ Required Fields:
   - apikey : Valid user API key
   - Title  : Product title
   - Rating : Integer (0 to 5)
+  - Review : Sentence
 
 ------------------ REQUEST EXAMPLE ------------------
 
@@ -486,7 +498,8 @@ Required Fields:
   "type": "addReview",
   "apikey": "user_api_key_here",
   "Title": "Product X",
-  "Rating": 4
+  "Rating": 4,
+  "Review": "Cool"
 }
 
 ------------------ SUCCESS RESPONSE ------------------
