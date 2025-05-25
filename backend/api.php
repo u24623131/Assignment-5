@@ -359,34 +359,50 @@ class API {
     }
     //GAP: name = getAllProducts param = input ... change as you see fit
     private function getAllProducts() {
-        
-    // Query the products
-    $result = $this->DB_Connection->query("SELECT * FROM Products");
 
-    // Check if the query was successful
+    $result = $this->DB_Connection->query("
+        SELECT 
+            Products.Product_No, 
+            Products.Title,
+            Prices.Price,
+            Retailers.Name AS Retailer_Name
+        FROM Products
+        JOIN Prices ON Products.Product_No = Prices.Product_No
+        JOIN Retailers ON Prices.Retailer_ID = Retailers.Retailer_ID
+    ");
+
     if ($result) {
-        if ($result && $result->num_rows > 0) {
+        if ($result->num_rows > 0) {
+            $groupedProducts = [];
 
-            // Fetch all rows 
-            $products = [];
             while ($row = $result->fetch_assoc()) {
-                $products[] = $row;
+                $productNo = $row['Product_No'];
+
+                if (!isset($groupedProducts[$productNo])) {
+                    $groupedProducts[$productNo] = [
+                        "Product_No" => $row['Product_No'],
+                        "Title" => $row['Title'],
+                        "Retailer_Names" => [],
+                        "Prices" => []
+                    ];
+                }
+
+                $groupedProducts[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
+                $groupedProducts[$productNo]["Prices"][] = $row['Price'];
             }
 
             http_response_code(200);
-            $this->response("200 OK", "success", ["Products" => $products]);
-
-        }
-        else {
+            $this->response("200 OK", "success", ["Products" => array_values($groupedProducts)]);
+        } else {
             http_response_code(200);
             $this->response("200 OK", "success", ["Products" => []]);
         }
-    }
-    else {
+    } else {
         http_response_code(500);
         $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
     }
     }
+
     //Delete Account: deleteAccount param = input
     private function deleteAccount($input){
 

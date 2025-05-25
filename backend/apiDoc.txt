@@ -166,7 +166,9 @@ Required Fields:
         "Category": "Category 1",
         "Description": "Description 1",
         "Brand": "Brand 1",
-        "Image_UTL": "image1.jpg"
+        "Image_URL": "image1.jpg",
+        "Retailer_Names": ["Checkers", "Pick n Pay"],
+        "Prices": ["23.45", "25.60"]
       },
       {
         "Product_No": 2,
@@ -174,7 +176,9 @@ Required Fields:
         "Category": "Category 2",
         "Description": "Description 2",
         "Brand": "Brand 2",
-        "Image_UTL": "image2.jpg"
+        "Image_URL": "image2.jpg",
+        "Retailer_Names": ["Woolworths"],
+        "Prices": ["29.99"]
       }
     ]
   }
