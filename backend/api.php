@@ -1352,7 +1352,7 @@ class API {
             return;
         }
 
-        $query = "SELECT User_ID, Name, Surname, Email, Cell_No FROM Users WHERE API_Key = ?";
+        $query = "SELECT Name, Surname, Email, Cell_No FROM Users WHERE API_Key = ?";
         $stmt = $this->DB_Connection->prepare($query);
         $stmt->bind_param("s", $api);
         $stmt->execute();
