@@ -367,31 +367,54 @@ class API
         }
     }
     //GAP: name = getAllProducts param = input ... change as you see fit
-    private function getAllProducts() {
-        
-    // Query the products
-    $result = $this->DB_Connection->query("SELECT * FROM Products");
+    private function getAllProducts()
+    {
 
-    // Check if the query was successful
-    if ($result) {
-        if ($result && $result->num_rows > 0) {
+        // Query the products
+        $result = $this->DB_Connection->query("SELECT Products.Product_No,
+            Products.Title,
+            Products.Category,
+            Products.Description,
+            Products.Brand,
+            Products.Image_URL,
+            Prices.Price,
+            Retailers.Name AS Retailer_Name
+        FROM Products
+        JOIN Prices ON Products.Product_No = Prices.Product_No
+        JOIN Retailers ON Prices.Retailer_ID = Retailers.Retailer_ID");
 
-            // Fetch all rows 
-            $products = [];
+        // Check if the query was successful
+       if ($result) {
+        if ($result->num_rows > 0) {
+            $groupedProducts = [];
+
             while ($row = $result->fetch_assoc()) {
-                $products[] = $row;
+                $productNo = $row['Product_No'];
+
+                if (!isset($groupedProducts[$productNo])) {
+                    $groupedProducts[$productNo] = [
+                        "Product_No" => $row['Product_No'],
+                        "Title" => $row['Title'],
+                        "Brand" => $row['Brand'],
+                        "Image_URL" => $row['Image_URL'],
+                        "Description" => $row['Description'],
+                        "Category" => $row['Category'],
+                        "Retailer_Names" => [],
+                        "Prices" => []
+                    ];
+                }
+
+                $groupedProducts[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
+                $groupedProducts[$productNo]["Prices"][] = $row['Price'];
             }
 
             http_response_code(200);
-            $this->response("200 OK", "success", ["Products" => $products]);
-
-        }
-        else {
+            $this->response("200 OK", "success", ["Products" => array_values($groupedProducts)]);
+        } else {
             http_response_code(200);
             $this->response("200 OK", "success", ["Products" => []]);
         }
-    }
-    else {
+    } else {
         http_response_code(500);
         $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
     }
@@ -513,99 +536,101 @@ class API
         $required = ['apikey', 'customerID'];
         // do the whole string concatination thing per product associated with the customer id (Apparently the product numbers are in an array?)
     }
-    private function AddFavourite($input) {
-    // Required keys
-    $req = ['apikey', 'Product_No'];
+    private function AddFavourite($input)
+    {
+        // Required keys
+        $req = ['apikey', 'Product_No'];
 
-    // Check for missing parameters
-    foreach ($req as $r) {
-        if (!isset($input[$r]) || empty($input[$r])) {
+        // Check for missing parameters
+        foreach ($req as $r) {
+            if (!isset($input[$r]) || empty($input[$r])) {
+                http_response_code(response_code: 404);
+                $this->response("400 Bad Request", "error", "$r is missing");
+                return;
+            }
+        }
+
+        // Get user from API key
+        $userInfo = $this->getUserByApiKey($input['apikey']);
+        if (!$userInfo || !isset($userInfo['User_ID'])) {
             http_response_code(response_code: 404);
-            $this->response("400 Bad Request", "error", "$r is missing");
+            $this->response("404 Not Found", "error", "User not found");
             return;
         }
-    }
 
-    // Get user from API key
-    $userInfo = $this->getUserByApiKey($input['apikey']);
-    if (!$userInfo || !isset($userInfo['User_ID'])) {
-        http_response_code(response_code: 404);
-        $this->response("404 Not Found", "error", "User not found");
-        return;
-    }
+        $userID = $userInfo['User_ID'];
+        $productNo = $input['Product_No'];
 
-    $userID = $userInfo['User_ID'];
-    $productNo = $input['Product_No'];
-
-    // Check if product exists
-    $stmt = $this->DB_Connection->prepare("SELECT Product_No FROM Products WHERE Product_No = ?");
-    if (!$stmt) {
-        error_log("Prepare Failed: " . $this->DB_Connection->error);
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Database Error: " . $this->DB_Connection->error);
-        return;
-    }
-
-    $stmt->bind_param("i", $productNo);
-
-    if (!$stmt->execute()) {
-        error_log("MySQL Error: " . $stmt->error);
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Product check failed");
-        return;
-    }
-
-    $result = $stmt->get_result();
-    if ($result->num_rows === 0) {
-        http_response_code(response_code: 404);
-        $this->response("404 Not Found", "error", "Product not found");
-        return;
-    }
-
-    // check if it alr exists 
-    $check = $this->DB_Connection->prepare("SELECT * FROM favourites WHERE user_id = ? AND product_id = ?");
-    $check->bind_param("ii", $userID,$productNo);
-
-    if (!$check->execute()) {
-        if ($this->DB_Connection->errno === 1062) { // Duplicate entry
-            http_response_code(409);
-            $this->response("409 Conflict", "error", "This product is already in your favourites.");
-        } else {
+        // Check if product exists
+        $stmt = $this->DB_Connection->prepare("SELECT Product_No FROM Products WHERE Product_No = ?");
+        if (!$stmt) {
+            error_log("Prepare Failed: " . $this->DB_Connection->error);
             http_response_code(500);
-            error_log("Insert Failed: " . $stmt->error);
-            $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
+            $this->response("500 Internal Server Error", "error", "Database Error: " . $this->DB_Connection->error);
+            return;
         }
-        return;
-    }
 
-    if ($result = $check->get_result()->num_rows>0){
+        $stmt->bind_param("i", $productNo);
+
+        if (!$stmt->execute()) {
+            error_log("MySQL Error: " . $stmt->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Product check failed");
+            return;
+        }
+
+        $result = $stmt->get_result();
+        if ($result->num_rows === 0) {
+            http_response_code(response_code: 404);
+            $this->response("404 Not Found", "error", "Product not found");
+            return;
+        }
+
+        // check if it alr exists 
+        $check = $this->DB_Connection->prepare("SELECT * FROM favourites WHERE user_id = ? AND product_id = ?");
+        $check->bind_param("ii", $userID, $productNo);
+
+        if (!$check->execute()) {
+            if ($this->DB_Connection->errno === 1062) { // Duplicate entry
+                http_response_code(409);
+                $this->response("409 Conflict", "error", "This product is already in your favourites.");
+            } else {
+                http_response_code(500);
+                error_log("Insert Failed: " . $stmt->error);
+                $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
+            }
+            return;
+        }
+
+        if ($result = $check->get_result()->num_rows > 0) {
             http_response_code(401);
             error_log("Insert Failed: " . $stmt->error);
             $this->response("401 Unauthorised Action", "error", "User_ID And Product_No Already in table");
-    }
-    // Insert into favourites
-    $stmt = $this->DB_Connection->prepare("INSERT INTO favourites(user_id, product_no) VALUES (?, ?)");
-    if (!$stmt) {
-        error_log("Prepare Failed (Insert): " . $this->DB_Connection->error);
-        $this->response("500 Internal Server Error", "error", "Failed to prepare insert statement");
-        return;
-    }
-
-    $stmt->bind_param("ii", $userID, $productNo);
-    if (!$stmt->execute()) {
-        if ($this->DB_Connection->errno === 1062) { // Duplicate entry
-            $this->response("409 Conflict", "error", "This product is already in your favourites.");
-        } else {
-            error_log("Insert Failed: " . $stmt->error);
-            $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
         }
-        return;
-    }
+        // Insert into favourites
+        $stmt = $this->DB_Connection->prepare("INSERT INTO favourites(user_id, product_no) VALUES (?, ?)");
+        if (!$stmt) {
+            error_log("Prepare Failed (Insert): " . $this->DB_Connection->error);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare insert statement");
+            return;
+        }
 
-    // Success response
-    $this->response("200 OK", "success", "Product added to favourites");
+        $stmt->bind_param("ii", $userID, $productNo);
+        if (!$stmt->execute()) {
+            if ($this->DB_Connection->errno === 1062) { // Duplicate entry
+                $this->response("409 Conflict", "error", "This product is already in your favourites.");
+            } else {
+                error_log("Insert Failed: " . $stmt->error);
+                $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
+            }
+            return;
+        }
+
+        // Success response
+        $this->response("200 OK", "success", "Product added to favourites");
     }
-    private function getUserFavourite($input) {
+    private function getUserFavourite($input)
+    {
         // Validate input
         if (!isset($input['apikey']) || empty($input['apikey'])) {
             http_response_code(400);
@@ -613,18 +638,18 @@ class API
             return;
         }
 
-    // Get user from API key
-    $userInfo = $this->getUserByApiKey($input['apikey']);
-    if (!$userInfo || !isset($userInfo['User_ID'])) {
-        http_response_code(404);
-        $this->response("404 Not Found", "error", "User not found");
-        return;
-    }
+        // Get user from API key
+        $userInfo = $this->getUserByApiKey($input['apikey']);
+        if (!$userInfo || !isset($userInfo['User_ID'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "User not found");
+            return;
+        }
 
-    $userId = $userInfo['User_ID'];
+        $userId = $userInfo['User_ID'];
 
-    // SQL query to get favourite products and associated retailers/prices
-    $sql = "
+        // SQL query to get favourite products and associated retailers/prices
+        $sql = "
         SELECT 
             Products.Product_No,
             Products.Title,
@@ -642,48 +667,48 @@ class API
         WHERE Users.User_ID = ?
     ";
 
-    $stmt = $this->DB_Connection->prepare($sql);
-    if (!$stmt) {
-        http_response_code(500);
-        error_log("Prepare failed: " . $this->DB_Connection->error);
-        $this->response("500 Internal Server Error", "error", "Database error: " . $this->DB_Connection->error);
-        return;
-    }
-
-    $stmt->bind_param("i", $userId);
-
-    if (!$stmt->execute()) {
-        http_response_code(500);
-        error_log("Execution failed: " . $stmt->error);
-        $this->response("500 Internal Server Error", "error", "Query execution failed");
-        return;
-    }
-
-    $result = $stmt->get_result();
-    $groupedFavourites = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $productNo = $row['Product_No'];
-
-        if (!isset($groupedFavourites[$productNo])) {
-            $groupedFavourites[$productNo] = [
-                "Product_No" => $row['Product_No'],
-                "Title" => $row['Title'],
-                "Category" => $row['Category'],
-                "Description" => $row['Description'],
-                "Brand" => $row['Brand'],
-                "Image_URL" => $row['Image_URL'],
-                "Retailer_Names" => [],
-                "Prices" => []
-            ];
+        $stmt = $this->DB_Connection->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            error_log("Prepare failed: " . $this->DB_Connection->error);
+            $this->response("500 Internal Server Error", "error", "Database error: " . $this->DB_Connection->error);
+            return;
         }
 
-        $groupedFavourites[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
-        $groupedFavourites[$productNo]["Prices"][] = $row['Price'];
-    }
+        $stmt->bind_param("i", $userId);
 
-    http_response_code(200);
-    $this->response("200 OK", "success", array_values($groupedFavourites));
+        if (!$stmt->execute()) {
+            http_response_code(500);
+            error_log("Execution failed: " . $stmt->error);
+            $this->response("500 Internal Server Error", "error", "Query execution failed");
+            return;
+        }
+
+        $result = $stmt->get_result();
+        $groupedFavourites = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $productNo = $row['Product_No'];
+
+            if (!isset($groupedFavourites[$productNo])) {
+                $groupedFavourites[$productNo] = [
+                    "Product_No" => $row['Product_No'],
+                    "Title" => $row['Title'],
+                    "Category" => $row['Category'],
+                    "Description" => $row['Description'],
+                    "Brand" => $row['Brand'],
+                    "Image_URL" => $row['Image_URL'],
+                    "Retailer_Names" => [],
+                    "Prices" => []
+                ];
+            }
+
+            $groupedFavourites[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
+            $groupedFavourites[$productNo]["Prices"][] = $row['Price'];
+        }
+
+        http_response_code(200);
+        $this->response("200 OK", "success", array_values($groupedFavourites));
     }
     private function addProduct($input)
     {
@@ -1050,12 +1075,12 @@ class API
         }
 
         // need rating,product name and using api key to find user
-        $toReview = ['Title','Rating'];
-        foreach($toReview as $r){
-            if(empty($input[$r])|| !isset($input[$r])){
-            http_response_code(400);
-            $this->response("400 Bad Request","error", $r." is Empty");
-            return;
+        $toReview = ['Title', 'Rating'];
+        foreach ($toReview as $r) {
+            if (empty($input[$r]) || !isset($input[$r])) {
+                http_response_code(400);
+                $this->response("400 Bad Request", "error", $r . " is Empty");
+                return;
             }
         }
 
@@ -1077,28 +1102,28 @@ class API
             return;
         }
 
-    $prodId = $productInfo['Product_No'];
+        $prodId = $productInfo['Product_No'];
 
-    $rating = (int) $input['Rating'];
-    if($rating > 5){
-        http_response_code(400);
-        $this->response("400 Bad Request","error", "Rating may not be greater than 5");
-        return;
-    }
-    if($rating < 0){
-        http_response_code(400);
-        $this->response("400 Bad Request","error", "Rating may not be negative");
-        return;
-    }
+        $rating = (int) $input['Rating'];
+        if ($rating > 5) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Rating may not be greater than 5");
+            return;
+        }
+        if ($rating < 0) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Rating may not be negative");
+            return;
+        }
         // all data is assumed at this point to be valid 
         $stmt = $this->DB_Connection->prepare('INSERT INTO Reviews(Rating, Prod_ID, U_ID) VALUES(?,?,?)');
-        if(!$stmt){
+        if (!$stmt) {
             http_response_code(500);
             $this->response("500 Internal Server Error", "error", "Could not prepare review statement");
             return;
         }
-        
-        $stmt->bind_param("iii",$rating,$prodId,$userId);
+
+        $stmt->bind_param("iii", $rating, $prodId, $userId);
 
         if ($stmt->execute()) {
             http_response_code(200);
