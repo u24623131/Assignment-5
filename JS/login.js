@@ -70,7 +70,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "success") {
-                        // Redirect to homepage or reload
+
+                        const apiKey = data.data.API_Key; 
+
+                        const d = new Date();
+                        d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
+                        let expires = "expires=" + d.toUTCString();
+
+                        document.cookie = `api_key=${apiKey}; ${expires}; path=/; Secure; SameSite=Lax`;
                         window.location.href = "home.php";
                     } else {
                         // Show error
