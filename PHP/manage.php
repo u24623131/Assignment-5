@@ -45,7 +45,7 @@ include("header.php");
                 <form id="addRetForm" class="Main_Form"> <label class="LblPA lbl"> Retailer Name:</label>
                     <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Retailer Name:">
                     <label class="LblPA lbl"> Retailer Address: (Optional)</label>
-                    <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="Retailer Address:">
+                    <input class="curVal retAddressInput" type="text" name="retailAddress"  placeholder="Retailer Address:">
                     <button class="btn btnAddRet" type="button" id="btnAddRet">Add Retailer</button>
                 </form>
 
@@ -54,9 +54,9 @@ include("header.php");
                 <form id="updateRetForm" class="Main_Form"> <label class="LblPA lbl"> Current Retailer Name:</label>
                     <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Current Retailer Name:">
                     <label class="LblPA lbl"> New Retailer Name: (Optional)</label>
-                    <input class="curVal retNameInput" type="text" name="retailName" required placeholder="New Retailer Name:">
+                    <input class="curVal retNameInput" type="text" name="newRetailName" placeholder="New Retailer Name:">
                     <label class="LblPA lbl"> New Retailer Address: (Optional)</label>
-                    <input class="curVal retAddressInput" type="text" name="retailAddress" required placeholder="New Retailer Address:">
+                    <input class="curVal retAddressInput" type="text" name="retailAddress" placeholder="New Retailer Address:">
                     <button class="btn btnUpdateRet" type="button" id="btnUpdateRet">Update Retailer</button>
                 </form>
                 <br>
