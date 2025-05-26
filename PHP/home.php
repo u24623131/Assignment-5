@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Products - ArtStore</title>
     <link id="themeStylesheet" rel="stylesheet" href="..\css\main.css">
-    <link id= "themeStylesheet" rel="stylesheet" href="..\css\home.css">
+    <link id="themeStylesheet" rel="stylesheet" href="..\css\home.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
@@ -35,8 +35,8 @@
         </div>
 
         <div class="filter-section">
-            <label class="Label-filter"><b>Country of Origin:</b></label>
-            <select id="Dropdown_country">
+            <label class="Label-filter"><b>Retailer:</b></label>
+            <select id="Dropdown_Retailer">
             </select>
         </div>
 
@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        <div class="compareBox" id ="compareList">
+        <div class="compareBox" id="compareList">
             <h2> Compare Items </h2>
 
             <div class="compareitem">
@@ -94,15 +94,10 @@
         </div>
 
         <div class="page-btn">
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>&#8594;</span>
         </div>
-        
+
         <div class="ProductPlace" id="PPlace">
-          
+
         </div>
 
     </div>
