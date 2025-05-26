@@ -1,13 +1,13 @@
 // Global variables for pagination
-let allProducts = []; 
+let allProducts = [];
 const productsPerPage = 15;
 let currentPage = 1;
 const PPlace = document.getElementById("PPlace");
-const pageButtonContainer = document.querySelector(".page-btn"); 
+const pageButtonContainer = document.querySelector(".page-btn");
 
 // fliters (Keep your existing filter logic)
 var btnFliter = document.getElementById("BtnFliter");
-btnFliter.addEventListener("click", function() {
+btnFliter.addEventListener("click", function () {
     var filterMenu = document.getElementById("filterMenu");
     if (filterMenu.style.display === "none" || filterMenu.style.display === "") {
         filterMenu.style.display = "block"; // Show sidebar
@@ -16,13 +16,13 @@ btnFliter.addEventListener("click", function() {
     }
 });
 var btnClose = document.getElementById("btnClose");
-btnClose.addEventListener("click", function() {
+btnClose.addEventListener("click", function () {
     filterMenu.style.display = "none";
 });
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     let priceRange = document.getElementById("priceRange");
     let priceValue = document.getElementById("priceValue");
-    priceRange.addEventListener("input", function() {
+    priceRange.addEventListener("input", function () {
         priceValue.value = priceRange.value;
     });
 });
@@ -167,7 +167,7 @@ function createCompareListCard(productName, imageSource) {
 }
 
 //Listing if an add to campare list button pressed ;
-document.addEventListener("click", function(event) {
+document.addEventListener("click", function (event) {
     if (event.target.closest(".btn-compare")) {
         // Get compare list box
         let compareList = document.getElementById("compareList");
@@ -214,6 +214,8 @@ async function sendRequest() {
 
         // Store all products globally
         allProducts = result.data.Products;
+        //setting the Filter Items 
+        setFilterItems(allProducts)
 
         // Set up pagination and render the first page
         setupPagination(allProducts.length);
@@ -227,8 +229,8 @@ async function sendRequest() {
 
 
 function renderProductsPage(page) {
-    currentPage = page; 
-    PPlace.innerHTML = ''; 
+    currentPage = page;
+    PPlace.innerHTML = '';
 
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
@@ -253,11 +255,11 @@ function renderProductsPage(page) {
 
 
 function setupPagination(totalItems) {
-    pageButtonContainer.innerHTML = ''; 
+    pageButtonContainer.innerHTML = '';
     const totalPages = Math.ceil(totalItems / productsPerPage);
 
     if (totalPages <= 1) {
-        return; 
+        return;
     }
 
     // Add "Previous" arrow
@@ -278,7 +280,7 @@ function setupPagination(totalItems) {
         pageSpan.textContent = i;
         pageSpan.classList.add('page-number');
         if (i === currentPage) {
-            pageSpan.classList.add('PActive'); 
+            pageSpan.classList.add('PActive');
         }
         pageSpan.addEventListener('click', () => renderProductsPage(i));
         pageButtonContainer.appendChild(pageSpan);
@@ -330,4 +332,54 @@ function updatePaginationArrowState(totalPages) {
             nextArrow.classList.remove('disabled');
         }
     }
+}
+
+
+//Setting the filter items(not the filtered product just yet)
+function setFilterItems(data) {
+    var categories = [];
+    var Retailer = [];
+    var brands = [];
+
+    data.forEach(product => {
+        if (product.Retailer_Names && product.Retailer_Names.length > 0) {
+            for (let i = 0; i < product.Retailer_Names.length; i++) {
+                if (product.Retailer_Names[i] && !Retailer.includes(product.Retailer_Names[i])) {
+                    Retailer.push(product.Retailer_Names[i]);                }
+            }
+        }
+        if (product.Brand && !brands.includes(product.Brand)) {
+            brands.push(product.Brand);
+        }
+
+        if (product.Category && !categories.includes(product.Category)) {
+            categories.push(product.Category);
+        }
+    });
+    console.log("Collected Retailers:", Retailer);
+    const categorySelect = document.getElementById("Dropdown_Category");
+    const RetailerSelect = document.getElementById("Dropdown_Retailer");
+    const brandSelect = document.getElementById("Dropdown_brand");
+
+
+    categories.forEach(category => {
+        var option = document.createElement("option");
+        option.value = category;
+        option.text = category;
+        categorySelect.appendChild(option);
+    });
+
+    Retailer.forEach(retail => {
+        var option = document.createElement("option");
+        option.value = retail;
+        option.text = retail;
+        RetailerSelect.appendChild(option);
+    });
+
+    brands.forEach(brand => {
+        var option = document.createElement("option");
+        option.value = brand;
+        option.text = brand;
+        brandSelect.appendChild(option);
+    });
 }
