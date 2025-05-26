@@ -107,6 +107,14 @@ class API {
             case "AdminDeleteUser": // takes in email
                 $this-> AdminDeleteUser($input);
                 break;
+            
+            case "GetUserXP":
+                $this->getUserXP($input);
+                break;
+
+            case "AddUserXP":
+                $this-> AddUserXP($input);
+                break;
 
             //Product manipulation    
             case "ProductByRetailer":
@@ -298,7 +306,8 @@ class API {
             http_response_code(200);
             $this->response("200 OK", "success",  [
                                 "message" => "$name was added",
-                                "apikey" => $apiKey
+                                "apikey" => $apiKey,
+                                
                                 ]);
             return;
         } 
@@ -329,7 +338,7 @@ class API {
         $pass = trim($input['Password']);
         
         //find the user and ensure they exist
-        $stmt = $this->DB_Connection->prepare("SELECT Password, Salt, API_Key FROM Users WHERE Email = ?");
+        $stmt = $this->DB_Connection->prepare("SELECT Password, Salt, API_Key,Email FROM Users WHERE Email = ?");
 
         // if prepare didn't prep
         if(!$stmt){
@@ -357,7 +366,9 @@ class API {
 
             if (password_verify($saltedPass, $user["Password"])) {
                 http_response_code(200);
-                $this->response("200 OK", "success", ["apikey" => $user["API_Key"]]);
+                $this->response("200 OK", "success", 
+                ["apikey" => $user["API_Key"],
+                      "email" =>$user["Email"]]);
             } 
             else {
                 http_response_code(401);
@@ -1974,7 +1985,88 @@ class API {
         }
 
     }
+    private function AddUserXP($input){
+        // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error",$input['apikey']." is Missing");
+            return;
+        }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
 
+        if(empty($input['xp'])|| !isset($input['xp'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","xp is Missing");
+            return;
+        }
+
+        if(!is_numeric($input['xp'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","xp must be a number");
+            return;
+        }
+        
+        if($input['xp'] < 0){
+        http_response_code(400);
+        $this->response("400 Bad Request","error","xp must be positive");
+        return;
+        }
+
+        $xp = $input['xp'];
+        $apiK = $input['apikey'];
+        
+
+        $currXp = $this->getUserByApiKey($apiK)['XP'];
+
+        $newXp = $xp + $currXp;
+
+        // add xp
+        $stmt = $this->DB_Connection->prepare("UPDATE Users SET XP = ? WHERE API_Key = ?");
+        $stmt->bind_param("is", $newXp,$apiK);
+
+        if($stmt->execute()){
+            http_response_code(200);
+            $this->response("200 OK","success","Congradulations, XP went up by " . $xp);
+            return;
+        }
+        else{
+             http_response_code(500);
+            $this->response("500 Internal Server Error","error","Could not increase XP :(");
+            return;
+        }
+    }
+    private function GetUserXP($input){
+        // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+        
+        $api = $input['apikey'];
+
+        if(!$this->isValidApikey($api)){
+            http_response_code(404);
+            $this->response("404 Not Found","error","apikey is not valid");
+            return;
+        }
+
+        if($this->getUserByApiKey($api)){
+            $xp = $this->getUserByApiKey($api)['XP'];
+            http_response_code(404);
+            $this->response("404 Not Found","error",["XP"=>$xp]);
+            return;
+        }else{
+            http_response_code(404);
+            $this->response("400 Bad Request","error","issue with api key");
+            return;
+        }
+
+    }
     //--------------------- HELPER FUNCTIONS -----------------//
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
