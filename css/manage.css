@@ -54,6 +54,14 @@
     bottom: 325px;
 }
 
+#btnChangeAcc {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 222px;
+}
+
 #btnDelRev {
     width: 20%;
     margin-left: 32px;
@@ -99,7 +107,7 @@
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 222px;
+    bottom: 345px;
 }
 
 
@@ -155,6 +163,11 @@
 }
 
 .retNameInput {
+    width: 30%;
+    margin-left: 32px;
+}
+
+.changeAccTypeAPIInput {
     width: 30%;
     margin-left: 32px;
 }

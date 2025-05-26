@@ -145,6 +145,7 @@ function initializeForm() {
                 .then(res => {
                     if (res.ok) {
                         console.log("Submitted successfully.");
+                        window.location.href = "login.php";
                     } else {
                         console.error("API error:", res.status);
                     }
@@ -152,7 +153,7 @@ function initializeForm() {
                 .catch(err => console.error("Network error:", err));
 
             console.log("✅ All validations passed. Would proceed with API call.");
-            alert("Form is valid!");
+            //alert("Form is valid!");
         } else {
             console.log("❌ Form has validation errors. Not submitting.");
         }
