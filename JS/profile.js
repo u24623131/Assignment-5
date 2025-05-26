@@ -133,7 +133,7 @@ function initializeForm() {
     let curSurname = document.getElementsByName("curSurname")[0];
     let curEmail = document.getElementsByName("curEmail")[0];
     let curPhoneNr = document.getElementsByName("curPhoneNr")[0];
-    let password = document.getElementsByName("curPwd")[0];
+    let curPasswordInput = document.getElementsByName("curPasswordInput")[0];
     let curType = document.getElementById("curAcc");
 
     // Get the NEW input fields for validation and update
@@ -141,7 +141,7 @@ function initializeForm() {
     let surname = document.getElementById("surname");
     let email = document.getElementById("email");
     let phoneNumber = document.getElementById("phoneNumber"); // Using 'phoneNumber' for the input ID
-    let newPassword = document.getElementById("password");
+    let newPasswordInput = document.getElementById("newPasswordInput");
     // let typeSelect = document.getElementById("type");
 
     let submit = document.getElementById("btnSave");
