@@ -89,7 +89,6 @@ include("header.php");
                         <i class="fa fa-user-tag"></i>
                         <select id="type" name="User_Type" class="Select_Type" required>
                             <option value="Normal">Normal</option>
-                            <option value="Admin">Admin</option>
                         </select>
                         <!-- <label class="error-label" id="type-error"></label> -->
                     </div>
