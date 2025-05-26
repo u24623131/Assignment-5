@@ -135,7 +135,7 @@ function initializeForm() {
             json.type = "Register";
             console.log(json); // To check if form data is correctly formatted
 
-            fetch("../../api.php", {
+            fetch("../api.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

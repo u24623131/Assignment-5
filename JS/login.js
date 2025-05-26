@@ -63,15 +63,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                         body: JSON.stringify({
                             type: "Login",
-                            email: email.value,
-                            password: password.value
+                            Email: email.value,
+                            Password: password.value
                         })
                     })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "success") {
-                        // Redirect to homepage or reload
-                        window.location.href = "index.php";
+
+                        const apiKey = data.data.API_Key; 
+
+                        const d = new Date();
+                        d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
+                        let expires = "expires=" + d.toUTCString();
+
+                        document.cookie = `api_key=${apiKey}; ${expires}; path=/; Secure; SameSite=Lax`;
+                        window.location.href = "home.php";
                     } else {
                         // Show error
                         console.error(data.data);
@@ -129,27 +136,27 @@ document.addEventListener("DOMContentLoaded", function () {
              }
         }
     }
-
-
-    // 4. Add event listener to the select dropdown
-    if (themeToggleSelect) {
-        themeToggleSelect.addEventListener("change", function() {
-            // Get the selected value from the dropdown
-            const selectedTheme = this.value; // Will be "Light" or "Dark"
-
-            // Apply the selected theme
-            applyThemePreference(selectedTheme);
-
-            // Save the selected preference to localStorage
-            try {
-                localStorage.setItem(localStorageKey, selectedTheme);
-                 console.log("Theme preference saved:", selectedTheme);
-            } catch (e) {
-                 console.error("Failed to save theme preference to localStorage:", e);
-            }
-        });
-    } else {
-        console.warn("Theme toggle select element not found (#theme-toggle).");
-    }
 });
+
+//     // 4. Add event listener to the select dropdown
+//     if (themeToggleSelect) {
+//         themeToggleSelect.addEventListener("change", function() {
+//             // Get the selected value from the dropdown
+//             const selectedTheme = this.value; // Will be "Light" or "Dark"
+
+//             // Apply the selected theme
+//             applyThemePreference(selectedTheme);
+
+//             // Save the selected preference to localStorage
+//             try {
+//                 localStorage.setItem(localStorageKey, selectedTheme);
+//                  console.log("Theme preference saved:", selectedTheme);
+//             } catch (e) {
+//                  console.error("Failed to save theme preference to localStorage:", e);
+//             }
+//         });
+//     } else {
+//         console.warn("Theme toggle select element not found (#theme-toggle).");
+//     }
+// });
 
