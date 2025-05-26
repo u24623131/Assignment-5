@@ -86,37 +86,37 @@ include("header.php");
 
             <div id="productForms"> <label class="LblPA" id="delProd">Delete Product:</label>
                 <form id="delProdForm" class="Main_Form"> <label class="LblPA lbl"> Product's Title:</label>
-                    <input class="curVal delProdTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <input class="curVal delProdTitleInput" type="text" name="delProdTitleInput" required placeholder="Product's Title:">
                     <button class="btn btnDelProd" type="button" id="btnDelProd">Delete Product</button>
                 </form>
 
                 <br>
                 <label class="LblPA" id="upProd">Update Product's Price:</label>
                 <form id="updateProdPriceForm" class="Main_Form"> <label class="LblPA lbl"> Product's Title:</label>
-                    <input class="curVal upProdTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <input class="curVal upProdTitleInput" type="text" name="upProdTitleInput" required placeholder="Product's Title:">
                     <label class="LblPA lbl"> Retailer's Name:</label>
-                    <input class="curVal upProdRetNameInput" type="text" name="retailName" required placeholder="Retailer's Name:">
+                    <input class="curVal upProdRetNameInput" type="text" name="retailerNameInput" required placeholder="Retailer's Name:">
                     <label class="LblPA lbl"> New Price:</label>
-                    <input class="curVal upPriceInput" type="text" name="retailName" required placeholder="New Price:">
+                    <input class="curVal upPriceInput" type="text" name="newProdPrice" required placeholder="New Price:">
                     <button class="btn btnUpProdPrice" type="button" id="btnUpProdPrice">Update Price</button>
                 </form>
                 <br>
 
                 <label class="LblPA" id="addProd">Add Product:</label>
                 <form id="addProdForm" class="Main_Form"> <label class="LblPA lbl"> Product's Title:</label>
-                    <input class="curVal addProdTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <input class="curVal addProdTitleInput" type="text" name="addProdTitleInput" required placeholder="Product's Title:">
                     <label class="LblPA lbl"> Product's Category:</label>
-                    <input class="curVal addProdCatInput" type="text" name="retailName" required placeholder="Product's Category:">
+                    <input class="curVal addProdCatInput" type="text" name="addProdCatInput" required placeholder="Product's Category:">
                     <label class="LblPA lbl"> Product's Description:</label>
-                    <input class="curVal addProdDescInput" type="text" name="retailName" required placeholder="Products's Description:">
+                    <input class="curVal addProdDescInput" type="text" name="addProdDescInput" required placeholder="Products's Description:">
                     <label class="LblPA lbl"> Product's Brand:</label>
-                    <input class="curVal addProdBrandInput" type="text" name="retailName" required placeholder="Product's Brand:">
+                    <input class="curVal addProdBrandInput" type="text" name="addProdBrandInput" required placeholder="Product's Brand:">
                     <label class="LblPA lbl"> Image's URL:</label>
-                    <input class="curVal addImgUrlInput" type="text" name="retailName" required placeholder="Product's Image's Url:">
+                    <input class="curVal addImgUrlInput" type="text" name="addImgUrlInput" required placeholder="Product's Image's Url:">
                     <label class="LblPA lbl"> Retailers That Sell The Product:</label>
-                    <input class="curVal addProdRetailersInput" type="text" name="retailName" required placeholder="Retailers Selling Product:">
+                    <input class="curVal addProdRetailersInput" type="text" name="addProdRetailersInput" required placeholder="Retailers Selling Product:">
                     <label class="LblPA lbl"> Prices of Product At Corresponding Retailers:</label>
-                    <input class="curVal addProdPricesInput" type="text" name="retailName" required placeholder="Product's Prices Corresponding To Retailers:">
+                    <input class="curVal addProdPricesInput" type="text" name="addProdPricesInput" required placeholder="Product's Prices Corresponding To Retailers:">
                     <button class="btn btnAddProd" type="button" id="btnAddProd">Add Product</button>
                 </form>
                 <br>

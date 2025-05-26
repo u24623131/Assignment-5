@@ -306,7 +306,7 @@ document.getElementById("btnDelRev").addEventListener("click", function (event) 
     } else {
         // clearError("retailNameInputId"); // Clear error if applicable
     }
-    
+
     if (prodTitle === "") {
         alert("Product Title is required!");
         isValid = false;
@@ -354,12 +354,287 @@ document.getElementById("btnDelRev").addEventListener("click", function (event) 
 
 document.getElementById("btnDelProd").addEventListener("click", function (event) {
     event.preventDefault();
+
+    let prodToDeleteInput = document.getElementsByName("delProdTitleInput")[0];
+
+    let isValid = true;
+    let prodToDelete = prodToDeleteInput ? prodToDeleteInput.value.trim() : "";
+
+    if (prodToDelete === "") {
+        alert("Title of product to delete is required!");
+        isValid = false;
+    } else {
+        // clearError("retailNameInputId"); // Clear error if applicable
+    }
+
+    if (isValid) {
+        const payload = {
+            type: "deleteProduct",
+            apikey: apiKey,
+            productTitle: prodToDelete
+        };
+
+        console.log("Sending payload:", payload);
+
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Successfully deleted product!");
+                    if (prodToDeleteInput) prodToDeleteInput.value = "";
+                } else {
+                    alert("Failed to delete product: " + (data.data || "Unknown error."));
+                    console.error("API error:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error deleting product:", error);
+                alert("Network error. Please check your connection.");
+            });
+    } else {
+        console.log("Validation failed. Not sending request.");
+    }
 });
 
 document.getElementById("btnUpProdPrice").addEventListener("click", function (event) {
-    event.preventDefault();
+ event.preventDefault();
+
+    let prodToUpdateInput = document.getElementsByName("upProdTitleInput")[0];
+    let retailerNameInput = document.getElementsByName("retailerNameInput")[0];
+    let newPriceInput = document.getElementsByName("newProdPrice")[0];
+
+    let isValid = true;
+    let prodToUpdate = prodToUpdateInput ? prodToUpdateInput.value.trim() : "";
+    let retailerName = retailerNameInput ? retailerNameInput.value.trim() : "";
+    let newProdPriceString = newPriceInput ? newPriceInput.value.trim() : ""; // Keep original string for initial check
+
+    // Validation for empty strings first
+    if (prodToUpdate === "") {
+        alert("Title of product to update is required!");
+        isValid = false;
+    } else {
+        // clearError("prodTitleInputId"); // Example: clear specific error
+    }
+
+    if (retailerName === "") {
+        alert("Title of retailer selling the product to update is required!");
+        isValid = false;
+    } else {
+        // clearError("retailerNameInputId"); // Example: clear specific error
+    }
+
+    // Now, handle the price input
+    let newProdPrice; // Declare here
+    if (newProdPriceString === "") { // Check if the *original string* was empty
+        alert("New price to change to is required!");
+        isValid = false;
+    } else {
+        newProdPrice = parseFloat(newProdPriceString); // Parse only if not empty
+        if (isNaN(newProdPrice)) { // Check if parsing resulted in NaN
+            alert("New price must be a valid number!");
+            isValid = false;
+        } else if (newProdPrice < 0) { // Optional: Add check for non-negative price
+            alert("Price cannot be negative!");
+            isValid = false;
+        }
+        // else { clearError("newPriceInputId"); } // Example: clear specific error
+    }
+
+    if (isValid) {
+        const payload = {
+            type: "updateProductPrice",
+            apikey: apiKey,
+            productTitle: prodToUpdate,
+            retailer: retailerName,
+            newPrice: newProdPrice // This will now be a number
+        };
+
+        console.log("Sending payload:", payload);
+
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Successfully updated price!");
+                    if (prodToUpdateInput) prodToUpdateInput.value = "";
+                    if (retailerNameInput) retailerNameInput.value = "";
+                    if (newPriceInput) newPriceInput.value = "";
+                } else {
+                    alert("Failed to update price: " + (data.data || "Unknown error."));
+                    console.error("API error:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error updating price:", error);
+                alert("Network error. Please check your connection.");
+            });
+    } else {
+        console.log("Validation failed. Not sending request.");
+    }
 });
 
 document.getElementById("btnAddProd").addEventListener("click", function (event) {
     event.preventDefault();
+
+    // Get references to input elements
+    let prodToAddInput = document.getElementsByName("addProdTitleInput")[0];
+    let categoryInput = document.getElementsByName("addProdCatInput")[0];
+    let descriptionInput = document.getElementsByName("addProdDescInput")[0];
+    let brandInput = document.getElementsByName("addProdBrandInput")[0];
+    let imgUrlInput = document.getElementsByName("addImgUrlInput")[0];
+    let retailersInput = document.getElementsByName("addProdRetailersInput")[0];
+    let pricesInput = document.getElementsByName("addProdPricesInput")[0];
+
+    let isValid = true; // Flag to track overall form validity
+
+    // Get and trim raw string values from inputs
+    let prodToAdd = prodToAddInput ? prodToAddInput.value.trim() : "";
+    let category = categoryInput ? categoryInput.value.trim() : "";
+    let description = descriptionInput ? descriptionInput.value.trim() : "";
+    let brand = brandInput ? brandInput.value.trim() : "";
+    let imgUrl = imgUrlInput ? imgUrlInput.value.trim() : "";
+    let retailersRawString = retailersInput ? retailersInput.value.trim() : ""; // Renamed for clarity
+    let pricesRawString = pricesInput ? pricesInput.value.trim() : "";       // Renamed for clarity
+
+    // --- Validation Checks for single string inputs ---
+
+    if (prodToAdd === "") {
+        alert("Title of product is required!");
+        isValid = false;
+    }
+
+    if (category === "") {
+        alert("Category of product is required!");
+        isValid = false;
+    }
+
+    if (description === "") {
+        alert("Description of product is required!");
+        isValid = false;
+    }
+
+    if (brand === "") {
+        alert("Brand of product is required!");
+        isValid = false;
+    }
+
+    // Basic URL validation (can be more robust if needed)
+    if (imgUrl === "") {
+        alert("Image URL is required!");
+        isValid = false;
+    } else if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i.test(imgUrl)) {
+        alert("Please enter a valid image URL (e.g., starts with http/https and ends with common image extensions).");
+        isValid = false;
+    }
+
+    // --- Handling and Validation for Retailers (comma-separated string to array) ---
+    let retailersArray = [];
+    if (retailersRawString === "") {
+        alert("Retailers selling the product are required!");
+        isValid = false;
+    } else {
+        // Split the string by comma, trim each item, and filter out any empty strings
+        retailersArray = retailersRawString.split(',').map(item => item.trim()).filter(item => item !== "");
+        if (retailersArray.length === 0) {
+            alert("Please enter at least one valid retailer name.");
+            isValid = false;
+        }
+    }
+
+    // --- Handling and Validation for Prices (comma-separated string to array of numbers) ---
+    let pricesArray = [];
+    if (pricesRawString === "") {
+        alert("Prices of product at corresponding retailers are required!");
+        isValid = false;
+    } else {
+        // Split the string by comma, trim each item, and attempt to parse as float
+        let tempPrices = pricesRawString.split(',').map(item => item.trim());
+        let hasInvalidPrice = false; // Flag to track if any individual price is invalid
+
+        for (let i = 0; i < tempPrices.length; i++) {
+            const priceStr = tempPrices[i];
+            if (priceStr === "") { // Handle cases like "10,,20" or "10, ,20"
+                alert("Please ensure all prices are valid numbers and not empty within the list.");
+                hasInvalidPrice = true;
+                isValid = false;
+                break; // Stop checking further prices if one is invalid
+            }
+            let parsedPrice = parseFloat(priceStr);
+            if (isNaN(parsedPrice) || parsedPrice < 0) { // Check for NaN or negative price
+                alert(`Price "${priceStr}" is not a valid non-negative number.`);
+                hasInvalidPrice = true;
+                isValid = false;
+                break; // Stop checking further prices if one is invalid
+            }
+            pricesArray.push(parsedPrice);
+        }
+
+        // Additional check: Ensure number of retailers matches number of prices
+        // Only perform this check if general validation is still good and we have retailers
+        if (isValid && retailersArray.length > 0 && pricesArray.length !== retailersArray.length) {
+            alert("The number of retailers must match the number of prices.");
+            isValid = false;
+        }
+    }
+
+
+    // --- If all validations pass, proceed with API call ---
+    if (isValid) {
+        const payload = {
+            type: "addProduct",
+            apikey: apiKey, // Ensure apiKey is defined in your script
+            Title: prodToAdd,
+            Category: category,
+            Description: description,
+            Brand: brand,
+            Image_URL: imgUrl,
+            Retailers: retailersArray, // Now correctly an array of strings
+            Prices: pricesArray        // Now correctly an array of numbers
+        };
+
+        console.log("Sending payload:", payload);
+
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Successfully added product!");
+                    // Clear all input fields on success
+                    if (prodToAddInput) prodToAddInput.value = "";
+                    if (categoryInput) categoryInput.value = "";
+                    if (descriptionInput) descriptionInput.value = "";
+                    if (brandInput) brandInput.value = "";
+                    if (imgUrlInput) imgUrlInput.value = "";
+                    if (retailersInput) retailersInput.value = "";
+                    if (pricesInput) pricesInput.value = "";
+                } else {
+                    alert("Failed to add product: " + (data.data || "Unknown error."));
+                    console.error("API error:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error adding product:", error);
+                alert("Network error. Please check your connection.");
+            });
+    } else {
+        console.log("Validation failed. Not sending request.");
+    }
 });
