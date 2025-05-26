@@ -1,121 +1,4 @@
-/* filters */
-.filter-sidebar {
-    display: none;
-    z-index: 1;
-    height: 670px;
-    width: 234px;
-    position: fixed;
-    top: 0;
-    right: 0;
-    background-color: #222;
-    overflow-x: hidden;
-    transition: 0.3s;
-    padding-top: 40px;
-    color: white;
-    padding-left: 13px;
-    border-bottom-left-radius: 34px;
-}
 
-.filter-sidebar h2 {
-    color: #ff523b;
-    margin-top: 0;
-}
-
-.Label-filter {
-    font-weight: bold;
-}
-
-.filter-section {
-    margin: 10px 0;
-}
-
-.filter-section label,
-.filter-section select {
-    display: block;
-    margin-top: 3px;
-}
-
-.filter-section select {
-    display: block;
-    margin-top: 3px;
-    background-color: #222;
-    border-radius: 7px;
-    padding: 3px;
-    height: 20px;
-}
-
-.filter-section input[type="text"] {
-    margin-right: 3px;
-    display: block;
-    margin-top: 3px;
-    background-color: #222;
-    border-radius: 7px;
-    padding: 3px;
-    height: 20px;
-    border-color: #ff523b;
-}
-
-.filter-section input[type="range"] {
-    width: 60%;
-}
-
-.inputPrice {
-    margin-right: 3px;
-    display: block;
-    margin-top: 3px;
-    background-color: #222;
-    border-radius: 7px;
-    padding: 3px;
-    height: 20px;
-    border-color: #ff523b;
-}
-
-.no-results-message {
-    color: #ff523b;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    font-size: 27px;
-}
-
-#radiogroup {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-}
-
-.close-btn {
-    position: absolute;
-    top: 7px;
-    right: 13px;
-    font-size: 17px;
-    cursor: pointer;
-    color: white;
-}
-
-.close-btn:hover {
-    background-color: #ff523b;
-}
-
-.clear-btn {
-    background-color: #ff523b;
-    color: white;
-    border: none;
-    padding: 7px 10px;
-    font-size: 11px;
-    cursor: pointer;
-    margin-top: 7px;
-}
-
-.clear-btn:hover {
-    background-color: #218838;
-}
-
-/*filter on the page */
-.fliters-group {
-    display: flex;
-    gap: 13px;
-    line-height: 20px;
-}
 
 /* Product and the containers styling */
 
@@ -154,7 +37,6 @@
 
 .compareBox {
     width: 100%;
-    /* Take full width of its wrapper */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -165,13 +47,14 @@
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
     border-radius: 13px;
     padding: 15px;
+    transition: transform 0.5s;
+    overflow: hidden;
 }
 
 .compareBox h2 {
     font-size: 18px;
     margin: 0 0 15px;
     text-align: center;
-    color: #ff523b;
 }
 
 .compareitem {
@@ -182,6 +65,14 @@
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
+    transition: transform 0.3s ease-out;
+    cursor: pointer;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.compareitem:hover {
+    transform: scale(1.1);
 }
 
 .compareitem:last-of-type {
@@ -194,12 +85,40 @@
     object-fit: cover;
     border-radius: 5px;
     margin-bottom: 5px;
+    transition: transform 0.3s ease;
 }
 
-.compareitem h4 {
-    font-size: 14px;
+.compareitem h4,
+.compareitem p {
     text-align: center;
+    width: 100%;
+    padding: 0 5px;
+    box-sizing: border-box;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tooltip-style remove message */
+.remove-message {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+    z-index: 2;
+}
+
+.compareitem:hover .remove-message {
+    opacity: 1;
 }
 
 .compareBox button {
@@ -273,19 +192,6 @@
     margin-bottom: 0;
 }
 
-/* Discount Tag Styling */
-.discount-tag {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: #ff523b;
-    color: white;
-    padding: 4px 6px;
-    font-size: 10px;
-    font-weight: bold;
-    border-bottom-right-radius: 4px;
-    z-index: 2;
-}
 
 
 /* NEW: Right Section (Product Details) */
@@ -343,7 +249,7 @@
     font-family: 'Courier New', Courier, monospace;
     font-style: italic;
     font-size: 14px;
-    color: #563434;
+    color: white;
     margin-bottom: 0;
 }
 
@@ -357,15 +263,10 @@
     flex-shrink: 0;
 }
 
-.Price-Cross {
-    color: #aaa;
-    text-decoration: line-through;
-    font-size: 10px;
-}
+
 
 .Iprice {
-    color: #aaa;
-    text-decoration: line-through;
+    color: white;
     font-size: 10px;
 }
 
@@ -376,10 +277,17 @@
     color: #ff523b;
 }
 
-.country-origin {
+.category-display {
     font-size: 12px;
     font-weight: bold;
-    color: rgb(85, 83, 83);
+    color: white;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.description-display{
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
     margin-top: 0;
     margin-bottom: 5px;
 }
@@ -395,7 +303,7 @@
     width: 100%;
 }
 
-.add-romove {
+.btn-remove {
     padding: 6px;
     border-radius: 50%;
     font-size: 14px;
@@ -405,6 +313,12 @@
     justify-content: center;
     align-items: center;
     background-color: #563434;
+}
+
+.btn-remove:hover {
+    cursor: pointer;
+    background-color: #ff523b;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .btn-compare {

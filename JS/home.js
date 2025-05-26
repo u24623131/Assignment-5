@@ -21,7 +21,7 @@ function getCookie(name) {
 
 const api_key = getCookie('api_key');
 
-// fliters (Keep your existing filter logic)
+// fliters 
 var btnFliter = document.getElementById("BtnFliter");
 btnFliter.addEventListener("click", function () {
     var filterMenu = document.getElementById("filterMenu");
@@ -43,8 +43,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+
 function createProductCard(product) {
-    // 1. Create the main product card container
+    //  Create the main product card container
     const productCardElement = document.createElement("div");
     productCardElement.className = "col-4";
     productCardElement.dataset.productId = product.Product_No;
@@ -237,9 +238,7 @@ async function sendRequest() {
         });
 
         // Store all products globally
-        console.log(getAllProducts.type)
         if (getAllProducts.type === "GetAllProducts") {
-            console.log("Here!!")
             allProducts = result.data.Products;
         } else if (getAllProducts.type === "Search") {
             allProducts = result.data;

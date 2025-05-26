@@ -35,8 +35,8 @@
         </div>
 
         <div class="filter-section">
-            <label class="Label-filter"><b>Country of Origin:</b></label>
-            <select id="Dropdown_country">
+            <label class="Label-filter"><b>Retailer:</b></label>
+            <select id="Dropdown_Retailer">
             </select>
         </div>
 
@@ -76,16 +76,19 @@
             <div class="compareitem">
                 <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
+                <div class="remove-message">Click to remove</div>
             </div>
 
             <div class="compareitem">
                 <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
+                <div class="remove-message">Click to remove</div>
             </div>
 
             <div class="compareitem">
                 <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
+                <div class="remove-message">Click to remove</div>
             </div>
 
             <button class="btn btn-compare">
@@ -94,100 +97,7 @@
         </div>
 
     <div class="ProductPlace" id="PPlace">
-            <div class="col-4">
-                <div class="product-left-section">
-                    <div class="discount-tag">16% OFF</div>
-                    <img src="..\image\ST.png">
-                </div>
-                <div class="product-right-section">
-                    <div class="title-price-row">
-                        <h4 id="Title">Compact 8 Compartment Wooden Desktop Organizer</h4>
-                        <div class="prices">
-                            <p class="Price-Cross Iprice">R499.99</p>
-                            <p class="Aprice">R299.99</p>
-                        </div>
-                    </div>
-                    <div class="retail">
-                        <i class="fas fa-chevron-left"></i>
-                        <p>Game</p>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <p class="brand">Russell Hobbs</p>
-                    <p class="country-origin">Made in China</p>
-                    <div class="btn-group">
-                        <button class="btn add-romove">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-compare">
-                            <i class="fas fa-plus-square"></i> Compare
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-              <div class="col-4">
-                <div class="product-left-section">
-                    <div class="discount-tag">16% OFF</div>
-                    <img src="..\image\ST.png">
-                </div>
-                <div class="product-right-section">
-                    <div class="title-price-row">
-                        <h4 id="Title">Compact 8 Compartment Wooden Desktop Organizer</h4>
-                        <div class="prices">
-                            <p class="Price-Cross Iprice">R499.99</p>
-                            <p class="Aprice">R299.99</p>
-                        </div>
-                    </div>
-                    <div class="retail">
-                        <i class="fas fa-chevron-left"></i>
-                        <p>Game</p>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <p class="brand">Russell Hobbs</p>
-                    <p class="country-origin">Made in China</p>
-                    <div class="btn-group">
-                        <button class="btn add-romove">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-compare">
-                            <i class="fas fa-plus-square"></i> Compare
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-              <div class="col-4">
-                <div class="product-left-section">
-                    <div class="discount-tag">16% OFF</div>
-                    <img src="..\image\ST.png">
-                </div>
-                <div class="product-right-section">
-                    <div class="title-price-row">
-                        <h4 id="Title">Compact 8 Compartment Wooden Desktop Organizer</h4>
-                        <div class="prices">
-                            <p class="Price-Cross Iprice">R499.99</p>
-                            <p class="Aprice">R299.99</p>
-                        </div>
-                    </div>
-                    <div class="retail">
-                        <i class="fas fa-chevron-left"></i>
-                        <p>Game</p>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <p class="brand">Russell Hobbs</p>
-                    <p class="country-origin">Made in China</p>
-                    <div class="btn-group">
-                        <button class="btn add-romove">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-compare">
-                            <i class="fas fa-plus-square"></i> Compare
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
+    </div>
 
         <div class="page-btn">
             <span>1</span>
