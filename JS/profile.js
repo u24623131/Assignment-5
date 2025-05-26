@@ -12,7 +12,7 @@ document.getElementById("btnDeleteAccount").addEventListener("click", function (
 
     const payload = {
         type: "DeleteAccount",
-        apikey: apiKey 
+        apikey: apiKey
     };
 
     console.log("Sending payload:", payload);
@@ -179,133 +179,360 @@ function initializeForm() {
 
 
     submit.addEventListener("click", function (event) {
+        // event.preventDefault();
+
+        // let isValid = true; // Flag to track overall form validity
+        // const updatedFields = {}; // Object to store only the fields that are valid and non-empty
+
+        // // --- Name (Required Field) ---
+        // if (!fname || fname.value.trim() === "") {
+        //     clearError("name");
+        // } else if (!regexNameSurname.test(fname.value)) {
+        //     showError("name", "Name can only contain letters (e.g., John Doe).");
+        //     isValid = false;
+        // } else {
+        //     clearError("name");
+        //     updatedFields.name = fname.value.trim(); // Add to updated fields if valid
+        // }
+
+        // // --- Surname (Required Field) ---
+        // if (!surname || surname.value.trim() === "") {
+        //     clearError("surname");
+        // } else if (!regexNameSurname.test(surname.value)) {
+        //     showError("surname", "Surname can only contain letters (e.g., Smith).");
+        //     isValid = false;
+        // } else {
+        //     clearError("surname");
+        //     updatedFields.surname = surname.value.trim(); // Add to updated fields if valid
+        // }
+
+        // // --- Email (Required Field) ---
+        // if (!email || email.value.trim() === "") {
+        //     clearError("email");
+        // } else if (!regexEmail.test(email.value)) {
+        //     showError("email", "Please enter a valid email address!");
+        //     isValid = false;
+        // } else {
+        //     clearError("email");
+        //     updatedFields.email = email.value.trim(); // Add to updated fields if valid
+        // }
+
+        // // --- Phone Number (Optional Field) ---
+        // // Check if a value is entered. Only validate if it's not empty.
+        // if (phoneNumber && phoneNumber.value.trim() !== "") {
+        //     if (!regexPhoneNr.test(phoneNumber.value)) {
+        //         showError("phoneNumber", "Please enter a valid phone number (e.g., +27831234567 or 0831234567)!");
+        //         isValid = false;
+        //     } else {
+        //         clearError("phoneNumber");
+        //         updatedFields.cell_no = phoneNumber.value.trim(); // API expects 'cell_no'
+        //     }
+        // } else {
+        //     clearError("phoneNumber"); // Clear error if optional field is empty
+        //     // Do NOT add to updatedFields if empty, as per "Optional Fields" requirement
+        // }
+
+
+        // // --- Password (Required Field) ---
+        // if (!newPassword || newPassword.value.trim() === "") {
+
+        //     clearError("password");
+        // } else
+        //     if (!regexPassword.test(newPassword.value)) {
+        //         showError("password", "Password must be 8+ characters with upper/lowercase, numbers, and symbols!");
+        //         isValid = false;
+        //     } else {
+        //         clearError("password");
+        //         updatedFields.password = newPassword.value.trim(); // Add to updated fields if valid
+        //     }
+
+        // // --- Account Type (Required Field) ---
+        // // Assuming your select has id="type" and default value is not empty string
+        // // If it's a dropdown, usually all options are valid unless you have a "Select..." default.
+        // if (!typeSelect || typeSelect.value.trim() === "") {
+        //     showError("type", "Account Type is required!");
+        //     isValid = false;
+        // } else {
+        //     clearError("type");
+        //     updatedFields.type = typeSelect.value; // Add to updated fields if valid
+        // }
+
+
+        // // --- API Call Logic ---
+        // if (isValid) {
+        //     // Check if at least one optional field has been provided for update
+        //     const hasOptionalFields = Object.keys(updatedFields).length > 0;
+
+        //     if (!hasOptionalFields) {
+        //         // If only required fields were *initially* empty and now filled, but no optional fields changed,
+        //         // you might want to prevent an empty update call.
+        //         // However, with "UpdateUserDetails" and *all* the current fields being required,
+        //         // this check is slightly redundant unless you convert some of them to optional.
+        //         // For your current setup, it will always have 'name', 'surname', 'email', 'password', 'type' if valid.
+        //         // The API spec says "at least one required" under Optional fields. This is slightly confusing.
+        //         // Let's assume if any of the mutable fields are changed (name, surname, etc.), we send them.
+        //     }
+
+        //     // The API requires 'type' and 'apikey'
+        //     updatedFields.type = "UpdateUserDetails"; // Add the type of API call
+        //     updatedFields.apikey = apiKey; // Add the API key
+
+        //     console.log("Sending to API:", updatedFields); // Check the payload before sending
+
+        //     fetch("../api.php", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify(updatedFields), // Send only the valid and non-empty fields
+        //     })
+        //         .then(res => res.json()) // Assume API always returns JSON
+        //         .then(data => {
+        //             if (data.status === "success") {
+        //                 console.log("Submitted successfully:", data);
+        //                 alert("Profile updated successfully!");
+        //                 initializeForm(); // Re-fetch details to show updated values
+        //             } else {
+        //                 console.error("API error:", data.data);
+        //                 alert("Failed to update profile: " + data.data); // Display API-specific error
+        //             }
+        //         })
+        //         .catch(err => {
+        //             console.error("Network error:", err);
+        //             alert("Network error. Please check your connection.");
+        //         });
+
+        //     console.log("✅ All validations passed. Proceeding with API call.");
+        // } else {
+        //     console.log("❌ Form has validation errors. Not submitting.");
+        // }
         event.preventDefault();
 
         let isValid = true; // Flag to track overall form validity
-        const updatedFields = {}; // Object to store only the fields that are valid and non-empty
+        const updatedUserDetailsFields = {}; // Object to store only the non-empty user details fields for update
+        let oldPassword = null; // To store the current password for the ChangePassword API call
+        let newPasswordVal = null; // To store the new password for the ChangePassword API call
 
-        // --- Name (Required Field) ---
+        // Get references to the password input fields (assuming their variables are correctly defined)
+        // You might need to declare these if they are not already.
+        // Example: const curPasswordInput = document.getElementById("curPasswordInputId");
+        // Example: const newPasswordInput = document.getElementById("newPasswordInputId");
+
+
+        // --- Name (Required Field for User Details Update) ---
         if (!fname || fname.value.trim() === "") {
-            clearError("name");
+            showError("name", "Name is required!"); // It's a required field for the update
+            isValid = false;
         } else if (!regexNameSurname.test(fname.value)) {
             showError("name", "Name can only contain letters (e.g., John Doe).");
             isValid = false;
         } else {
             clearError("name");
-            updatedFields.name = fname.value.trim(); // Add to updated fields if valid
+            updatedUserDetailsFields.name = fname.value.trim();
         }
 
-        // --- Surname (Required Field) ---
+        // --- Surname (Required Field for User Details Update) ---
         if (!surname || surname.value.trim() === "") {
-            clearError("surname");
+            showError("surname", "Surname is required!");
+            isValid = false;
         } else if (!regexNameSurname.test(surname.value)) {
             showError("surname", "Surname can only contain letters (e.g., Smith).");
             isValid = false;
         } else {
             clearError("surname");
-            updatedFields.surname = surname.value.trim(); // Add to updated fields if valid
+            updatedUserDetailsFields.surname = surname.value.trim();
         }
 
-        // --- Email (Required Field) ---
+        // --- Email (Required Field for User Details Update) ---
         if (!email || email.value.trim() === "") {
-            clearError("email");
+            showError("email", "Email is required!");
+            isValid = false;
         } else if (!regexEmail.test(email.value)) {
             showError("email", "Please enter a valid email address!");
             isValid = false;
         } else {
             clearError("email");
-            updatedFields.email = email.value.trim(); // Add to updated fields if valid
+            updatedUserDetailsFields.email = email.value.trim();
         }
 
-        // --- Phone Number (Optional Field) ---
-        // Check if a value is entered. Only validate if it's not empty.
+        // --- Phone Number (Optional Field for User Details Update) ---
         if (phoneNumber && phoneNumber.value.trim() !== "") {
             if (!regexPhoneNr.test(phoneNumber.value)) {
                 showError("phoneNumber", "Please enter a valid phone number (e.g., +27831234567 or 0831234567)!");
                 isValid = false;
             } else {
                 clearError("phoneNumber");
-                updatedFields.cell_no = phoneNumber.value.trim(); // API expects 'cell_no'
+                updatedUserDetailsFields.cell_no = phoneNumber.value.trim(); // API expects 'cell_no'
             }
         } else {
-            clearError("phoneNumber"); // Clear error if optional field is empty
-            // Do NOT add to updatedFields if empty, as per "Optional Fields" requirement
+            clearError("phoneNumber");
+            // If optional field is empty, do not add it to updatedUserDetailsFields
         }
 
-
-        // --- Password (Required Field) ---
-        if (!newPassword || newPassword.value.trim() === "") {
-
-            clearError("password");
-        } else
-            if (!regexPassword.test(newPassword.value)) {
-                showError("password", "Password must be 8+ characters with upper/lowercase, numbers, and symbols!");
-                isValid = false;
-            } else {
-                clearError("password");
-                updatedFields.password = newPassword.value.trim(); // Add to updated fields if valid
-            }
-
-        // --- Account Type (Required Field) ---
-        // Assuming your select has id="type" and default value is not empty string
-        // If it's a dropdown, usually all options are valid unless you have a "Select..." default.
+        // --- Account Type (Required Field for User Details Update) ---
         if (!typeSelect || typeSelect.value.trim() === "") {
             showError("type", "Account Type is required!");
             isValid = false;
         } else {
             clearError("type");
-            updatedFields.type = typeSelect.value; // Add to updated fields if valid
+            updatedUserDetailsFields.type = typeSelect.value;
+        }
+
+
+        // --- Password Change Logic ---
+        // Check if *either* old password or new password fields have values.
+        // This indicates the user intends to change the password.
+        const isPasswordChangeAttempted = (curPasswordInput && curPasswordInput.value.trim() !== "") ||
+            (newPasswordInput && newPasswordInput.value.trim() !== "");
+
+        if (isPasswordChangeAttempted) {
+            // Old Password (Required for password change)
+            if (!curPasswordInput || curPasswordInput.value.trim() === "") {
+                showError("curPassword", "Current password is required to change password!");
+                isValid = false;
+            } else {
+                clearError("curPassword");
+                oldPassword = curPasswordInput.value.trim();
+            }
+
+            // New Password (Required for password change, and must meet regex)
+            if (!newPasswordInput || newPasswordInput.value.trim() === "") {
+                showError("newPassword", "New password is required!");
+                isValid = false;
+            } else if (!regexPassword.test(newPasswordInput.value)) {
+                showError("newPassword", "New password must be 8+ characters with upper/lowercase, numbers, and symbols!");
+                isValid = false;
+            } else {
+                clearError("newPassword");
+                newPasswordVal = newPasswordInput.value.trim();
+            }
+
+            // Additional check: New password should not be the same as old password
+            if (oldPassword === newPasswordVal && oldPassword !== null) {
+                showError("newPassword", "New password cannot be the same as the current password.");
+                isValid = false;
+            }
+        } else {
+            // If no password change is attempted, clear any existing errors for these fields
+            clearError("curPassword");
+            clearError("newPassword");
         }
 
 
         // --- API Call Logic ---
         if (isValid) {
-            // Check if at least one optional field has been provided for update
-            const hasOptionalFields = Object.keys(updatedFields).length > 0;
+            const fetchPromises = []; // Array to hold promises for API calls
 
-            if (!hasOptionalFields) {
-                // If only required fields were *initially* empty and now filled, but no optional fields changed,
-                // you might want to prevent an empty update call.
-                // However, with "UpdateUserDetails" and *all* the current fields being required,
-                // this check is slightly redundant unless you convert some of them to optional.
-                // For your current setup, it will always have 'name', 'surname', 'email', 'password', 'type' if valid.
-                // The API spec says "at least one required" under Optional fields. This is slightly confusing.
-                // Let's assume if any of the mutable fields are changed (name, surname, etc.), we send them.
+            // 1. User Details Update (if any mutable field was changed)
+            // Check if any of the user detail fields have values to send (excluding type and apikey for now)
+            const hasUserDetailsToUpdate = Object.keys(updatedUserDetailsFields).some(key =>
+                key !== 'type' && key !== 'apikey' // Exclude these, as they are added later
+            );
+
+            if (hasUserDetailsToUpdate) {
+                const userDetailsPayload = {
+                    type: "UpdateUserDetails",
+                    apikey: apiKey,
+                    ...updatedUserDetailsFields // Spread operator to add all collected fields
+                };
+                console.log("Sending User Details to API:", userDetailsPayload);
+
+                fetchPromises.push(
+                    fetch("../api.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(userDetailsPayload),
+                    })
+                        .then(res => {
+                            if (!res.ok) {
+                                return res.json().then(errorData => {
+                                    throw new Error(errorData.data || `HTTP error! Status: ${res.status}`);
+                                });
+                            }
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data.status === "success") {
+                                console.log("User details updated successfully:", data);
+                                return { success: true, message: "User details updated." };
+                            } else {
+                                throw new Error("Failed to update user details: " + (data.data || "Unknown error."));
+                            }
+                        })
+                );
             }
 
-            // The API requires 'type' and 'apikey'
-            updatedFields.type = "UpdateUserDetails"; // Add the type of API call
-            updatedFields.apikey = apiKey; // Add the API key
+            // 2. Password Change (if attempted and valid)
+            if (isPasswordChangeAttempted && oldPassword && newPasswordVal) {
+                const passwordChangePayload = {
+                    type: "ChangePassword",
+                    apikey: apiKey,
+                    oldPassword: oldPassword,
+                    newPassword: newPasswordVal
+                };
+                console.log("Sending Password Change to API:", passwordChangePayload);
 
-            console.log("Sending to API:", updatedFields); // Check the payload before sending
+                fetchPromises.push(
+                    fetch("../api.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(passwordChangePayload),
+                    })
+                        .then(res => {
+                            if (!res.ok) {
+                                return res.json().then(errorData => {
+                                    throw new Error(errorData.data || `HTTP error! Status: ${res.status}`);
+                                });
+                            }
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data.status === "success") {
+                                console.log("Password changed successfully:", data);
+                                return { success: true, message: "Password changed." };
+                            } else {
+                                throw new Error("Failed to change password: " + (data.data || "Unknown error."));
+                            }
+                        })
+                );
+            }
 
-            fetch("../api.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedFields), // Send only the valid and non-empty fields
-            })
-                .then(res => res.json()) // Assume API always returns JSON
-                .then(data => {
-                    if (data.status === "success") {
-                        console.log("Submitted successfully:", data);
-                        alert("Profile updated successfully!");
-                        initializeForm(); // Re-fetch details to show updated values
-                    } else {
-                        console.error("API error:", data.data);
-                        alert("Failed to update profile: " + data.data); // Display API-specific error
-                    }
-                })
-                .catch(err => {
-                    console.error("Network error:", err);
-                    alert("Network error. Please check your connection.");
-                });
+            // Execute all promises in parallel
+            if (fetchPromises.length > 0) {
+                Promise.all(fetchPromises)
+                    .then(results => {
+                        // Check if all individual promises were successful
+                        const allSuccess = results.every(res => res.success);
+                        if (allSuccess) {
+                            alert("Profile updated successfully!");
+                            initializeForm(); // Re-fetch details to show updated values and clear password fields
+                            // Clear password fields only after successful update
+                            if (curPasswordInput) curPasswordInput.value = "";
+                            if (newPasswordInput) newPasswordInput.value = "";
+                        } else {
+                            // This block might be hit if some promises succeed but others fail,
+                            // but our current .then structure for individual fetches throws on failure.
+                            // So, typically, if any fails, it jumps to the .catch block.
+                        }
+                    })
+                    .catch(err => {
+                        console.error("API error during profile update:", err);
+                        alert("Error updating profile: " + err.message); // Display specific error message
+                    });
+            } else {
+                alert("No changes detected to update.");
+                console.log("No changes detected to update.");
+            }
 
-            console.log("✅ All validations passed. Proceeding with API call.");
+            console.log("✅ All validations passed. Proceeding with API call(s).");
         } else {
             console.log("❌ Form has validation errors. Not submitting.");
         }
+
     });
 
 }
