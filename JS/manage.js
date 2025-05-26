@@ -191,14 +191,165 @@ document.getElementById("btnUpdateRet").addEventListener("click", function (even
 
 document.getElementById("btnDelAcc").addEventListener("click", function (event) {
     event.preventDefault();
+
+    let accToDeleteInput = document.getElementsByName("accToDeleteAPIKey")[0];
+
+    let isValid = true;
+    let apiKeyToDelete = accToDeleteInput ? accToDeleteInput.value.trim() : "";
+
+    if (apiKeyToDelete === "") {
+        alert("APIKey of account to delete is required!");
+        isValid = false;
+    } else {
+        // clearError("retailNameInputId"); // Clear error if applicable
+    }
+
+    if (isValid) {
+        const payload = {
+            type: "DeleteAccount",
+            apikey: apiKeyToDelete
+        };
+
+
+        console.log("Sending payload:", payload);
+
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Successfully deleted account!");
+                    if (accToDeleteInput) accToDeleteInput.value = "";
+                } else {
+                    alert("Failed to delete account: " + (data.data || "Unknown error."));
+                    console.error("API error:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error deleting account:", error);
+                alert("Network error. Please check your connection.");
+            });
+    } else {
+        console.log("Validation failed. Not sending request.");
+    }
 });
 
 document.getElementById("btnChangeAcc").addEventListener("click", function (event) {
     event.preventDefault();
+
+    let accToChangeInput = document.getElementsByName("accToChangeAPIKey")[0];
+
+    let isValid = true;
+    let apiKeyToChange = accToChangeInput ? accToChangeInput.value.trim() : "";
+
+    if (apiKeyToChange === "") {
+        alert("APIKey of account to change is required!");
+        isValid = false;
+    } else {
+        // clearError("retailNameInputId"); // Clear error if applicable
+    }
+
+    if (isValid) {
+        const payload = {
+            type: "MakeUserAdmin",
+            adminkey: apiKey,
+            targetkey: apiKeyToChange
+        };
+
+
+        console.log("Sending payload:", payload);
+
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Successfully changed account type!");
+                    if (accToChangeInput) accToChangeInput.value = "";
+                } else {
+                    alert("Failed to change account type: " + (data.data || "Unknown error."));
+                    console.error("API error:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error changing account type:", error);
+                alert("Network error. Please check your connection.");
+            });
+    } else {
+        console.log("Validation failed. Not sending request.");
+    }
 });
 
 document.getElementById("btnDelRev").addEventListener("click", function (event) {
     event.preventDefault();
+
+    let reviewerAPIKeyInput = document.getElementsByName("reviewerAPIKey")[0];
+    let productTitleInput = document.getElementsByName("prodTitle")[0];
+
+    let isValid = true;
+    let reviewerAPIKey = reviewerAPIKeyInput ? reviewerAPIKeyInput.value.trim() : "";
+    let prodTitle = productTitleInput ? productTitleInput.value.trim() : "";
+
+    if (reviewerAPIKey === "") {
+        alert("Reviewer API_Key is required!");
+        isValid = false;
+    } else {
+        // clearError("retailNameInputId"); // Clear error if applicable
+    }
+    
+    if (prodTitle === "") {
+        alert("Product Title is required!");
+        isValid = false;
+    } else {
+        // clearError("retailNameInputId"); // Clear error if applicable
+    }
+
+    if (isValid) {
+        const payload = {
+            type: "removeReview",
+            apikey: apiKey,
+            Title: prodTitle,
+            userapikey: reviewerAPIKey
+        };
+
+
+        console.log("Sending payload:", payload);
+
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Successfully removed review!");
+                    if (reviewerAPIKeyInput) reviewerAPIKeyInput.value = "";
+                    if (productTitleInput) productTitleInput.value = "";
+                } else {
+                    alert("Failed to remove review: " + (data.data || "Unknown error."));
+                    console.error("API error:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error removing review:", error);
+                alert("Network error. Please check your connection.");
+            });
+    } else {
+        console.log("Validation failed. Not sending request.");
+    }
 });
 
 document.getElementById("btnDelProd").addEventListener("click", function (event) {

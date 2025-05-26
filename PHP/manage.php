@@ -64,21 +64,21 @@ include("header.php");
 
             <div id="userForms" style="display: none;"> <label class="LblPA" id="delAcc">Delete Account:</label>
                 <form id="delAccForm" class="Main_Form"> <label class="LblPA lbl"> Account's API Key:</label>
-                    <input class="curVal delAccAPIInput" type="text" name="retailName" required placeholder="Account To Delete's API Key:">
+                    <input class="curVal delAccAPIInput" type="text" name="accToDeleteAPIKey" required placeholder="Account To Delete's API Key:">
                     <button class="btn btnDelAcc" type="button" id="btnDelAcc">Delete Account</button>
                 </form>
 
                 <br><label class="LblPA" id="remRev">Change User's Account Type:</label>
                 <form id="changeAccTypeForm" class="Main_Form"> <label class="LblPA lbl"> Account's API Key:</label>
-                    <input class="curVal changeAccTypeAPIInput" type="text" name="retailName" required placeholder="Account To Change's API Key:">
+                    <input class="curVal changeAccTypeAPIInput" type="text" name="accToChangeAPIKey" required placeholder="Account To Change's API Key:">
                     <button class="btn btnChangeAcc" type="button" id="btnChangeAcc">Change Account</button>
                 </form>
 
                 <br>
                 <label class="LblPA" id="remRev">Remove User's Review:</label> <form id="remRevForm" class="Main_Form"> <label class="LblPA lbl"> Account's API Key:</label>
-                    <input class="curVal delAccAPIInput" type="text" name="retailName" required placeholder="Account To Delete's API Key:">
+                    <input class="curVal delAccAPIInput" type="text" name="reviewerAPIKey" required placeholder="APIKey of Reviewer Account:">
                     <label class="LblPA lbl"> Product Title:</label>
-                    <input class="curVal prodTitleInput" type="text" name="retailName" required placeholder="Product's Title:">
+                    <input class="curVal prodTitleInput" type="text" name="prodTitle" required placeholder="Product's Title:">
                     <button class="btn btnDelRev" type="button" id="btnDelRev">Remove Review</button>
                 </form>
                 <br>
