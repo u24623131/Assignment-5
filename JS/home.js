@@ -31,7 +31,7 @@ function createProductCard(product) {
     // 1. Create the main product card container
     const productCardElement = document.createElement("div");
     productCardElement.className = "col-4";
-
+    productCardElement.dataset.productId = product.Product_No;
     // Create and append
     // image
     const productImage = document.createElement("img");
@@ -194,6 +194,7 @@ var getAllProducts = {
 
 sendRequest();
 
+//Request ----
 async function sendRequest() {
     console.log("SENDING REQUEST");
     const reqURL = '../api.php';
@@ -213,13 +214,63 @@ async function sendRequest() {
         });
 
         // Store all products globally
-        allProducts = result.data.Products;
+        console.log(getAllProducts.type )
+        if(getAllProducts.type === "GetAllProducts"){
+            console.log("Here!!")
+            allProducts = result.data.Products;
+        }else if(getAllProducts.type === "Search"){
+            allProducts = result.data ;
+        }
+        
         //setting the Filter Items 
         setFilterItems(allProducts)
 
         // Set up pagination and render the first page
         setupPagination(allProducts.length);
         renderProductsPage(currentPage);
+        return allProducts ;
+
+    } catch (error) {
+        console.error("Request failed", error);
+    }
+}
+
+//No Response Request
+
+async function sendRequest() {
+    console.log("SENDING REQUEST");
+    const reqURL = '../api.php';
+
+    try {
+        const response = await fetch(reqURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(getAllProducts)
+        });
+
+        const result = await response.json();
+        console.dir(result, {
+            depth: null
+        });
+
+        // Store all products globally
+        console.log(getAllProducts.type )
+        if(getAllProducts.type === "GetAllProducts"){
+            console.log("Here!!")
+            allProducts = result.data.Products;
+        }else if(getAllProducts.type === "Search"){
+            allProducts = result.data ;
+        }
+        
+        //setting the Filter Items 
+        setFilterItems(allProducts)
+
+        // Set up pagination and render the first page
+        setupPagination(allProducts.length);
+        renderProductsPage(currentPage);
+        return allProducts ;
 
     } catch (error) {
         console.error("Request failed", error);
@@ -337,6 +388,11 @@ function updatePaginationArrowState(totalPages) {
 
 //Setting the filter items(not the filtered product just yet)
 function setFilterItems(data) {
+
+    if (window.filtersInitialized) { 
+        return ;
+    }
+    window.filtersInitialized = true; 
     var categories = [];
     var Retailer = [];
     var brands = [];
@@ -383,3 +439,95 @@ function setFilterItems(data) {
         brandSelect.appendChild(option);
     });
 }
+
+// setting filters when the page loads 
+
+ document.addEventListener('DOMContentLoaded', (event) => {
+
+        var btnSearch = document.getElementById("btnSearch");
+        btnSearch.addEventListener("click",function(){
+        getAllProducts = {
+            type: "Search", 
+            apikey : "766d4969d53b80ae446ef13d892736ff" ,
+            search: {
+                        "Title" : "",
+                        "Category" : "",
+                        "Description" : "",
+                        "Brand" : ""
+                    }
+        };
+            var input_search = document.querySelector('input[name="search"]');
+            getAllProducts.search.Title = input_search.value ;
+            sendRequest();
+        })
+
+        // const sortSelect = document.querySelector(".filters-btn");
+        // sortSelect.addEventListener("change", function () {
+        //     var selectedSort = this.value;
+    
+        //     if (selectedSort === "price_asc") {
+        //         getAllProducts.sort = "final_price";
+        //         getAllProducts.order = "ASC";
+        //     } else if (selectedSort === "price_desc") {
+        //         getAllProducts.sort = "final_price";
+        //         getAllProducts.order = "DESC";
+        //     } else if (selectedSort === "Title") {
+        //         getAllProducts.sort = "title";
+        //         getAllProducts.order = "ASC";
+        //     } else if (selectedSort === "Latest") {
+        //         getAllProducts.sort = "date_first_available";
+        //         getAllProducts.order = "DESC";
+        //     } else if (selectedSort === "Country") {
+        //         getAllProducts.sort = "country_of_origin";
+        //         getAllProducts.order = "ASC";
+        //     }
+    
+        //     sendRequest(); // Refresh products after sorting
+        // });
+    
+        // var priceRange = document.querySelectorAll('input[id="priceRange"]');
+        // priceRange.forEach(input => {
+        // input.addEventListener("input", function () {
+        //         sendRequest();
+        //     });
+        // });
+
+        // var priceRange = document.querySelectorAll('input[id="priceValue"]');
+        // priceRange.forEach(input => {
+        // input.addEventListener("input", function () {
+        //         sendRequest();
+        //     });
+        // });
+        
+        // const categorySelect = document.getElementById("Dropdown_Category");
+        // const countrySelect = document.getElementById("Dropdown_country");
+        // const brandSelect = document.getElementById("Dropdown_brand");
+    
+        // categorySelect.addEventListener("change", function () {
+        //     getAllProducts.search.categories = categorySelect.value;
+        //     sendRequest();
+        // });
+        
+        // countrySelect.addEventListener("change", function () {
+        //     getAllProducts.search.country_of_origin = countrySelect.value;
+        //     sendRequest();
+        // });
+        
+        // brandSelect.addEventListener("change", function () {
+        //     getAllProducts.search.brand = brandSelect.value;
+        //     sendRequest();
+        // });
+        ///////////////////////////////////////////////////////////////////////////
+        // const btnClear = document.getElementById(btnClear)
+        // btnClear.addEventListener("click",function(){
+            
+        //     getAllProducts.search.title ="";
+        //     getAllProducts.search.categories = "";
+        //     getAllProducts.search.country_of_origin ="";
+        //     getAllProducts.search.brand ="";
+        //     fetchProducts() ;
+        // });
+    });
+
+
+    //Adding to the  ADD TO FAVOURITES
