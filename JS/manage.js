@@ -640,14 +640,45 @@ document.getElementById("btnAddProd").addEventListener("click", function (event)
 });
 
 document.getElementById("btnShowUsers").addEventListener("click", function (event) {
+    // event.preventDefault();
+
+
+    // const payload = {
+    //     type: "GetAllUsers",
+    //     apikey: apiKey
+    // };
+
+
+    // console.log("Sending payload:", payload);
+
+    // fetch("../api.php", {
+    //     method: "POST",
+    //     headers: {
+    //         "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify(payload)
+    // })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.status === "success") {
+    //             alert("Successfully retrieved users!");
+    //         } else {
+    //             alert("Failed to retrieve users: " + (data.data || "Unknown error."));
+    //             console.error("API error:", data.data);
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error("Network error retrieving users:", error);
+    //         alert("Network error. Please check your connection.");
+    //     });
+
     event.preventDefault();
 
-
+    // Correct payload type to match the PHP API handler for users
     const payload = {
-        type: "GetAllProducts",
-        apikey: apiKey
+        type: "GetAllUsers", // Changed from "GetAllProducts" to "GetAllUsers"
+        apikey: apiKey      // Ensure apiKey is defined in your script
     };
-
 
     console.log("Sending payload:", payload);
 
@@ -658,18 +689,94 @@ document.getElementById("btnShowUsers").addEventListener("click", function (even
         },
         body: JSON.stringify(payload)
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Successfully retrieved users!");
-            } else {
-                alert("Failed to retrieve users: " + (data.data || "Unknown error."));
-                console.error("API error:", data.data);
-            }
-        })
-        .catch(error => {
-            console.error("Network error retrieving users:", error);
-            alert("Network error. Please check your connection.");
-        });
+    .then(response => {
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+            // If not, throw an error to be caught by .catch()
+            // This is important for handling HTTP errors (like 403, 400, 500 from PHP)
+            return response.json().then(errorData => {
+                throw new Error(errorData.data || `HTTP error! Status: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === "success" && data.data) {
+            // Get the list container and modal elements
+            const usersListDiv = document.getElementById("usersList");
+            const usersModal = document.getElementById("usersModal");
 
+            usersListDiv.innerHTML = ''; // Clear previous content
+
+            if (data.data.length > 0) {
+                // Create a table to display users
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+
+                // Table header
+                const thead = table.createTHead();
+                const headerRow = thead.insertRow();
+                const emailHeader = document.createElement('th');
+                emailHeader.textContent = 'Email';
+                emailHeader.style.border = '1px solid #ddd';
+                emailHeader.style.padding = '8px';
+                emailHeader.style.textAlign = 'left';
+                headerRow.appendChild(emailHeader);
+
+                const apiKeyHeader = document.createElement('th');
+                apiKeyHeader.textContent = 'API Key';
+                apiKeyHeader.style.border = '1px solid #ddd';
+                apiKeyHeader.style.padding = '8px';
+                apiKeyHeader.style.textAlign = 'left';
+                headerRow.appendChild(apiKeyHeader);
+                
+                // Table body
+                const tbody = table.createTBody();
+                data.data.forEach(user => {
+                    const row = tbody.insertRow();
+                    const emailCell = row.insertCell();
+                    emailCell.textContent = user.Email;
+                    emailCell.style.border = '1px solid #ddd';
+                    emailCell.style.padding = '8px';
+
+                    const apiKeyCell = row.insertCell();
+                    apiKeyCell.textContent = user.API_Key;
+                    apiKeyCell.style.border = '1px solid #ddd';
+                    apiKeyCell.style.padding = '8px';
+                });
+                usersListDiv.appendChild(table);
+
+            } else {
+                usersListDiv.innerHTML = '<p>No users found.</p>';
+            }
+
+            // Display the modal
+            usersModal.style.display = "block";
+
+            // Add event listener to close button (if not already added globally)
+            const closeButton = usersModal.querySelector('.close-button');
+            if (closeButton) {
+                closeButton.onclick = function() {
+                    usersModal.style.display = "none";
+                }
+            }
+
+            // Optional: Close modal if user clicks outside of it
+            window.onclick = function(event) {
+                if (event.target === usersModal) {
+                    usersModal.style.display = "none";
+                }
+            }
+
+        } else {
+            // Handle API success status but empty or problematic data.data
+            alert("Failed to retrieve users: " + (data.data || "Unknown API response data."));
+            console.error("API error:", data.data);
+        }
+    })
+    .catch(error => {
+        console.error("Fetch error:", error);
+        alert("Error retrieving users: " + error.message); // Display error message from the thrown error
+    });
 });
