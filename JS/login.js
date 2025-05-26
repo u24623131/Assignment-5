@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
         submit.addEventListener("click", function (event) {
             event.preventDefault();
             // Logging to check the values
- if (regexEmail.test(email.value)) {
+            if (regexEmail.test(email.value)) {
                 let errorContainer = document.getElementById("email-error");
                 if (errorContainer != null) {
                     errorContainer.innerHTML = "";
@@ -56,42 +56,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             if (regexEmail.test(email.value) && regexPassword.test(password.value)) {
-                    fetch("../api.php", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            type: "Login",
-                            Email: email.value,
-                            Password: password.value
-                        })
+                fetch("../api.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        type: "Login",
+                        Email: email.value,
+                        Password: password.value
                     })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
 
-                        console.log(data);
-                        const apiKey = data.data.apikey; 
+                            console.log(data);
+                            const apiKey = data.data.apikey;
 
-                        const d = new Date();
-                        d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
-                        let expires = "expires=" + d.toUTCString();
+                            const d = new Date();
+                            d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
+                            let expires = "expires=" + d.toUTCString();
 
-                        document.cookie = `api_key=${apiKey}; ${expires}; path=/; Secure; SameSite=Lax`;
-                        window.location.href = "home.php";
-                    } else {
-                        // Show error
-                        console.error(data.data);
-                    }
-                });
+                            document.cookie = `api_key=${apiKey}; ${expires}; path=/; Secure; SameSite=Lax`;
+                            window.location.href = "home.php";
+                        } else {
+                            // Show error
+                            console.error(data.data);
+                        }
+                    });
             }
         });
     } else {
         console.error("Submit button not found!");
     }
 
-       const themeToggleSelect = document.getElementById("theme-toggle");
+    const themeToggleSelect = document.getElementById("theme-toggle");
     const body = document.body; // Get the body element
 
     // Define the class name for dark mode
@@ -105,12 +105,12 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Dark theme applied.");
         } else { // Assuming 'Light' is the other option
             body.classList.remove(darkModeClass);
-             console.log("Light theme applied.");
+            console.log("Light theme applied.");
         }
         // Optional: Update the select dropdown value to match the applied theme
-         if (themeToggleSelect) {
-             themeToggleSelect.value = theme;
-         }
+        if (themeToggleSelect) {
+            themeToggleSelect.value = theme;
+        }
     }
 
     // 3. Load the saved preference on page load
@@ -127,14 +127,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const initiallySelectedOption = themeToggleSelect ? themeToggleSelect.value : 'Light'; // Default to 'Light' if select not found
 
         if (initiallySelectedOption) {
-             applyThemePreference(initiallySelectedOption);
+            applyThemePreference(initiallySelectedOption);
         } else {
-             // Fallback to system preference if no saved preference and no default selected option
-             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // Fallback to system preference if no saved preference and no default selected option
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 applyThemePreference('Dark');
-             } else {
+            } else {
                 applyThemePreference('Light'); // Default to light if system preference is not dark
-             }
+            }
         }
     }
 });

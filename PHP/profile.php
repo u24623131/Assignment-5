@@ -82,9 +82,8 @@ include("header.php");
                     <input type="text" class="CurVal" id="curAcc" disabled required placeholder="Current Account Type Val:">
                     <i class="fa fa-user-tag"></i>
                     <select id="type" name="type" class="Select_Type" required>
-                        <option value="Customer">Customer</option>
-                        <option value="Courier">Courier</option>
-                        <option value="Inventory Manager">Inventory Manager</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Admin">Admin</option>
                     </select>
                     <label class="error-label" id="type-error"></label>
                 </div>
