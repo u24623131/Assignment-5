@@ -4,6 +4,22 @@ const productsPerPage = 15;
 let currentPage = 1;
 const PPlace = document.getElementById("PPlace");
 const pageButtonContainer = document.querySelector(".page-btn");
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';'); // Split the cookie string into an array of individual cookies
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') { // Remove leading spaces (e.g., " my_cookie=value" -> "my_cookie=value")
+            c = c.substring(1, c.length);
+        }
+        if (c.indexOf(nameEQ) == 0) { // If this cookie starts with the name we're looking for
+            return c.substring(nameEQ.length, c.length); // Return the value
+        }
+    }
+    return null; // Cookie not found
+}
+
+const api_key = getCookie('api_key');
 
 // fliters (Keep your existing filter logic)
 var btnFliter = document.getElementById("BtnFliter");
@@ -151,17 +167,24 @@ function createCompareListCard(productName, imageSource) {
     const CompareListElement = document.createElement("div");
     CompareListElement.className = "compareitem";
 
+
     //image
     const productImage = document.createElement("img");
     productImage.src = imageSource;
-
     CompareListElement.appendChild(productImage);
 
     //title
-    const productTitle = document.createElement("h4")
+    const productTitle = document.createElement("h4");
+    productTitle.id = "Title" ;
     productTitle.textContent = productName;
-
     CompareListElement.appendChild(productTitle);
+
+
+    // remove message 
+    const removeMessageDiv = document.createElement("div");
+    removeMessageDiv.className = "remove-message";
+    removeMessageDiv.textContent = "Click to remove";
+    CompareListElement.appendChild(removeMessageDiv);
 
     return CompareListElement;
 }
@@ -214,21 +237,21 @@ async function sendRequest() {
         });
 
         // Store all products globally
-        console.log(getAllProducts.type )
-        if(getAllProducts.type === "GetAllProducts"){
+        console.log(getAllProducts.type)
+        if (getAllProducts.type === "GetAllProducts") {
             console.log("Here!!")
             allProducts = result.data.Products;
-        }else if(getAllProducts.type === "Search"){
-            allProducts = result.data ;
+        } else if (getAllProducts.type === "Search") {
+            allProducts = result.data;
         }
-        
+
         //setting the Filter Items 
         setFilterItems(allProducts)
 
         // Set up pagination and render the first page
         setupPagination(allProducts.length);
         renderProductsPage(currentPage);
-        return allProducts ;
+        return allProducts;
 
     } catch (error) {
         console.error("Request failed", error);
@@ -237,8 +260,8 @@ async function sendRequest() {
 
 //No Response Request
 
-async function sendRequest() {
-    console.log("SENDING REQUEST");
+async function sendAddRequest(dataToSend) {
+    console.log("SENDING REQUEST" );
     const reqURL = '../api.php';
 
     try {
@@ -247,30 +270,13 @@ async function sendRequest() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(getAllProducts)
+            body: JSON.stringify(dataToSend)
         });
 
         const result = await response.json();
         console.dir(result, {
             depth: null
         });
-
-        // Store all products globally
-        console.log(getAllProducts.type )
-        if(getAllProducts.type === "GetAllProducts"){
-            console.log("Here!!")
-            allProducts = result.data.Products;
-        }else if(getAllProducts.type === "Search"){
-            allProducts = result.data ;
-        }
-        
-        //setting the Filter Items 
-        setFilterItems(allProducts)
-
-        // Set up pagination and render the first page
-        setupPagination(allProducts.length);
-        renderProductsPage(currentPage);
-        return allProducts ;
 
     } catch (error) {
         console.error("Request failed", error);
@@ -389,10 +395,10 @@ function updatePaginationArrowState(totalPages) {
 //Setting the filter items(not the filtered product just yet)
 function setFilterItems(data) {
 
-    if (window.filtersInitialized) { 
-        return ;
+    if (window.filtersInitialized) {
+        return;
     }
-    window.filtersInitialized = true; 
+    window.filtersInitialized = true;
     var categories = [];
     var Retailer = [];
     var brands = [];
@@ -401,7 +407,8 @@ function setFilterItems(data) {
         if (product.Retailer_Names && product.Retailer_Names.length > 0) {
             for (let i = 0; i < product.Retailer_Names.length; i++) {
                 if (product.Retailer_Names[i] && !Retailer.includes(product.Retailer_Names[i])) {
-                    Retailer.push(product.Retailer_Names[i]);                }
+                    Retailer.push(product.Retailer_Names[i]);
+                }
             }
         }
         if (product.Brand && !brands.includes(product.Brand)) {
@@ -442,92 +449,149 @@ function setFilterItems(data) {
 
 // setting filters when the page loads 
 
- document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
 
-        var btnSearch = document.getElementById("btnSearch");
-        btnSearch.addEventListener("click",function(){
+    var btnSearch = document.getElementById("btnSearch");
+    btnSearch.addEventListener("click", function () {
         getAllProducts = {
-            type: "Search", 
-            apikey : "766d4969d53b80ae446ef13d892736ff" ,
+            type: "Search",
+            apikey: api_key,
             search: {
-                        "Title" : "",
-                        "Category" : "",
-                        "Description" : "",
-                        "Brand" : ""
-                    }
+                "Title": "",
+                "Category": "",
+                "Description": "",
+                "Brand": ""
+            }
         };
-            var input_search = document.querySelector('input[name="search"]');
-            getAllProducts.search.Title = input_search.value ;
-            sendRequest();
-        })
+        var input_search = document.querySelector('input[name="search"]');
+        getAllProducts.search.Title = input_search.value;
+        sendRequest();
+    })
 
-        // const sortSelect = document.querySelector(".filters-btn");
-        // sortSelect.addEventListener("change", function () {
-        //     var selectedSort = this.value;
-    
-        //     if (selectedSort === "price_asc") {
-        //         getAllProducts.sort = "final_price";
-        //         getAllProducts.order = "ASC";
-        //     } else if (selectedSort === "price_desc") {
-        //         getAllProducts.sort = "final_price";
-        //         getAllProducts.order = "DESC";
-        //     } else if (selectedSort === "Title") {
-        //         getAllProducts.sort = "title";
-        //         getAllProducts.order = "ASC";
-        //     } else if (selectedSort === "Latest") {
-        //         getAllProducts.sort = "date_first_available";
-        //         getAllProducts.order = "DESC";
-        //     } else if (selectedSort === "Country") {
-        //         getAllProducts.sort = "country_of_origin";
-        //         getAllProducts.order = "ASC";
-        //     }
-    
-        //     sendRequest(); // Refresh products after sorting
-        // });
-    
-        // var priceRange = document.querySelectorAll('input[id="priceRange"]');
-        // priceRange.forEach(input => {
-        // input.addEventListener("input", function () {
-        //         sendRequest();
-        //     });
-        // });
+    // const sortSelect = document.querySelector(".filters-btn");
+    // sortSelect.addEventListener("change", function () {
+    //     var selectedSort = this.value;
 
-        // var priceRange = document.querySelectorAll('input[id="priceValue"]');
-        // priceRange.forEach(input => {
-        // input.addEventListener("input", function () {
-        //         sendRequest();
-        //     });
-        // });
-        
-        // const categorySelect = document.getElementById("Dropdown_Category");
-        // const countrySelect = document.getElementById("Dropdown_country");
-        // const brandSelect = document.getElementById("Dropdown_brand");
-    
-        // categorySelect.addEventListener("change", function () {
-        //     getAllProducts.search.categories = categorySelect.value;
-        //     sendRequest();
-        // });
-        
-        // countrySelect.addEventListener("change", function () {
-        //     getAllProducts.search.country_of_origin = countrySelect.value;
-        //     sendRequest();
-        // });
-        
-        // brandSelect.addEventListener("change", function () {
-        //     getAllProducts.search.brand = brandSelect.value;
-        //     sendRequest();
-        // });
-        ///////////////////////////////////////////////////////////////////////////
-        // const btnClear = document.getElementById(btnClear)
-        // btnClear.addEventListener("click",function(){
-            
-        //     getAllProducts.search.title ="";
-        //     getAllProducts.search.categories = "";
-        //     getAllProducts.search.country_of_origin ="";
-        //     getAllProducts.search.brand ="";
-        //     fetchProducts() ;
-        // });
-    });
+    //     if (selectedSort === "price_asc") {
+    //         getAllProducts.sort = "final_price";
+    //         getAllProducts.order = "ASC";
+    //     } else if (selectedSort === "price_desc") {
+    //         getAllProducts.sort = "final_price";
+    //         getAllProducts.order = "DESC";
+    //     } else if (selectedSort === "Title") {
+    //         getAllProducts.sort = "title";
+    //         getAllProducts.order = "ASC";
+    //     } else if (selectedSort === "Latest") {
+    //         getAllProducts.sort = "date_first_available";
+    //         getAllProducts.order = "DESC";
+    //     } else if (selectedSort === "Country") {
+    //         getAllProducts.sort = "country_of_origin";
+    //         getAllProducts.order = "ASC";
+    //     }
+
+    //     sendRequest(); // Refresh products after sorting
+    // });
+
+    // var priceRange = document.querySelectorAll('input[id="priceRange"]');
+    // priceRange.forEach(input => {
+    // input.addEventListener("input", function () {
+    //         sendRequest();
+    //     });
+    // });
+
+    // var priceRange = document.querySelectorAll('input[id="priceValue"]');
+    // priceRange.forEach(input => {
+    // input.addEventListener("input", function () {
+    //         sendRequest();
+    //     });
+    // });
+
+    // const categorySelect = document.getElementById("Dropdown_Category");
+    // const countrySelect = document.getElementById("Dropdown_country");
+    // const brandSelect = document.getElementById("Dropdown_brand");
+
+    // categorySelect.addEventListener("change", function () {
+    //     getAllProducts.search.categories = categorySelect.value;
+    //     sendRequest();
+    // });
+
+    // countrySelect.addEventListener("change", function () {
+    //     getAllProducts.search.country_of_origin = countrySelect.value;
+    //     sendRequest();
+    // });
+
+    // brandSelect.addEventListener("change", function () {
+    //     getAllProducts.search.brand = brandSelect.value;
+    //     sendRequest();
+    // });
+    ///////////////////////////////////////////////////////////////////////////
+    // const btnClear = document.getElementById(btnClear)
+    // btnClear.addEventListener("click",function(){
+
+    //     getAllProducts.search.title ="";
+    //     getAllProducts.search.categories = "";
+    //     getAllProducts.search.country_of_origin ="";
+    //     getAllProducts.search.brand ="";
+    //     fetchProducts() ;
+    // });
+});
 
 
-    //Adding to the  ADD TO FAVOURITES
+//Adding to the  ADD TO FAVOURITES
+
+document.addEventListener("click", async function (event) {
+    if (event.target.closest(".add-fav")) {
+        var btn = event.target.closest(".add-fav");
+        var productCard = btn.closest(".col-4");
+
+
+        if (productCard) {
+            var titleElement = productCard.querySelector("#Title");
+            console.log("Product ID to add to Favourites :", titleElement.textContent);
+
+            const addToFavPayload = {
+                type: "AddToFavourite",
+                apikey: api_key,
+                Product_Name: titleElement.textContent
+            };
+            const heartIcon = btn.querySelector('.fa-heart');
+
+            if (heartIcon) {
+                btn.classList.add('animate-bg-and-heart');
+                heartIcon.classList.add('animate-favorite');
+
+                try {
+                    await sendAddRequest(addToFavPayload);
+                    setTimeout(() => {
+                        btn.classList.remove('animate-bg-and-heart');
+                        heartIcon.classList.remove('animate-favorite');
+                    }, 2000);
+
+                } catch (error) {
+                    console.error("Failed to add to favorites:", error);
+                    btn.classList.remove('animate-bg-and-heart');
+                    heartIcon.classList.remove('animate-favorite');
+                    alert("Failed to add to favorites. Please try again.");
+                }
+            } else {
+                console.warn("Heart icon not found inside .add-fav button.");
+            }
+        }
+    }
+});
+
+// Listener for removing compare items
+document.addEventListener("click", function(event) {
+    const clickedCompareItem = event.target.closest(".compareitem");
+
+    if (clickedCompareItem) {
+        var titleElement = clickedCompareItem.querySelector("#Title");
+        if (titleElement) {
+            console.log("Removing product ID:", titleElement);
+            // Remove item from DOM
+            clickedCompareItem.remove();
+        } else {
+            console.warn("Missing data-product-id on:", clickedCompareItem);
+        }
+    }
+});

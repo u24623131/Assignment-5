@@ -76,16 +76,19 @@
             <div class="compareitem">
                 <img src="..\image\Bounty.jpeg">
                 <h4 id="Title">Toaster</h4>
+                <div class="remove-message">Click to remove</div>
             </div>
 
             <div class="compareitem">
                 <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
+                <div class="remove-message">Click to remove</div>
             </div>
 
             <div class="compareitem">
                 <img src="..\image\toaster.jpg">
                 <h4 id="Title">Toaster</h4>
+                <div class="remove-message">Click to remove</div>
             </div>
 
             <button class="btn btn-compare">

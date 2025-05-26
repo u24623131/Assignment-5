@@ -285,7 +285,60 @@
     justify-content: center;
     align-items: center;
     background-color: #563434;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+.add-fav:hover {
+    cursor: pointer;
+    background-color: #ff523b;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.add-fav .fa-heart {
+    color: white;
+    transition: transform 0.2s ease-out, color 0.2s ease-out;
+}
+
+/* Triggers background animation when favorited */
+.add-fav.animate-bg-and-heart {
+    background-color: transparent;
+    animation: fade-bg 0.7s ease-out forwards;
+}
+
+/* Triggers heart pulse animation */
+.add-fav .fa-heart.animate-favorite {
+    color: red;
+    transform: scale(1.5);
+    animation: favorite-pulse 0.7s ease-out forwards;
+}
+
+@keyframes favorite-pulse {
+    0% {
+        transform: scale(1);
+        color: white;
+    }
+    50% {
+        transform: scale(1.8);
+        color: red;
+    }
+    100% {
+        transform: scale(1.5);
+        color: red;
+    }
+}
+
+@keyframes fade-bg {
+    0% {
+        background-color: #563434;
+    }
+    50% {
+        background-color: rgba(86, 52, 52, 0.5);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
 
 .btn-compare {
     flex-grow: 1;
@@ -366,6 +419,7 @@
     }
 }
 
+
 .row-2 {
     justify-content: space-between;
     margin: 67px auto 34px;
@@ -395,13 +449,13 @@ select:focus {
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
     border-radius: 13px;
     transition: transform 0.5s;
+    overflow: hidden;
 }
 
 .compareBox h2 {
     font-size: 15px;
     margin: 13px 0;
     text-align: center;
-    /* No change needed here, as the main title was already centered */
 }
 
 .compareitem {
@@ -409,21 +463,56 @@ select:focus {
     flex-direction: column;
     align-items: center;
     margin-bottom: 7px;
+    position: relative;
+    transition: transform 0.3s ease-out;
+    cursor: pointer;
+    padding: 5px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.compareitem:hover {
+    transform: scale(1.1);
 }
 
 .compareitem img {
     width: 54px;
     height: auto;
     margin-bottom: 3px;
+    transition: transform 0.3s ease;
 }
 
-
 .compareitem h4,
-.compareitem p { 
+.compareitem p {
     text-align: center;
     width: 100%;
-    padding: 0 5px; 
-    box-sizing: border-box; 
+    padding: 0 5px;
+    box-sizing: border-box;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tooltip-style remove message */
+.remove-message {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+    z-index: 2;
+}
+
+.compareitem:hover .remove-message {
+    opacity: 1;
 }
 
 .compareBox button {
