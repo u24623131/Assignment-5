@@ -20,94 +20,123 @@
         });
     });
 
-function createProductCard(productName, initialPrice, finalPrice, imageSource, category, brandName, retailerName) {
-    // 1. Create the main product card container
-    const productCardElement = document.createElement("div");
-    productCardElement.className = "col-4";
+    function createProductCard(product) {
+        // 1. Create the main product card container
+        const productCardElement = document.createElement("div");
+        productCardElement.className = "col-4";
 
-    //Create and append
-    // image
-    const productImage = document.createElement("img");
-    productImage.src = imageSource;
-    productCardElement.appendChild(productImage);
+        // Create and append
+        // image
+        const productImage = document.createElement("img");
+        productImage.src = product.Image_URL;
+        productCardElement.appendChild(productImage);
 
-    // product title
-    const productTitle = document.createElement("h4");
-    productTitle.textContent = productName;
-    
-    productTitle.id = "Title"; 
-    productCardElement.appendChild(productTitle);
+        // product title
+        const productTitle = document.createElement("h4");
+        productTitle.textContent = product.Title;
+        productTitle.id = "Title";
+        productCardElement.appendChild(productTitle);
 
-    // retailer 
-    const retailerInfoElement = document.createElement("div");
-    retailerInfoElement.className = "retail";
+        // Retailer and Price display with navigation
+        const retailerInfoElement = document.createElement("div");
+        retailerInfoElement.className = "retail";
 
-    const retailerPrevIcon = document.createElement("i");
-    retailerPrevIcon.classList.add("fas", "fa-chevron-left");
-    retailerInfoElement.appendChild(retailerPrevIcon);
+        const retailerPrevIcon = document.createElement("i");
+        retailerPrevIcon.classList.add("fas", "fa-chevron-left");
+        retailerInfoElement.appendChild(retailerPrevIcon);
 
-    const retailerNameElement = document.createElement("p");
-    retailerNameElement.textContent = retailerName;
-    retailerInfoElement.appendChild(retailerNameElement);
+        const retailerNameElement = document.createElement("p");
+        retailerNameElement.className = "current-retailer"; 
+        retailerInfoElement.appendChild(retailerNameElement);
 
-    const retailerNextIcon = document.createElement("i");
-    retailerNextIcon.classList.add("fas", "fa-chevron-right");
-    retailerInfoElement.appendChild(retailerNextIcon);
+        const retailerNextIcon = document.createElement("i");
+        retailerNextIcon.classList.add("fas", "fa-chevron-right");
+        retailerInfoElement.appendChild(retailerNextIcon);
 
-    productCardElement.appendChild(retailerInfoElement);
+        productCardElement.appendChild(retailerInfoElement);
 
-    //  brand name
-    const brandElement = document.createElement("p");
-    brandElement.textContent = brandName;
-    brandElement.className = "brand";
-    productCardElement.appendChild(brandElement);
+        // Brand name
+        const brandElement = document.createElement("p");
+        brandElement.textContent = product.Brand;
+        brandElement.className = "brand";
+        productCardElement.appendChild(brandElement);
 
-    // price section
-    const priceContainer = document.createElement("div");
-    priceContainer.className = "prices";
+        // Price section
+        const priceContainer = document.createElement("div");
+        priceContainer.className = "prices";
 
-    const initialPriceElement = document.createElement("p");
-    initialPriceElement.classList.add("Price-Cross", "Iprice");
-    initialPriceElement.textContent = `R${initialPrice.toFixed(2)}`; 
-    priceContainer.appendChild(initialPriceElement);
+        // Display the number of retailers in the "Iprice" slot
+        const retailerCountElement = document.createElement("p");
+        retailerCountElement.classList.add("Iprice"); 
+        const retailerCount = product.Retailer_Names ? product.Retailer_Names.length : 0;
+        retailerCountElement.textContent = `${retailerCount} Retailers`;
+        priceContainer.appendChild(retailerCountElement);
 
-    const finalPriceElement = document.createElement("p");
-    finalPriceElement.className = "Aprice";
-    finalPriceElement.textContent = `R${finalPrice.toFixed(2)}`; 
-    priceContainer.appendChild(finalPriceElement);
 
-    productCardElement.appendChild(priceContainer);
+        // Display the current price
+        const currentPriceElement = document.createElement("p");
+        currentPriceElement.className = "Aprice current-price"; 
+        priceContainer.appendChild(currentPriceElement);
 
-    // Snack Category
-    const snackcategory = document.createElement("p");
-    snackcategory.textContent = ` ${category}`;
-    productCardElement.appendChild(snackcategory);
+        productCardElement.appendChild(priceContainer);
 
-    //button group
-    const buttonGroup = document.createElement("div");
-    buttonGroup.className = "btn-group";
+        // Category
+        const categoryElement = document.createElement("p");
+        categoryElement.textContent = product.Category;
+        productCardElement.appendChild(categoryElement);
 
-    // Add to Favorites Button
-    const addToFavoritesButton = document.createElement("button");
-    addToFavoritesButton.classList.add("btn", "add-fav");
-    const heartIcon = document.createElement("i");
-    heartIcon.classList.add("fas", "fa-heart");
-    addToFavoritesButton.appendChild(heartIcon);
-    buttonGroup.appendChild(addToFavoritesButton);
+        // Button group
+        const buttonGroup = document.createElement("div");
+        buttonGroup.className = "btn-group";
 
-    // Compare Button
-    const compareButton = document.createElement("button");
-    compareButton.classList.add("btn", "btn-compare");
-    const compareIcon = document.createElement("i");
-    compareIcon.classList.add("fas", "fa-plus-square");
-    compareButton.appendChild(compareIcon);
-    compareButton.appendChild(document.createTextNode(" Compare")); 
-    buttonGroup.appendChild(compareButton);
+        // Add to Favorites Button
+        const addToFavoritesButton = document.createElement("button");
+        addToFavoritesButton.classList.add("btn", "add-fav");
+        const heartIcon = document.createElement("i");
+        heartIcon.classList.add("fas", "fa-heart");
+        addToFavoritesButton.appendChild(heartIcon);
+        buttonGroup.appendChild(addToFavoritesButton);
 
-    productCardElement.appendChild(buttonGroup);
+        // Compare Button
+        const compareButton = document.createElement("button");
+        compareButton.classList.add("btn", "btn-compare");
+        const compareIcon = document.createElement("i");
+        compareIcon.classList.add("fas", "fa-plus-square");
+        compareButton.appendChild(compareIcon);
+        compareButton.appendChild(document.createTextNode(" Compare"));
+        buttonGroup.appendChild(compareButton);
 
-    return productCardElement;
-}
+        productCardElement.appendChild(buttonGroup);
+
+        // --- Dynamic Retailer/Price Logic ---
+        let currentRetailerIndex = 0; 
+
+        function updateRetailerAndPrice() {
+            if (product.Retailer_Names && product.Retailer_Names.length > 0) {
+                retailerNameElement.textContent = product.Retailer_Names[currentRetailerIndex];
+                currentPriceElement.textContent = `R${parseFloat(product.Prices[currentRetailerIndex]).toFixed(2)}`;
+            } else {
+                retailerNameElement.textContent = "N/A";
+                currentPriceElement.textContent = "R0.00";
+            }
+        }
+
+        updateRetailerAndPrice();
+
+        // Event listeners for navigation
+        retailerPrevIcon.addEventListener('click', () => {
+            currentRetailerIndex = (currentRetailerIndex - 1 + product.Retailer_Names.length) % product.Retailer_Names.length;
+            updateRetailerAndPrice();
+        });
+
+        retailerNextIcon.addEventListener('click', () => {
+            currentRetailerIndex = (currentRetailerIndex + 1) % product.Retailer_Names.length;
+            updateRetailerAndPrice();
+        });
+
+        return productCardElement;
+    }
+
 
 function createCompareListCard(productName , imageSource){
     
@@ -222,9 +251,9 @@ function displayProduct(data) {
         console.log("Parsed data: " + products);
         products.forEach(Product => {
             console.log(Product.Image_URL)
-            var productToAdd = createProductCard(Product.Title,0, 0
-                ,Product.Image_URL ,Product.Category ,Product.Brand , "Game");
+            var productToAdd = createProductCard(Product);
             PPlace.appendChild(productToAdd)
+            
             } )
         }
         

@@ -237,11 +237,7 @@
     font-size: 30px;
 }
 
-.Price-Cross {
-    color: #aaa;
-    text-decoration: line-through;
-    font-size: 10px;
-}
+
 
 .Iprice {
     font-weight: bold;
@@ -427,7 +423,7 @@ select:focus {
     font-size: 15px;
     margin: 13px 0;
     text-align: center;
-    left: unset;
+    /* No change needed here, as the main title was already centered */
 }
 
 .compareitem {
@@ -441,6 +437,15 @@ select:focus {
     width: 54px;
     height: auto;
     margin-bottom: 3px;
+}
+
+
+.compareitem h4,
+.compareitem p { 
+    text-align: center;
+    width: 100%;
+    padding: 0 5px; 
+    box-sizing: border-box; 
 }
 
 .compareBox button {

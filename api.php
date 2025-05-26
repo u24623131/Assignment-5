@@ -364,6 +364,9 @@ class API {
         SELECT 
             Products.Product_No, 
             Products.Title,
+            Products.Category,
+            Products.Brand,
+            Products.Image_URL,
             Prices.Price,
             Retailers.Name AS Retailer_Name
         FROM Products
@@ -382,6 +385,9 @@ class API {
                     $groupedProducts[$productNo] = [
                         "Product_No" => $row['Product_No'],
                         "Title" => $row['Title'],
+                        "Category" => $row['Category'],
+                        "Brand" => $row['Brand'],
+                        "Image_URL" => $row['Image_URL'],
                         "Retailer_Names" => [],
                         "Prices" => []
                     ];
