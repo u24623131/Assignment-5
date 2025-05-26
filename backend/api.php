@@ -144,6 +144,14 @@ class API {
             case "ProductCompare":
                 $this->handleProductCompare($input);
                 break;
+            
+            case "AddToCompare":
+                $this->handleAddToCompare($input);
+                break;
+
+            case "RemoveFromCompare":
+                $this->handleRemoveFromCompare($input);
+                break;
 
             // Favourites manipulation
             case "AddToFavourite":
@@ -365,16 +373,23 @@ class API {
             $saltedPass = $pass.$user["Salt"];
 
             if (password_verify($saltedPass, $user["Password"])) {
+                $_SESSION['login'] = true;
+                if ($user['User_Type'] == "admin") {
+                    $_SESSION["admin"] = true;
+                }else{
+                    $_SESSION["admin"] = false;
+                }
                 http_response_code(200);
                 $this->response("200 OK", "success", 
                 ["apikey" => $user["API_Key"],
                       "email" =>$user["Email"]]);
             } 
             else {
+                $_SESSION["admin"] = false;
+                $_SESSION["login"] = false;
                 http_response_code(401);
                 $this->response("401 Unauthorized", "error", "Incorrect password.");
             }
-
     }
     else{
             error_log("MySQL Error: " . $stmt->error); // for extra error checking
@@ -1022,7 +1037,7 @@ class API {
         $deleteStmt->close();
     }
     private function handleProductCompare($input){
-        $required = ['apikey', 'productTitle1', 'productTitle2'];
+        $required = ['apikey'];
         forEach($required as $field){
             if(empty($input[$field])){
                 http_response_code(400); // Bad Request
@@ -1030,23 +1045,79 @@ class API {
                 return;
             }
         }
-        if(!$this->isValidApikey($input['apikey'])){
+        $apikey = trim($input['apikey']);
+        if(!$this->isValidApikey($apikey)){
             http_response_code(403);
             $this->response("403 Forbidden","error",data: "apikey is invalid");
             return;
         }
 
-        $productTitle1 = $input['productTitle1'];
-        $productTitle2 = $input['productTitle2'];
+        // get userid
+        $user = $this->getUserByApiKey($apikey);
+        if (!$user || !isset($user['User_ID'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "User not found");
+            return;
+        }
+        $userID = intval($user['User_ID']);
+        // get products from compare table 
+        $sql = "SELECT product_id FROM Compare WHERE user_id = ?";
+        $stmt = $this->DB_Connection->prepare($sql);
 
-        // fetch product with prices + retailsers in 1 query!!! (Joins?)
-        $product1Data = $this->fetchProductData($productTitle1);
-        $product2Data = $this->fetchProductData($productTitle2);
+        if (!$stmt) {
+            error_log("Prepare Failed: " . $this->DB_Connection->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Database Error");
+            return;
+        }
+    
+        $stmt->bind_param("i", $userID);
+        if (!$stmt->execute()) {
+            error_log("Execution Failed: " . $stmt->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to retrieve compare list");
+            return;
+        }
 
-        $product1Result = $this->formatResponseData($product1Data);
-        $product2Result = $this->formatResponseData($product2Data);
+        $result = $stmt->get_result();
+        if ($result->num_rows === 0) {
+            http_response_code(200);
+            $this->response("200 OK", "success", ["products" => []]);
+            return;
+        }
 
-        $this->response("200 OK", "success", ["product1" => $product1Result, "product2" => $product2Result]);
+        // get all related details per product
+        $productIDs = [];
+        while($row = $result->fetch_assoc()){
+            $productIDs[] = intval($row['product_id']);
+        }
+        $stmt->close();
+
+        $products = [];
+
+        foreach($productIDs as $productID){
+            $sql = "SELECT Title FROM Products WHERE Product_No = ?";
+            $stmt = $this->DB_Connection->prepare($sql);
+            $stmt->bind_param("i", $productID);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            if ($res && $row = $res->fetch_assoc()) {
+                $title = $row['Title'];
+                $stmt->close();
+
+                $productData = $this->fetchProductData($title);
+                if (!empty($productData)) {
+                    $formatted = $this->formatResponseData($productData);
+                    $products[] = $formatted;
+                }
+            }else{
+                error_log("Product not found for ID: $productID");
+            }
+        }
+
+        http_response_code(200);
+        $this->response("200 OK", "success", ["products" => $products]);
     }
     private function handleFilter($input){
         $required = ['apikey', 'filter']; // rn it's 1 filterAt a time -- // UPDATE: can now handle multiple
@@ -2067,6 +2138,169 @@ class API {
         }
 
     }
+    private function handleAddToCompare($input){
+        $required = ['apikey', 'Product_Name'];
+
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+    
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
+    
+        $user = $this->getUserByApiKey($input['apikey']);
+        if (!isset($user['User_ID'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "User not found");
+            return;
+        }
+    
+        $userID = intval($user['User_ID']);
+    
+        $productName = htmlspecialchars(trim($input['Product_Name']), ENT_QUOTES,'UTF-8');
+        $productInfo = $this->getProductInfo($productName);
+        if (!isset($productInfo['Product_No'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "Product not found");
+            return;
+        }
+    
+        $productNo = intval($productInfo['Product_No']);
+    
+        $toCheck = $this->DB_Connection->prepare("SELECT * FROM Compare WHERE user_id = ? AND product_id = ?");
+        if (!$toCheck) {
+            error_log("Prepare Failed (Check): " . $this->DB_Connection->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Database Error");
+            return;
+        }
+    
+        $toCheck->bind_param("ii", $userID, $productNo);
+        if (!$toCheck->execute()) {
+            error_log("Check Execution Failed: " . $toCheck->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to check existing compares");
+            return;
+        }
+    
+        $result = $toCheck->get_result();
+        if ($result && $result->num_rows > 0) {
+            http_response_code(409);
+            $this->response("409 Conflict", "error", "This product is already in your compares.");
+            return;
+        }
+    
+        $insertSql = "INSERT INTO Compare(user_id, product_id) VALUES (?, ?)";
+        $insertStmt = $this->DB_Connection->prepare($insertSql);
+        if (!$insertStmt) {
+            error_log("Prepare Failed (Insert): " . $this->DB_Connection->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare insert statement");
+            return;
+        }
+    
+        $insertStmt->bind_param("ii", $userID, $productNo);
+        if (!$insertStmt->execute()) {
+            error_log("Insert Failed: " . $insertStmt->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to add to Compare");
+            return;
+        }
+    
+        // Success
+        http_response_code(200);
+        $this->response("200 OK", "success", "Product added to Compare");
+        $insertStmt->close();
+    }
+
+    private function handleRemoveFromCompare($input){
+        $required = ['apikey', 'Product_Name'];
+
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+
+        $apikey = trim($input['apikey']);
+    
+        if(!$this->isValidApikey($apikey)){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
+
+        $user = $this->getUserByApiKey($apikey);
+        if (!isset($user['User_ID'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "User not found");
+            return;
+        }
+        $userID = intval($user['User_ID']);
+
+        $productName = htmlspecialchars(trim($input['Product_Name']), ENT_QUOTES,'UTF-8');
+        $productInfo = $this->getProductInfo($productName);
+        if (!isset($productInfo['Product_No'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "Product not found");
+            return;
+        }
+    
+        $productNo = intval($productInfo['Product_No']);
+    
+        $toCheck = $this->DB_Connection->prepare("SELECT * FROM Compare WHERE user_id = ? AND product_id = ?");
+        if (!$toCheck) {
+            error_log("Prepare Failed (Check): " . $this->DB_Connection->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Database Error");
+            return;
+        }
+    
+        $toCheck->bind_param("ii", $userID, $productNo);
+        if (!$toCheck->execute()) {
+            error_log("Check Execution Failed: " . $toCheck->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to check existing compares");
+            return;
+        }
+    
+        $result = $toCheck->get_result();
+        if ($result && $result->num_rows > 0) {
+            $deleteSql = "DELETE FROM Compare WHERE user_id = ? AND product_id = ?";
+            $deleteStmt = $this->DB_Connection->prepare($deleteSql);
+            if (!$deleteStmt) {
+                error_log("Prepare Failed: " . $this->DB_Connection->error);
+                http_response_code(500);
+                $this->response("500 Internal Server Error", "error", "Failed to prepare delete statement");
+                return;
+            }
+
+            $deleteStmt->bind_param("ii", $userID, $productNo);
+            if (!$deleteStmt->execute()) {
+                error_log("Delete Failed: " . $deleteStmt->error);
+                http_response_code(500);
+                $this->response("500 Internal Server Error", "error", "Failed to delete from Compare");
+                return;
+            }
+            
+            http_response_code(200);
+            $this->response("200 OK", "success", "Product successfully removed from Compare table");
+
+            $deleteStmt->close();
+        }else{
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "Product not found within the Compare table");
+        }
+    }
     //--------------------- HELPER FUNCTIONS -----------------//
     private function response($codeAndMessage, $status, $data){
         // code and message is in the form "200 OK"
@@ -2229,7 +2463,7 @@ class API {
     }
     private function formatResponseData($data){
         $retailers = array_map(fn($r) => htmlspecialchars($r, ENT_QUOTES, 'UTF-8'), array_column($data, 'retailerName'));
-        $prices = array_column($data, 'Price');
+        $prices = array_map('floatval',array_column($data, 'Price'));
         $title = htmlspecialchars(array_column($data, 'productTitle')[0], ENT_QUOTES, 'UTF-8');
         $productNum = array_column($data, 'Product_No')[0];
         $category = htmlspecialchars(array_column($data, 'Category')[0],ENT_QUOTES, 'UTF-8');
