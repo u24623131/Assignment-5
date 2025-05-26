@@ -71,7 +71,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(data => {
                     if (data.status === "success") {
 
-                        const apiKey = data.data.API_Key; 
+                        console.log(data);
+                        const apiKey = data.data.apikey; 
 
                         const d = new Date();
                         d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
