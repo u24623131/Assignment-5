@@ -1442,23 +1442,6 @@ class API
             }
         }
 
-        if (!empty($input['password'])) {
-            if (!$this->isValidPassword($input['password'])) {
-                http_response_code(400);
-                $this->response("400 Bad Request", "error", "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.");
-                return;
-            }
-            // generate salt (16 random chars and Letters) 
-            $salt = bin2hex(random_bytes(16));
-
-            // Hash password using Argon2ID (no manual salt needed)
-            $hash = password_hash($input['password'] . $salt, PASSWORD_ARGON2ID);
-
-            $fields[] = "Password = ?";
-            $params[] = $hash;
-            $types .= "s";
-        }
-
         if (count($fields) === 0) {
             http_response_code(400);
             $this->response("400 Bad Request", "error", "No fields to update");
