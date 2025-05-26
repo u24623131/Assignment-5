@@ -538,96 +538,83 @@ class API
     }
     private function AddFavourite($input)
     {
-        // Required keys
-        $req = ['apikey', 'Product_No'];
+         // Required keys
+    $req = ['apikey', 'Product_Name'];
 
-        // Check for missing parameters
-        foreach ($req as $r) {
-            if (!isset($input[$r]) || empty($input[$r])) {
-                http_response_code(response_code: 404);
-                $this->response("400 Bad Request", "error", "$r is missing");
-                return;
-            }
-        }
-
-        // Get user from API key
-        $userInfo = $this->getUserByApiKey($input['apikey']);
-        if (!$userInfo || !isset($userInfo['User_ID'])) {
-            http_response_code(response_code: 404);
-            $this->response("404 Not Found", "error", "User not found");
+    // Check for missing parameters
+    foreach ($req as $r) {
+        if (!isset($input[$r]) || empty($input[$r])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "$r is missing");
             return;
         }
+    }
 
-        $userID = $userInfo['User_ID'];
-        $productNo = $input['Product_No'];
+    // Get user from API key
+    $userInfo = $this->getUserByApiKey($input['apikey']);
+    if (!$userInfo || !isset($userInfo['User_ID'])) {
+        http_response_code(404);
+        $this->response("404 Not Found", "error", "User not found");
+        return;
+    }
 
-        // Check if product exists
-        $stmt = $this->DB_Connection->prepare("SELECT Product_No FROM Products WHERE Product_No = ?");
-        if (!$stmt) {
-            error_log("Prepare Failed: " . $this->DB_Connection->error);
-            http_response_code(500);
-            $this->response("500 Internal Server Error", "error", "Database Error: " . $this->DB_Connection->error);
-            return;
-        }
+    $userID = intval($userInfo['User_ID']);
 
-        $stmt->bind_param("i", $productNo);
+    // Get product by title using helper
+    $productName = htmlspecialchars(trim($input['Product_Name']), ENT_QUOTES,'UTF-8');
+    $productInfo = $this->getProductInfo($productName);
+    if (!$productInfo || !isset($productInfo['Product_No'])) {
+        http_response_code(404);
+        $this->response("404 Not Found", "error", "Product not found");
+        return;
+    }
 
-        if (!$stmt->execute()) {
-            error_log("MySQL Error: " . $stmt->error);
-            http_response_code(500);
-            $this->response("500 Internal Server Error", "error", "Product check failed");
-            return;
-        }
+    $productNo = intval($productInfo['Product_No']);
 
-        $result = $stmt->get_result();
-        if ($result->num_rows === 0) {
-            http_response_code(response_code: 404);
-            $this->response("404 Not Found", "error", "Product not found");
-            return;
-        }
+    // Check if it already exists in favourites
+    $check = $this->DB_Connection->prepare("SELECT * FROM favourites WHERE user_id = ? AND product_id = ?");
+    if (!$check) {
+        error_log("Prepare Failed (Check): " . $this->DB_Connection->error);
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Database Error");
+        return;
+    }
 
-        // check if it alr exists 
-        $check = $this->DB_Connection->prepare("SELECT * FROM favourites WHERE user_id = ? AND product_id = ?");
-        $check->bind_param("ii", $userID, $productNo);
+    $check->bind_param("ii", $userID, $productNo);
+    if (!$check->execute()) {
+        error_log("Check Execution Failed: " . $check->error);
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to check existing favourites");
+        return;
+    }
 
-        if (!$check->execute()) {
-            if ($this->DB_Connection->errno === 1062) { // Duplicate entry
-                http_response_code(409);
-                $this->response("409 Conflict", "error", "This product is already in your favourites.");
-            } else {
-                http_response_code(500);
-                error_log("Insert Failed: " . $stmt->error);
-                $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
-            }
-            return;
-        }
+    $result = $check->get_result();
+    if ($result && $result->num_rows > 0) {
+        http_response_code(409);
+        $this->response("409 Conflict", "error", "This product is already in your favourites.");
+        return;
+    }
 
-        if ($result = $check->get_result()->num_rows > 0) {
-            http_response_code(401);
-            error_log("Insert Failed: " . $stmt->error);
-            $this->response("401 Unauthorised Action", "error", "User_ID And Product_No Already in table");
-        }
-        // Insert into favourites
-        $stmt = $this->DB_Connection->prepare("INSERT INTO favourites(user_id, product_no) VALUES (?, ?)");
-        if (!$stmt) {
-            error_log("Prepare Failed (Insert): " . $this->DB_Connection->error);
-            $this->response("500 Internal Server Error", "error", "Failed to prepare insert statement");
-            return;
-        }
+    // Insert into favourites
+    $stmt = $this->DB_Connection->prepare("INSERT INTO favourites(user_id, product_id) VALUES (?, ?)");
+    if (!$stmt) {
+        error_log("Prepare Failed (Insert): " . $this->DB_Connection->error);
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to prepare insert statement");
+        return;
+    }
 
-        $stmt->bind_param("ii", $userID, $productNo);
-        if (!$stmt->execute()) {
-            if ($this->DB_Connection->errno === 1062) { // Duplicate entry
-                $this->response("409 Conflict", "error", "This product is already in your favourites.");
-            } else {
-                error_log("Insert Failed: " . $stmt->error);
-                $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
-            }
-            return;
-        }
+    $stmt->bind_param("ii", $userID, $productNo);
+    if (!$stmt->execute()) {
+        error_log("Insert Failed: " . $stmt->error);
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
+        return;
+    }
 
-        // Success response
-        $this->response("200 OK", "success", "Product added to favourites");
+    // Success
+    http_response_code(200);
+    $this->response("200 OK", "success", "Product added to favourites");
     }
     private function getUserFavourite($input)
     {
