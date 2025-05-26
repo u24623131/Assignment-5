@@ -103,6 +103,10 @@ class API {
             case "GetAllUsers":
                 $this->handleGetAllUsers($input);
                 break;
+            
+            case "AdminDeleteUser": // takes in email
+                $this-> AdminDeleteUser($input);
+                break;
 
             //Product manipulation    
             case "ProductByRetailer":
@@ -371,64 +375,82 @@ class API {
     }
     //GAP: name = getAllProducts param = input ... change as you see fit
     private function getAllProducts() {
+        $result = $this->DB_Connection->query("
+            SELECT 
+                Products.Product_No, 
+                Products.Title,
+                Products.Category,
+                Products.Description,
+                Products.Brand,
+                Products.Image_URL,
+                Prices.Price,
+                Retailers.Name AS Retailer_Name
+            FROM Products
+            JOIN Prices ON Products.Product_No = Prices.Product_No
+            JOIN Retailers ON Prices.Retailer_ID = Retailers.Retailer_ID
+        ");
 
-    $result = $this->DB_Connection->query("
-        SELECT 
-            Products.Product_No, 
-            Products.Title,
-            Prices.Price,
-            Retailers.Name AS Retailer_Name
-        FROM Products
-        JOIN Prices ON Products.Product_No = Prices.Product_No
-        JOIN Retailers ON Prices.Retailer_ID = Retailers.Retailer_ID
-    ");
+        if ($result) {
+            if ($result->num_rows > 0) {
+                $groupedProducts = [];
 
-    if ($result) {
-        if ($result->num_rows > 0) {
-            $groupedProducts = [];
+                while ($row = $result->fetch_assoc()) {
+                    $productNo = $row['Product_No'];
 
-            while ($row = $result->fetch_assoc()) {
-                $productNo = $row['Product_No'];
+                    // Escape output
+                    $title = htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8');
+                    $category = htmlspecialchars($row['Category'], ENT_QUOTES, 'UTF-8');
+                    $description = htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8');
+                    $brand = htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8');
+                    $imageURL = htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8');
+                    $retailerName = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
 
-                $title = htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8');
-                $retailerName = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+                    if (!isset($groupedProducts[$productNo])) {
+                        $groupedProducts[$productNo] = [
+                            "Product_No" => $productNo,
+                            "Title" => $title,
+                            "Category" => $category,
+                            "Description" => $description,
+                            "Brand" => $brand,
+                            "Image_URL" => $imageURL,
+                            "Retailer_Names" => [],
+                            "Prices" => []
+                        ];
+                    }
 
-                if (!isset($groupedProducts[$productNo])) {
-                    $groupedProducts[$productNo] = [
-                        "Product_No" => $row['Product_No'],
-                        "Title" => $title,
-                        "Retailer_Names" => [],
-                        "Prices" => []
-                    ];
+                    $groupedProducts[$productNo]["Retailer_Names"][] = $retailerName;
+                    $groupedProducts[$productNo]["Prices"][] = (float)$row['Price'];
                 }
 
-                $groupedProducts[$productNo]["Retailer_Names"][] = $retailerName;
-                $groupedProducts[$productNo]["Prices"][] = (float)$row['Price'];
+                http_response_code(200);
+                $this->response("200 OK", "success", ["Products" => array_values($groupedProducts)]);
+            } else {
+                http_response_code(200);
+                $this->response("200 OK", "success", ["Products" => []]);
             }
-
-            http_response_code(200);
-            $this->response("200 OK", "success", ["Products" => array_values($groupedProducts)]);
         } else {
-            http_response_code(200);
-            $this->response("200 OK", "success", ["Products" => []]);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
         }
-    } else {
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
     }
-    }
-
     //Delete Account: deleteAccount param = input
     private function deleteAccount($input){
 
         if(!isset($input['apikey'])|| empty($input['apikey'])){
             http_response_code(400);
-                $this->response("400 Bad Request","error","API_Key is Missing");
+                $this->response("400 Bad Request","error","apiokey is Missing");
                 return;
         }
         // find find that user via API key
 
         $api = $input['apikey'];
+
+        if(!$this->isValidApikey($api)){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
+        
          //find the user and ensure they exist
         $stmt = $this->DB_Connection->prepare("DELETE FROM Users WHERE API_Key = ?");
 
@@ -465,6 +487,11 @@ class API {
                 $this->response("400 Bad Request","error","$field is required");
                 return;
             }
+        }
+          if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
         }
 
         $retailer = $input['retailer'];
@@ -540,6 +567,11 @@ class API {
             return;
         }
     }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
 
     // Get user from API key
     $userInfo = $this->getUserByApiKey($input['apikey']);
@@ -614,6 +646,12 @@ class API {
         $this->response("400 Bad Request", "error", "apikey is missing");
         return;
     }
+
+    if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
 
     // Get user from API key
     $userInfo = $this->getUserByApiKey($input['apikey']);
@@ -692,6 +730,11 @@ class API {
         if(empty($input['apikey'])|| !isset($input['apikey'])){
             http_response_code(400);
             $this->response("400 Bad Request","error",$input['apikey']." is Missing");
+            return;
+        }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
             return;
         }
 
@@ -824,6 +867,11 @@ class API {
                 return;
             }
         }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
         if(!$this->isAdmin($input['apikey'])){
             http_response_code(400);
             $this->response("400 Bad Request","error","User is not an admin");
@@ -882,6 +930,11 @@ class API {
                 return;
             }
         }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
         if(!$this->isAdmin($input['apikey'])){
             http_response_code(400);
             $this->response("400 Bad Request","error","User is not an admin");
@@ -931,6 +984,12 @@ class API {
                 return;
             }
         }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
+
         if(!$this->isAdmin($input['apikey'])){
             http_response_code(400);
             $this->response("400 Bad Request","error","User is not an admin");
@@ -960,6 +1019,11 @@ class API {
                 return;
             }
         }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
 
         $productTitle1 = $input['productTitle1'];
         $productTitle2 = $input['productTitle2'];
@@ -981,6 +1045,11 @@ class API {
                 $this->response("400 Bad Request","error","$field is required");
                 return;
             }
+        }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
         }
 
         $all = isset($input['filter']['All']) ? $input['filter']['All']: '';
@@ -1050,6 +1119,11 @@ class API {
         if(empty($input['apikey'])|| !isset($input['apikey'])){
             http_response_code(400);
             $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
             return;
         }
 
@@ -1132,6 +1206,11 @@ class API {
         $this->response("400 Bad Request", "error", "apikey is Missing");
         return;
     }
+    if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
 
     if(empty($input['Title']) || !isset($input['Title'])){
         http_response_code(400);
@@ -1183,6 +1262,11 @@ class API {
         if(empty($input['apikey'])|| !isset($input['apikey'])){
             http_response_code(400);
             $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
             return;
         }
 
@@ -1261,80 +1345,118 @@ class API {
             $this->response("500 Internal Server Error", "error", "Failed to update review");
         }
     }
-    private function Search($input){ 
-    // Ensure 'apikey' is provided
-    if (empty($input['apikey']) || !isset($input['apikey'])) {
-        http_response_code(400);
-        $this->response("400 Bad Request", "error", "apikey is missing");
-        return;
-    }
-     $apiKey = $input['apikey'];
-
-    if (!$this->getUserByApiKey($apiKey)) {
-        http_response_code(403);
-        $this->response("403 Forbidden", "error", "Invalid API key");
-        return;
-    }
-
-    if (empty($input['search']) || !isset($input['search'])) {
-        http_response_code(400);
-        $this->response("403 Forbidden", "error", "search is missing");
-        return;
-    }
-
-    if (!is_array($input['search'])) {
-        http_response_code(400);
-        $this->response("400 Bad Request", "error", "search must be an array");
-        return;
-    }
-
-    // Allowed columns
-    $validCol = ['Title', 'Category', 'Description', 'Brand'];
-    $search = $input['search'];
-    $conditions = [];
-    $params = [];
-    $types = "";
-
-    // Construct query dynamically
-    foreach ($search as $key => $value) {
-        if (!in_array($key, $validCol)) {
+    private function Search($input) {
+        // Ensure 'apikey' is provided
+        if (empty($input['apikey']) || !isset($input['apikey'])) {
             http_response_code(400);
-            $this->response("400 Bad Request", "error", "Invalid column name '$key'. Valid columns: " . implode(", ", $validCol));
+            $this->response("400 Bad Request", "error", "apikey is missing");
+            return;
+        }
+        $apiKey = $input['apikey'];
+
+        if (!$this->getUserByApiKey($apiKey)) {
+            http_response_code(403);
+            $this->response("403 Forbidden", "error", "Invalid API key");
             return;
         }
 
-        
-        $conditions[] = "$key LIKE ?";
-        $params[] = "%" . $value . "%";
-        $types .= "s"; 
-    }
+        if (empty($input['search']) || !isset($input['search'])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "search is missing");
+            return;
+        }
 
-    $sql = "SELECT * FROM Products";
-    if (count($conditions) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $conditions);
-    }
+        if (!is_array($input['search'])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "search must be an array");
+            return;
+        }
 
-    $stmt = $this->DB_Connection->prepare($sql);
-    if (!$stmt) {
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Could not prepare SQL statement");
-        return;
-    }
+        // Allowed columns
+        $validCol = ['Title', 'Category', 'Description', 'Brand'];
+        $search = $input['search'];
+        $conditions = [];
+        $params = [];
+        $types = "";
 
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
+        // Construct dynamic WHERE clause
+        foreach ($search as $key => $value) {
+            if (!in_array($key, $validCol)) {
+                http_response_code(400);
+                $this->response("400 Bad Request", "error", "Invalid column name '$key'. Valid columns: " . implode(", ", $validCol));
+                return;
+            }
 
-    $result = $stmt->get_result();
-    $products = [];
+            $conditions[] = "Products.$key LIKE ?";
+            $params[] = "%" . $value . "%";
+            $types .= "s";
+        }
 
-    while ($row = $result->fetch_assoc()) {
-        $products[] = $row;
-    }
+        $sql = "
+            SELECT 
+                Products.Product_No,
+                Products.Title,
+                Products.Category,
+                Products.Description,
+                Products.Brand,
+                Products.Image_URL,
+                Prices.Price,
+                Retailers.Name AS Retailer_Name
+            FROM Products
+            JOIN Prices ON Products.Product_No = Prices.Product_No
+            JOIN Retailers ON Prices.Retailer_ID = Retailers.Retailer_ID
+        ";
 
-    $stmt->close();
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
 
-    http_response_code(200);
-    $this->response("200 OK", "success", $products);
+        $stmt = $this->DB_Connection->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Could not prepare SQL statement");
+            return;
+        }
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $groupedProducts = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $productNo = $row['Product_No'];
+            $title = htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8');
+            $category = htmlspecialchars($row['Category'], ENT_QUOTES, 'UTF-8');
+            $description = htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8');
+            $brand = htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8');
+            $imageUrl = htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8');
+            $retailerName = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+
+            if (!isset($groupedProducts[$productNo])) {
+                $groupedProducts[$productNo] = [
+                    "Product_No" => $productNo,
+                    "Title" => $title,
+                    "Category" => $category,
+                    "Description" => $description,
+                    "Brand" => $brand,
+                    "Image_URL" => $imageUrl,
+                    "Retailer_Names" => [],
+                    "Prices" => []
+                ];
+            }
+
+            $groupedProducts[$productNo]["Retailer_Names"][] = $retailerName;
+            $groupedProducts[$productNo]["Prices"][] = (float)$row['Price'];
+        }
+
+        $stmt->close();
+
+        http_response_code(200);
+        $this->response("200 OK", "success", ["Products" => array_values($groupedProducts)]);
     }
     private function getUserDetails($input){
         // ensure apiKey is NOT NULL
@@ -1367,6 +1489,62 @@ class API {
             http_response_code(500);
             $this->response("500 Internal Server Error", "error", "Failed to fetch user data");
             return;
+        }
+    }
+    private function AdminDeleteUser($input){
+         // ensure apiKey is NOT NULL
+        if(empty($input['apikey'])|| !isset($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","apikey is Missing");
+            return;
+        }
+
+        if(empty($input['email'])|| !isset($input['email'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","email is Missing");
+            return;
+        }
+
+        // assign Apikey to var
+        $apiK = $input['apikey'];
+
+        if(!$this->isValidApikey(($apiK))){
+            http_response_code(403);
+            $this->response("403 Forbidden","error","Not a user in the db");
+            return;
+        }
+
+        //check if user is an admin
+        if(!$this->isAdmin($apiK)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Non-Admins may not delete users");
+            return;
+        }
+
+        if(!$this->getUserByEmail($input['Email'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","User is not found");
+            return;
+        }
+        $email = $input['Email'];
+
+        $stmt = $this->DB_Connection->prepare("DELETE FROM Users WHERE Email = ?");
+        if (!$stmt) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare statement");
+            return;
+        }
+
+        $stmt->bind_param("s", $email);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        if ($success) {
+            http_response_code(200);
+            $this->response("200 OK", "success", "User was removed from database");
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to delete from database");
         }
     }
     private function updateUserDetails($input){
@@ -1458,61 +1636,61 @@ class API {
         $stmt->close();
     }
     private function RemoveFromFavourite($input){
-    if (empty($input['apikey']) || !isset($input['apikey'])) {
-        http_response_code(400);
-        $this->response("400 Bad Request", "error", "apikey is Missing");
-        return;
-    }
+        if (empty($input['apikey']) || !isset($input['apikey'])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "apikey is Missing");
+            return;
+        }
 
-    if (empty($input['Title']) || !isset($input['Title'])) {
-        http_response_code(400);
-        $this->response("400 Bad Request", "error", "Title is Missing");
-        return;
-    }
+        if (empty($input['Title']) || !isset($input['Title'])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Title is Missing");
+            return;
+        }
 
-    $api = htmlspecialchars(trim($input['apikey']));
-    $title = htmlspecialchars(trim($input['Title']));
+        $api = htmlspecialchars(trim($input['apikey']));
+        $title = htmlspecialchars(trim($input['Title']));
 
-    $userId = $this->getUserByApiKey($api)['User_ID'];
-    if (!$userId) {
-        http_response_code(403);
-        $this->response("403 Forbidden", "error", "Invalid API Key");
-        return;
-    }
+        $userId = $this->getUserByApiKey($api)['User_ID'];
+        if (!$userId) {
+            http_response_code(403);
+            $this->response("403 Forbidden", "error", "Invalid API Key");
+            return;
+        }
 
-    $productInfo = $this->getProductInfo($title);
-    if (!$productInfo || !isset($productInfo['Product_No'])) {
-        http_response_code(404);
-        $this->response("404 Not Found", "error", "Product not found");
-        return;
-    }
+        $productInfo = $this->getProductInfo($title);
+        if (!$productInfo || !isset($productInfo['Product_No'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "Product not found");
+            return;
+        }
 
-    $prodId = intval($productInfo['Product_No']);
+        $prodId = intval($productInfo['Product_No']);
 
-    if (!$this->userAddedToFavourites($api, $title)) {
-        http_response_code(400);
-        $this->response("400 Bad Request", "error", "User did not add product to favourites");
-        return;
-    }
+        if (!$this->userAddedToFavourites($api, $title)) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "User did not add product to favourites");
+            return;
+        }
 
-    $stmt = $this->DB_Connection->prepare("DELETE FROM favourites WHERE product_id = ? AND user_id = ?");
-    if (!$stmt) {
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Failed to prepare statement");
-        return;
-    }
+        $stmt = $this->DB_Connection->prepare("DELETE FROM favourites WHERE product_id = ? AND user_id = ?");
+        if (!$stmt) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare statement");
+            return;
+        }
 
-    $stmt->bind_param("ii", $prodId, $userId);
-    $success = $stmt->execute();
-    $stmt->close();
+        $stmt->bind_param("ii", $prodId, $userId);
+        $success = $stmt->execute();
+        $stmt->close();
 
-    if ($success) {
-        http_response_code(200);
-        $this->response("200 OK", "success", "Product removed from favourites");
-    } else {
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Failed to delete favourite");
-    }
+        if ($success) {
+            http_response_code(200);
+            $this->response("200 OK", "success", "Product removed from favourites");
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to delete favourite");
+        }
     }
     private function AddRetailer($input) {
     if (empty($input['apikey']) || !isset($input['apikey'])) {
@@ -1698,7 +1876,6 @@ class API {
 
     $stmt->close();
     }
-
     private function handleGetAllUsers($input){
         $required = ['apikey'];
         forEach($required as $field){
@@ -1708,6 +1885,12 @@ class API {
                 return;
             }
         }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
+        }
+
         if(!$this->isAdmin($input['apikey'])){
             http_response_code(400);
             $this->response("400 Bad Request","error","User is not an admin");
@@ -1731,7 +1914,6 @@ class API {
         }
         $stmt->close();
     }
-
     private function handleChangePassword($input){
         $required = ['apikey', 'oldPassword', 'newPassword'];
         forEach($required as $field){
@@ -1740,6 +1922,11 @@ class API {
                 $this->response("400 Bad Request","error","$field is required");
                 return;
             }
+        }
+        if(!$this->isValidApikey($input['apikey'])){
+            http_response_code(403);
+            $this->response("403 Forbidden","error",data: "apikey is invalid");
+            return;
         }
 
         $oldPassword = htmlspecialchars(trim($input['oldPassword']),ENT_QUOTES, 'UTF-8');
@@ -1870,6 +2057,16 @@ class API {
     if (!$stmt) return null;
 
         $stmt->bind_param("s", $apiKey);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return ($result && $result->num_rows > 0) ? $result->fetch_assoc() : null;
+    }   
+    private function getUserByEmail($email) {
+    $stmt = $this->DB_Connection->prepare("SELECT * FROM Users WHERE Email = ?");
+    if (!$stmt) return null;
+
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 

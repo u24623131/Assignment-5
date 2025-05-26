@@ -689,11 +689,12 @@ Required Fields:
                  • Brand
 
 Optional Field:
-  - limit    : Maximum number of results to return (default: 50, max: 50)
+  - limit    : (Currently Ignored) — May be supported in future versions
 
 Notes:
   - Partial matches are supported (e.g. "Dron" matches "Drone")
   - All fields in `search` must be strings
+  - Returns full product details and groups all retailer prices and names
 
 ------------------ REQUEST EXAMPLE ------------------
 
@@ -703,8 +704,7 @@ Notes:
   "search": {
     "Title": "Drone",
     "Brand": "DJI"
-  },
-  "limit": 10
+  }
 }
 
 ------------------ SUCCESS RESPONSE ------------------
@@ -712,17 +712,21 @@ Notes:
 {
   "status": "success",
   "timestamp": 1747777777000,
-  "data": [
-    {
-      "Product_No": 3,
-      "Title": "DJI Mini Drone",
-      "Category": "Electronics",
-      "Description": "Compact and lightweight drone",
-      "Brand": "DJI",
-      "Image_URL": "minidrone.jpg"
-    },
-    ...
-  ]
+  "data": {
+    "Products": [
+      {
+        "Product_No": 3,
+        "Title": "DJI Mini Drone",
+        "Category": "Electronics",
+        "Description": "Compact and lightweight drone",
+        "Brand": "DJI",
+        "Image_URL": "minidrone.jpg",
+        "Retailer_Names": ["BestBuy", "TechWorld"],
+        "Prices": [499.99, 479.99]
+      },
+      ...
+    ]
+  }
 }
 
 ------------------- ERROR RESPONSES -------------------
@@ -736,14 +740,34 @@ Notes:
 {
   "status": "error",
   "timestamp": 1747778888001,
-  "data": "Invalid column name 'Price'. Valid columns: Title, Category, Description, Brand"
+  "data": "Invalid API key"
 }
 
 {
   "status": "error",
   "timestamp": 1747778888002,
+  "data": "search is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
   "data": "search must be an array"
 }
+
+{
+  "status": "error",
+  "timestamp": 1747778888004,
+  "data": "Invalid column name 'Price'. Valid columns: Title, Category, Description, Brand"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888005,
+  "data": "Could not prepare SQL statement"
+}
+
+
 ==================================================================
                       GET USER DETAILS
 ==================================================================
