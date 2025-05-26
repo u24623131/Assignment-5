@@ -403,7 +403,7 @@ document.getElementById("btnDelProd").addEventListener("click", function (event)
 });
 
 document.getElementById("btnUpProdPrice").addEventListener("click", function (event) {
- event.preventDefault();
+    event.preventDefault();
 
     let prodToUpdateInput = document.getElementsByName("upProdTitleInput")[0];
     let retailerNameInput = document.getElementsByName("retailerNameInput")[0];
@@ -637,4 +637,39 @@ document.getElementById("btnAddProd").addEventListener("click", function (event)
     } else {
         console.log("Validation failed. Not sending request.");
     }
+});
+
+document.getElementById("btnShowUsers").addEventListener("click", function (event) {
+    event.preventDefault();
+
+
+    const payload = {
+        type: "ShowUsers",
+        apikey: apiKey
+    };
+
+
+    console.log("Sending payload:", payload);
+
+    fetch("../api.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Successfully retrieved users!");
+            } else {
+                alert("Failed to retrieve users: " + (data.data || "Unknown error."));
+                console.error("API error:", data.data);
+            }
+        })
+        .catch(error => {
+            console.error("Network error retrieving users:", error);
+            alert("Network error. Please check your connection.");
+        });
+
 });

@@ -422,3 +422,10 @@
 .btnSignUp:hover {
     background-color: #218838;
 }
+
+#btnShowUsers {
+    position: absolute;
+    top: -5px;
+    right: 15px;
+    width: auto;
+}

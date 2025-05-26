@@ -45,7 +45,7 @@ include("header.php");
                 <form id="addRetForm" class="Main_Form"> <label class="LblPA lbl"> Retailer Name:</label>
                     <input class="curVal retNameInput" type="text" name="retailName" required placeholder="Retailer Name:">
                     <label class="LblPA lbl"> Retailer Address: (Optional)</label>
-                    <input class="curVal retAddressInput" type="text" name="retailAddress"  placeholder="Retailer Address:">
+                    <input class="curVal retAddressInput" type="text" name="retailAddress" placeholder="Retailer Address:">
                     <button class="btn btnAddRet" type="button" id="btnAddRet">Add Retailer</button>
                 </form>
 
@@ -75,7 +75,8 @@ include("header.php");
                 </form>
 
                 <br>
-                <label class="LblPA" id="remRev">Remove User's Review:</label> <form id="remRevForm" class="Main_Form"> <label class="LblPA lbl"> Account's API Key:</label>
+                <label class="LblPA" id="remRev">Remove User's Review:</label>
+                <form id="remRevForm" class="Main_Form"> <label class="LblPA lbl"> Account's API Key:</label>
                     <input class="curVal delAccAPIInput" type="text" name="reviewerAPIKey" required placeholder="APIKey of Reviewer Account:">
                     <label class="LblPA lbl"> Product Title:</label>
                     <input class="curVal prodTitleInput" type="text" name="prodTitle" required placeholder="Product's Title:">
@@ -121,7 +122,8 @@ include("header.php");
                 </form>
                 <br>
             </div>
-           
+            <button class="btn btnSignUp" type="button" id="btnShowUsers">Show Users</button>
+
         </div>
         <script src="../JS/manage.js"></script>
 </body>
