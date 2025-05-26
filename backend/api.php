@@ -92,6 +92,10 @@ class API {
                 $this->updateUserDetails($input);
                 break;
 
+            case "MakeUserAdmin":
+                $this->makeUserAdmin($input);
+                break;
+
             //Product manipulation    
             case "ProductByRetailer":
                 $this->handleProductByRetailer($input);
@@ -1118,64 +1122,57 @@ class API {
             return;
         }
     }
-    private function RemoveReview($input){ // has a logical issue: apparently "the admin logic is outside the else block that hanldes normal users, which can lead to confusion and potential bugs"
-        // ensure apiKey is NOT NULL
-        if(empty($input['apikey'])|| !isset($input['apikey'])){
-            http_response_code(400);
-            $this->response("400 Bad Request","error","apikey is Missing");
-            return;
-        }
+    private function RemoveReview($input){
+    if(empty($input['apikey']) || !isset($input['apikey'])){
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "apikey is Missing");
+        return;
+    }
 
-        // assign Apikey to var
-        $apiK = $input['apikey'];
+    if(empty($input['Title']) || !isset($input['Title'])){
+        http_response_code(400);
+        $this->response("400 Bad Request", "error", "Title is Missing");
+        return;
+    }
 
-        if(empty($input['Title'])|| !isset($input['Title'])){
-            http_response_code(400);
-            $this->response("400 Bad Request","error", "Title is Missing");
-            return;
-        }
-        $prodId = $this->getProductInfo($input['Title'])['Product_No'];
+    $apiK = $input['apikey'];
+    $prodId = $this->getProductInfo($input['Title'])['Product_No'];
 
-        //check if user is an admin
-        if(!$this->isAdmin($apiK)){
-            // make sure they made a review on that product 
-            if($this->madeReviewOnProduct($apiK,$input['Title'])){
-                if($this->userRemoveReview($apiK,$prodId)){
-                    http_response_code(200);
-                    $this->response("200 OK","success", "Removed your review");
-                    return;
-                }
-                else{
-                    http_response_code(400);
-                    $this->response("400 Bad Request","error", "Could Not remove your review");
-                    return;
-                }
+    if(!$this->isAdmin($apiK)){
+        if($this->madeReviewOnProduct($apiK, $input['Title'])){
+            if($this->userRemoveReview($apiK, $prodId)){
+                http_response_code(200);
+                $this->response("200 OK", "success", "Removed your review");
+                return;
+            } else {
+                http_response_code(400);
+                $this->response("400 Bad Request", "error", "Could Not remove your review");
+                return;
             }
-        else{
+        } else {
             http_response_code(400);
-            $this->response("400 Bad Request","error", "User did not make product review");
+            $this->response("400 Bad Request", "error", "User did not make product review");
             return;
         }
-        }
-            if(empty($input['userapikey'])|| !isset($input['userapikey'])){
+    } else {
+        if(empty($input['userapikey']) || !isset($input['userapikey'])){
             http_response_code(400);
-            $this->response("400 Bad Request","error","userapikey is Missing");
+            $this->response("400 Bad Request", "error", "userapikey is Missing");
             return;
         }
 
         $userApi = $input['userapikey'];
 
-        if($this->adminRemoveReview($input['Title'],$userApi)){
+        if($this->adminRemoveReview($input['Title'], $userApi)){
             http_response_code(200);
-            $this->response("200 OK","success", "Removed user's review");
+            $this->response("200 OK", "success", "Removed user's review");
             return;
-           }
-        else{
+        } else {
             http_response_code(400);
-            $this->response("400 Bad Request","error", "Could Not remove user's review");
+            $this->response("400 Bad Request", "error", "Could Not remove user's review");
             return;
-           }
-
+        }
+    }
     }
     private function UpdateReview($input){
         // ensure apiKey is NOT NULL
@@ -1660,6 +1657,60 @@ class API {
     } else {
         http_response_code(500);
         $this->response("500 Internal Server Error", "error", "Failed to update retailer");
+    }
+
+    $stmt->close();
+    }
+    private function makeUserAdmin($input){
+        $needed = ['adminkey', 'targetkey'];
+         forEach($needed as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+        $admin = $input['adminkey'];
+        if(!$this->isValidApikey($admin)){
+            http_response_code(400); 
+            $this->response("400 Bad Request","error","Admin key is not recognised as a valid key");
+            return;
+        }
+        if(!$this->isAdmin($admin)){
+            http_response_code(403); 
+            $this->response("403 Forbbidden","error","Non-admin user may not make users admin");
+            return;
+        }
+        $target = $input['targetkey'];
+    	if(!$this->isValidApikey($target)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Target key is not recognised as a valid key");
+            return;
+        }
+        
+
+
+        if($this->isAdmin($target)){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","Target key is already an Admin");
+            return;
+        }
+
+        $stmt = $this->DB_Connection->prepare("UPDATE Users SET User_Type = 'admin' WHERE API_Key = ?");
+    if (!$stmt) {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Could not prepare update statement");
+        return;
+    }
+
+    $stmt->bind_param("s", $target);
+
+    if ($stmt->execute()) {
+        http_response_code(200);
+        $this->response("200 OK", "success", "Target is now an admin");
+    } else {
+        http_response_code(500);
+        $this->response("500 Internal Server Error", "error", "Failed to make target an admin");
     }
 
     $stmt->close();
