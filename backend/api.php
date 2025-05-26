@@ -79,7 +79,11 @@ class API {
             case "Login":
                 $this->handleLogin($input);
                 break;
-            
+
+            case "ChangePassword":
+                $this->handleChangePassword($input);
+                break;
+
             case "DeleteAccount":
                 $this->deleteAccount($input);
                 break;
@@ -96,13 +100,13 @@ class API {
                 $this->makeUserAdmin($input);
                 break;
 
+            case "GetAllUsers":
+                $this->handleGetAllUsers($input);
+                break;
+
             //Product manipulation    
             case "ProductByRetailer":
                 $this->handleProductByRetailer($input);
-                break;
-
-            case "ProductsByCustomerId":
-                // $this->handleProductsByCustomerId($input);
                 break;
 
             case "UpdateProductDetails":
@@ -523,10 +527,6 @@ class API {
             http_response_code(500);
             $this->response("500 Internal Server Error","error","$productTitle does not exist in the database");
         }
-    }
-    private function handleProductsByCustomerId($input){
-        $required = ['apikey','customerID'];
-        // do the whole string concatination thing per product associated with the customer id (Apparently the product numbers are in an array?)
     }
     private function AddFavourite($input) {
     // Required keys
@@ -1427,27 +1427,6 @@ class API {
             }
     }
 
-        if (!empty($input['password'])) {
-        if (!$this->isValidPassword($input['password'])) {
-            http_response_code(400);
-            $this->response("400 Bad Request", "error", "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.");
-            return;
-        }
-            // generate salt (16 random chars and Letters) 
-            $salt = bin2hex(random_bytes(16));
-
-            // Hash password using Argon2ID (no manual salt needed)
-            $hash = password_hash($input['password'].$salt, PASSWORD_ARGON2ID, [
-                'memory_cost' => 65536, // Uses 64mb RAM per hash which slows down brute force attacks
-                'time_cost' => 4, // increased number of iterations means that hashing occurs more slowly but also means that the result would be harder to crack
-                'threads' => 2 // 2 CPU threads to balance speed and security
-            ]);
-
-            $fields[] = "Password = ?";
-            $params[] = $hash;
-            $types .= "s";
-    }
-
         if (count($fields) === 0) {
             http_response_code(400);
             $this->response("400 Bad Request", "error", "No fields to update");
@@ -1718,6 +1697,95 @@ class API {
     }
 
     $stmt->close();
+    }
+
+    private function handleGetAllUsers($input){
+        $required = ['apikey'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+        if(!$this->isAdmin($input['apikey'])){
+            http_response_code(400);
+            $this->response("400 Bad Request","error","User is not an admin");
+            return;
+        }
+
+        $sql = "SELECT Email, API_Key FROM Users WHERE 1=1";
+        $stmt = $this->DB_Connection->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result && $result->num_rows > 0) {
+            $users = [];
+            while($row = $result->fetch_assoc()){
+                $users[] = $row;
+            }
+            http_response_code(200);
+            $this->response("200 OK", "success",  $users);
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Could not fetch user data");
+        }
+        $stmt->close();
+    }
+
+    private function handleChangePassword($input){
+        $required = ['apikey', 'oldPassword', 'newPassword'];
+        forEach($required as $field){
+            if(empty($input[$field])){
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request","error","$field is required");
+                return;
+            }
+        }
+
+        $oldPassword = htmlspecialchars(trim($input['oldPassword']),ENT_QUOTES, 'UTF-8');
+        $newPassword = htmlspecialchars(trim($input['newPassword']), ENT_QUOTES, 'UTF-8');
+
+        if ($user = $this->getUserByApiKey(trim($input['apikey']))) {
+            // verify old password
+            $saltedPassword = $oldPassword.$user["Salt"];
+            if (password_verify($saltedPassword, $user["Password"])) {
+                // validate new password
+                if(!$this->isValidPassword($newPassword)){
+                    http_response_code(400);
+                    $this->response("400 Bad Request", "error","Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.");
+                    return;
+                }
+                $salt = bin2hex(random_bytes(16));
+        
+                // hash password (using Argon2ID)
+                $hash = password_hash($newPassword . $salt, PASSWORD_ARGON2ID,[
+                    'memory_cost' => 65536, // Uses 64mb RAM per hash which slows down brute force attacks
+                    'time_cost' => 4, // increased number of iterations means that hashing occurs more slowly but also means that the result would be harder to crack
+                    'threads' => 2 // 2 CPU threads to balance speed and security
+                ]);
+
+                // update: password, hash 
+                $updateSql = "UPDATE Users SET Password = ?, Salt = ? WHERE User_ID = ?";
+                $updateStmt = $this->DB_Connection->prepare($updateSql);
+                $updateStmt->bind_param("ssi", $hash, $salt, $user['User_ID']);
+                if ($updateStmt->execute()) {
+                    http_response_code(200);
+                    $this->response("200 OK","success","Password changed successfully" );
+                }else{
+                    http_response_code(500);
+                    $this->response("500 Internal Server Error","error","Password change failed");
+                }
+                $updateStmt->close();
+            } 
+            else {
+                http_response_code(401);
+                $this->response("401 Unauthorized", "error", "Incorrect password.");
+            }
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Could not fetch a user with the given apikey");
+        }
+
     }
 
     //--------------------- HELPER FUNCTIONS -----------------//
