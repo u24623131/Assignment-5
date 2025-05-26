@@ -195,11 +195,11 @@ class API {
         }
 
         // assign values
-        $name = trim($input['Name']);
-        $surname = trim($input['Surname']);
-        $email = trim($input['Email']);
-        $pass = trim($input['Password']);
-        $userType = trim($input['User_Type']);
+        $name = htmlspecialchars(trim($input['Name']), ENT_QUOTES, 'UTF-8');
+        $surname = htmlspecialchars(trim($input['Surname']), ENT_QUOTES, 'UTF-8');
+        $email = filter_var(trim($input['Email']), FILTER_SANITIZE_EMAIL);
+        $pass = htmlspecialchars(trim($input['Password']), ENT_QUOTES, 'UTF-8');
+        $userType = htmlspecialchars(trim($input['User_Type']), ENT_QUOTES, 'UTF-8');
 
         // Optional: Cell_num 
         $cellNo = NULL;
@@ -378,17 +378,20 @@ class API {
             while ($row = $result->fetch_assoc()) {
                 $productNo = $row['Product_No'];
 
+                $title = htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8');
+                $retailerName = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+
                 if (!isset($groupedProducts[$productNo])) {
                     $groupedProducts[$productNo] = [
                         "Product_No" => $row['Product_No'],
-                        "Title" => $row['Title'],
+                        "Title" => $title,
                         "Retailer_Names" => [],
                         "Prices" => []
                     ];
                 }
 
-                $groupedProducts[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
-                $groupedProducts[$productNo]["Prices"][] = $row['Price'];
+                $groupedProducts[$productNo]["Retailer_Names"][] = $retailerName;
+                $groupedProducts[$productNo]["Prices"][] = (float)$row['Price'];
             }
 
             http_response_code(200);
@@ -441,7 +444,7 @@ class API {
         http_response_code(500);
         $this->response("500 Internal Server Error", "error", "Execution failed during deleteAccount");
 }
-    }
+    } // if we return deleted user's name (later modification) remember to sanitise using htmlspecialchars before returning (XXS Protection)
     private function handleProductByRetailer($input){ // called when you click a button?
         $required = ['apikey','retailer', 'productTitle'];
         forEach($required as $field){
@@ -491,12 +494,12 @@ class API {
                 if ($resProductData && $productData = $resProductData->fetch_assoc()) {
                     http_response_code(200);
                     $this->response("200 OK","success",[
-                        "ProductNo" => $productData['Product_No'],
-                        "Title" => $productData['Title'],
-                        "Category" => $productData['Category'],
-                        "Description" => $productData['Description'],
-                        "Brand" => $productData['Brand'],
-                        "ImageUrl" => $productData['Image_URL'],
+                        "ProductNo" => (int)$productData['Product_No'],
+                        "Title" => htmlspecialchars($productData['Title'], ENT_QUOTES, 'UTF-8'),
+                        "Category" => htmlspecialchars($productData['Category'], ENT_QUOTES, 'UTF-8'),
+                        "Description" => htmlspecialchars($productData['Description'], ENT_QUOTES, 'UTF-8'),
+                        "Brand" => htmlspecialchars($productData['Brand'], ENT_QUOTES, 'UTF-8'),
+                        "ImageUrl" => filter_var($productData['Image_URL'], FILTER_VALIDATE_URL) ? htmlspecialchars($productData['Image_URL'], ENT_QUOTES, 'UTF-8') : null,
                         "Price" => (float)$price['Price']
                     ]);
                 }else{
@@ -541,7 +544,8 @@ class API {
     $userID = intval($userInfo['User_ID']);
 
     // Get product by title using helper
-    $productInfo = $this->getProductInfo($input['Product_Name']);
+    $productName = htmlspecialchars(trim($input['Product_Name']), ENT_QUOTES,'UTF-8');
+    $productInfo = $this->getProductInfo($productName);
     if (!$productInfo || !isset($productInfo['Product_No'])) {
         http_response_code(404);
         $this->response("404 Not Found", "error", "Product not found");
@@ -657,19 +661,19 @@ class API {
 
         if (!isset($groupedFavourites[$productNo])) {
             $groupedFavourites[$productNo] = [
-                "Product_No" => $row['Product_No'],
-                "Title" => $row['Title'],
-                "Category" => $row['Category'],
-                "Description" => $row['Description'],
-                "Brand" => $row['Brand'],
-                "Image_URL" => $row['Image_URL'],
+                "Product_No" => (int)$row['Product_No'],
+                "Title" => htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8'),
+                "Category" => htmlspecialchars($row['Category'], ENT_QUOTES, 'UTF-8'),
+                "Description" => htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8'),
+                "Brand" => htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8'),
+                "Image_URL" => filter_var($row['Image_URL'], FILTER_VALIDATE_URL) ? htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8') : null,
                 "Retailer_Names" => [],
                 "Prices" => []
             ];
         }
 
-        $groupedFavourites[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
-        $groupedFavourites[$productNo]["Prices"][] = $row['Price'];
+        $groupedFavourites[$productNo]["Retailer_Names"][] = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES,'UTF-8');
+        $groupedFavourites[$productNo]["Prices"][] = (float)$row['Price'];
     }
 
     http_response_code(200);
@@ -742,11 +746,11 @@ class API {
         }
 
         // Insert into Table products to obtain product Num
-        $title = $input['Title'];
-        $cat = $input['Category'];
-        $brand= $input['Brand'];
-        $url =$input['Image_URL'];
-        $desc = $input['Description'];
+        $title = htmlspecialchars(trim($input['Title']), ENT_QUOTES,'UTF-8');
+        $cat = htmlspecialchars(trim($input['Category']), ENT_QUOTES,'UTF-8');
+        $brand= htmlspecialchars(trim($input['Brand']), ENT_QUOTES,'UTF-8');
+        $url = filter_var(trim($input['Image_URL']), FILTER_VALIDATE_URL) ? htmlspecialchars(trim($input['Image_URL']), ENT_QUOTES,'UTF-8'):null;
+        $desc = htmlspecialchars(trim($input['Description']), ENT_QUOTES,'UTF-8');
 
         // ensure that product does NOT already Exist
         $firstStep = $this->DB_Connection->prepare("SELECT * FROM Products WHERE Title =?");
@@ -827,11 +831,22 @@ class API {
         $searchStm->close();
         if ($searchResult && $productDetails = $searchResult->fetch_assoc()) {
             // check which parameters are available to change
-            $newTitle = isset($input['newTitle']) ? $input['newTitle'] : $productDetails['Title'];
-            $newCategory = isset($input['newCategory']) ? $input['newCategory'] : $productDetails['Category'];
-            $newDescryption = isset($input['newDescription']) ? $input['newDescription'] : $productDetails['Description'];
-            $newBrand = isset($input['newBrand']) ? $input['newBrand'] : $productDetails['Brand'];
-            $newImgUrl = isset($input['newImageUrl']) ? $input['newImageUrl'] : $productDetails['Image_URL'];
+            $newTitle = isset($input['newTitle']) ? 
+            htmlspecialchars(trim($input['newTitle']), ENT_QUOTES, 'UTF-8') 
+            : htmlspecialchars(trim($productDetails['Title']), ENT_QUOTES, 'UTF-8');
+            $newCategory = isset($input['newCategory']) ? 
+            htmlspecialchars(trim($input['newCategory']), ENT_QUOTES, 'UTF-8') 
+            : htmlspecialchars(trim($productDetails['Category']), ENT_QUOTES, 'UTF-8');
+            $newDescryption = isset($input['newDescription']) ? 
+            htmlspecialchars(trim($input['newDescription']), ENT_QUOTES, 'UTF-8') 
+            : htmlspecialchars(trim($productDetails['Description']), ENT_QUOTES, 'UTF-8');
+            $newBrand = isset($input['newBrand']) ? 
+            htmlspecialchars(trim($input['newBrand']), ENT_QUOTES, 'UTF-8') 
+            : htmlspecialchars(trim($productDetails['Brand']), ENT_QUOTES, 'UTF-8');
+            $newImgUrl = isset($input['newImageUrl']) ? 
+            (filter_var(trim($input['newImageUrl']), FILTER_VALIDATE_URL) ?
+            htmlspecialchars(trim($input['newImageUrl']), ENT_QUOTES, 'UTF-8') : null)
+            : htmlspecialchars(trim($productDetails['Image_URL']), ENT_QUOTES, 'UTF-8');
 
             $updateSql = "UPDATE Products SET Title = ?, Category = ?, Description = ?, Brand = ?, Image_URL = ?  WHERE Product_No = ?";
             $updateStmt = $this->DB_Connection->prepare($updateSql);
@@ -914,14 +929,14 @@ class API {
             return;
         }
 
-        $productTitle = $input['productTitle'];
+        $productTitle = htmlspecialchars(trim($input['productTitle']), ENT_QUOTES, 'UTF-8');
 
         $deleteSql = "DELETE FROM Products WHERE Title = ?";
         $deleteStmt = $this->DB_Connection->prepare($deleteSql);
         $deleteStmt->bind_param("s", $productTitle);
         if ($deleteStmt->execute()) {
             http_response_code(500);
-            $this->response("200 OK","success",["message" => "Product '$productTitle' has been deleted."]);
+            $this->response("200 OK","success",["message" => "Product '".$productTitle."' has been deleted."]);
         }else{
             http_response_code(500);
             $this->response("500 Internal Server Error","error",["message" => "Could not delete product: $productTitle"]);
@@ -951,7 +966,7 @@ class API {
         $this->response("200 OK", "success", ["product1" => $product1Result, "product2" => $product2Result]);
     }
     private function handleFilter($input){
-        $required = ['apikey', 'filter']; // rn it's 1 filterAt a time
+        $required = ['apikey', 'filter']; // rn it's 1 filterAt a time -- // UPDATE: can now handle multiple
         forEach($required as $field){
             if(empty($input[$field])){
                 http_response_code(400); // Bad Request
@@ -967,29 +982,41 @@ class API {
         $byBrand = isset($input['filter']['byBrand']) ? $input['filter']['byBrand']: '';
         // $byPrice = isset($input['filter']['byPrice']) ? $input['filter']['byPrice']: ''; // price needs to be a [min, max] array
 
-        $searchSql = "SELECT * FROM Products WHERE ";
-        $searchVar = "";
-        if ($all != '') {
-            $searchSql .= "1=1";
-        }else if ($byTitle != '') {
-            $searchSql .= "Title = ?";
-            $searchVar = $byTitle;
-        }else if($byCategory != ''){
-            $searchSql .= "Category = ?";
-            $searchVar = $byCategory;
-        }elseif ($byDescription != '') {
-            $searchSql .= "Description = ?";
-            $searchVar = $byDescription;
-        }elseif ($byBrand != '') {
-            $searchSql .= "Brand = ?";
-            $searchVar = $byBrand;
-        }else{
-            $searchSql .= "1=1";
+        $whereClauses = [];
+        $params = [];
+        $types = "";
+
+        if(!empty($byTitle)){
+            $whereClauses[] = "Title = ?";
+            $params[] = $byTitle;
+            $types .= "s";
+        }
+        if(!empty($byCategory)){
+            $whereClauses[] = "Category = ?";
+            $params[] = $byCategory;
+            $types .= "s";
+        }
+        if(!empty($byDescription)){
+            $whereClauses[] = "Description = ?";
+            $params[] = $byDescription;
+            $types .= "s";
+        }
+        if(!empty($byBrand)){
+            $whereClauses[] = "Brand = ?";
+            $params[] = $byBrand;
+            $types .= "s";
         }
 
-        if ($searchVar != "") {
-            $searchStmt = $this->DB_Connection->prepare($searchSql);
-            $searchStmt->bind_param("s", $searchVar);
+        if (count($whereClauses) === 0) {
+            $whereClauses[] = "1=1"; //return all by default
+        }
+
+        $searchSql = "SELECT * FROM Products WHERE " . implode(" AND ", $whereClauses);
+        $searchStmt = $this->DB_Connection->prepare($searchSql);
+        if ($searchStmt) {
+            if (count($params) > 0) {
+                $searchStmt->bind_param($types, ...$params);
+            }
             $searchStmt->execute();
             $searchResult = $searchStmt->get_result();
             if ($searchResult) {
@@ -1002,18 +1029,10 @@ class API {
                 return;
             }
         }else{
-            $searchStmt = $this->DB_Connection->prepare($searchSql);
-            $searchStmt->execute();
-            $searchResult = $searchStmt->get_result();
-            if ($searchResult) {
-                http_response_code(200);
-                $this->response("200 OK","success", $searchResult->fetch_all(MYSQLI_ASSOC));
-                return;
-            }else{
-                http_response_code(400);
-                $this->response("400 Bad Request","error","No result matches the filter");
-                return;
-            }
+            error_log("Prepare failed: ". $this->DB_Connection->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error","error",["message" => "Database error occured. Please try again later"]);
+            return;
         }
 
 
@@ -1065,7 +1084,8 @@ class API {
     }
 
     $prodId = $productInfo['Product_No'];
-    $reveiw = $input['Review'];
+
+    $reveiw = htmlspecialchars(trim($input['Review']), ENT_QUOTES, 'UTF-8');
     $rating = (int) $input['Rating'];
     if($rating > 5){
         http_response_code(400);
@@ -1098,7 +1118,7 @@ class API {
             return;
         }
     }
-    private function RemoveReview($input){
+    private function RemoveReview($input){ // has a logical issue: apparently "the admin logic is outside the else block that hanldes normal users, which can lead to confusion and potential bugs"
         // ensure apiKey is NOT NULL
         if(empty($input['apikey'])|| !isset($input['apikey'])){
             http_response_code(400);
@@ -1416,7 +1436,11 @@ class API {
             $salt = bin2hex(random_bytes(16));
 
             // Hash password using Argon2ID (no manual salt needed)
-            $hash = password_hash($input['password'].$salt, PASSWORD_ARGON2ID);
+            $hash = password_hash($input['password'].$salt, PASSWORD_ARGON2ID, [
+                'memory_cost' => 65536, // Uses 64mb RAM per hash which slows down brute force attacks
+                'time_cost' => 4, // increased number of iterations means that hashing occurs more slowly but also means that the result would be harder to crack
+                'threads' => 2 // 2 CPU threads to balance speed and security
+            ]);
 
             $fields[] = "Password = ?";
             $params[] = $hash;
@@ -1579,7 +1603,7 @@ class API {
             $deleteStmt = $this->DB_Connection->prepare($deleteSql);
             $deleteStmt->bind_param("s", $retailer);
             if ($deleteStmt->execute()) {
-                http_response_code(500);
+                http_response_code(200);
                 $this->response("200 OK","success",["message" => "Retailer '$retailer' has been deleted."]);
             }else{
                 http_response_code(500);
@@ -1646,7 +1670,7 @@ class API {
         // code and message is in the form "200 OK"
         $headerText = "HTTP/1.1 ".$codeAndMessage;
         header($headerText);
-		header("Content-Type: application/json");
+		header("Content-Type: application/json; charset=UTF-8");
 
         $response = [
             "status" => $status,
@@ -1714,8 +1738,8 @@ class API {
                 return false;
             }
         }
-        http_response_code(400);
-        $this->response("500 Error", 'error',"isValid Retailer Did Not Execute)");
+        http_response_code(500);
+        $this->response("500 Internal Server Error", 'error',"Database error: " . $stmt->error);
         exit;
     }
     private function getUserByApiKey($apiKey) {
@@ -1792,14 +1816,14 @@ class API {
         return ($result && $result->num_rows > 0) ? $result->fetch_assoc() : null;
     }
     private function formatResponseData($data){
-        $retailers = array_column($data, 'retailerName');
+        $retailers = array_map(fn($r) => htmlspecialchars($r, ENT_QUOTES, 'UTF-8'), array_column($data, 'retailerName'));
         $prices = array_column($data, 'Price');
-        $title = array_column($data, 'productTitle')[0];
+        $title = htmlspecialchars(array_column($data, 'productTitle')[0], ENT_QUOTES, 'UTF-8');
         $productNum = array_column($data, 'Product_No')[0];
-        $category = array_column($data, 'Category')[0];
-        $description = array_column($data, 'Description')[0];
-        $imgUrl = array_column($data, 'Image_URL')[0];
-        $brand = array_column($data, 'Brand')[0];
+        $category = htmlspecialchars(array_column($data, 'Category')[0],ENT_QUOTES, 'UTF-8');
+        $description = htmlspecialchars(array_column($data, 'Description')[0],ENT_QUOTES, 'UTF-8');
+        $imgUrl = filter_var(array_column($data, 'Image_URL')[0], FILTER_VALIDATE_URL) ? htmlspecialchars(array_column($data, 'Image_URL')[0],ENT_QUOTES, 'UTF-8') : null;
+        $brand = htmlspecialchars(array_column($data, 'Brand')[0],ENT_QUOTES, 'UTF-8');
 
         return [
             "ProductNo" => $productNum,
@@ -1854,7 +1878,6 @@ class API {
 
         return $stmt->get_result()->num_rows > 0;
     }
-
     private function userAddedToFavourites($apikey, $title) {
     $user = $this->getUserByApiKey(htmlspecialchars(trim($apikey)));
     $product = $this->getProductInfo(htmlspecialchars(trim($title)));
@@ -1887,8 +1910,6 @@ class API {
     $stmt->close();
     return $exists;
     }
-
-    
     private function adminRemoveReview($title, $apikey) {
         return $this->userRemoveReview($apikey, $title); 
     }
