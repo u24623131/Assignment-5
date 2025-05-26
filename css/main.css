@@ -225,3 +225,64 @@ nav ul li .active::after {
     padding: 7px 15px; 
     margin: 0; 
 }
+
+/* Paging Container */
+.page-btn {
+    width: fit-content;
+    margin: 10px auto 54px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Individual Page Number Spans and Arrows */
+.page-btn span {
+    display: inline-block;
+    border: 1px solid #ff523b;
+    margin: 0 3.5px;
+    width: 27px;
+    height: 27px;
+    text-align: center;
+    line-height: 27px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s, color 0.3s;
+    color: #555;
+    border-radius: 50%;
+}
+
+.page-btn span.page-number:hover {
+    background-color: #ff523b;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.page-btn span.PActive {
+    background-color: #ff523b;
+    color: #fff;
+    transform: scale(1.0);
+}
+
+.page-btn span.page-arrow {
+    font-size: 1.2em;
+    font-weight: bold;
+    border: none;
+    width: auto;
+    height: auto;
+    line-height: inherit;
+    border-radius: 0;
+    margin: 0 10px;
+    color: #ff523b;
+}
+
+.page-btn span.page-arrow.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.page-btn span.page-arrow:hover {
+    background-color: transparent;
+    color: #ff523b;
+    transform: none;
+}

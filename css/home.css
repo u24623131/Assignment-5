@@ -377,31 +377,6 @@ select:focus {
     outline: none;
 }
 
-/* paging */
-.page-btn {
-    width: fit-content;
-    margin: 10px auto 54px;
-    justify-self: center;
-}
-
-.page-btn span {
-    display: inline-block;
-    border: 1px solid #ff523b;
-    margin-left: 7px;
-    width: 27px;
-    height: 27px;
-    text-align: center;
-    line-height: 27px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.page-btn span:hover {
-    background-color: #ff523b;
-    color: #fff;
-    transform: scale(1.2);
-}
-
 .compareBox {
     position: absolute;
     left: 34px;
