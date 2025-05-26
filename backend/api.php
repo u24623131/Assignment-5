@@ -167,6 +167,10 @@ class API {
             case "UpdateReview":
                 $this->UpdateReview($input);
                 break;
+            
+            case "GetProductReviews":
+                $this->getProductReviews($input);
+                break;
 
             //Manipulation 
             case "Filter":
@@ -1888,16 +1892,48 @@ class API {
         ];
     }
     //getProdReviews returns a table(2D array's)
-   private function getProductReviews($title) {
-        $product = $this->getProductInfo($title);
-        if (!$product) return [];
+    private function getProductReviews($input) {
+        if (empty($input['Title'])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Title is Missing");
+            return;
+        }
+
+        $product = $this->getProductInfo($input['Title']);
+        if (!$product) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Product not found");
+            return;
+        }
 
         $productId = $product['Product_No'];
-        $stmt = $this->DB_Connection->prepare("SELECT * FROM Reviews WHERE Prod_ID = ?");
+
+        $sql = "
+            SELECT 
+            Reviews.*
+            FROM Reviews
+            JOIN Users ON Reviews.U_ID = Users.User_ID
+            WHERE Reviews.Prod_ID = ?
+        ";
+
+        $stmt = $this->DB_Connection->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare SQL statement");
+            return;
+        }
+
         $stmt->bind_param("i", $productId);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $result = $stmt->get_result();
+
+        $reviews = $result->fetch_all(MYSQLI_ASSOC);
+
+        http_response_code(200);
+        $this->response("200 OK", "success", $reviews);
     }
+
+
     private function userRemoveReview($apikey, $title) {
         $user = $this->getUserByApiKey($apikey);
         $product = $this->getProductInfo($title);
