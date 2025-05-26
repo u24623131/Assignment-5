@@ -90,6 +90,7 @@ include("header.php");
                 <button class="btn btnSignUp" type="button" id="btnSave">Save</button>
             </form>
             <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
+            <button class="btn btnSignUp" type="button" id="btnDeleteAccount">Delete Account</button>
 
         </div>
     </div>

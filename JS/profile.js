@@ -2,6 +2,45 @@ document.getElementById("btnLogout").addEventListener("click", function () {
     window.location.href = "logout.php";
 });
 
+document.getElementById("btnDeleteAccount").addEventListener("click", function (event) { // <-- Added 'event' parameter
+    event.preventDefault();
+
+    if (!confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.")) {
+        console.log("Account deletion cancelled by user.");
+        return; // Stop the function if the user cancels
+    }
+
+    const payload = {
+        type: "DeleteAccount",
+        apikey: apiKey 
+    };
+
+    console.log("Sending payload:", payload);
+
+    fetch("../api.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Successfully deleted account!");
+                window.location.href = "logout.php"; // Redirect on success
+            } else {
+                alert("Failed to delete account: " + (data.data || "Unknown error."));
+                console.error("API error:", data.data);
+            }
+        })
+        .catch(error => {
+            console.error("Network error deleting account:", error);
+            alert("Network error. Please check your connection.");
+        });
+
+});
+
 function getCookie(name) {
     const nameEQ = name + "=";
     const ca = document.cookie.split(';'); // Split the cookie string into an array of individual cookies

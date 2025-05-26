@@ -52,6 +52,12 @@
     right: 15px;
 }
 
+#btnDeleteAccount {
+    position: absolute;
+    top: -5px;
+    right: 135px;
+    width: auto;
+}
 
 .MainContainer hr {
     border: none;
