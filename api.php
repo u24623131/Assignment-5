@@ -98,6 +98,14 @@ class API
                 $this->updateUserDetails($input);
                 break;
 
+            case "MakeUserAdmin":
+                $this->makeUserAdmin($input);
+                break;
+
+            case "GetAllUsers":
+                $this->handleGetAllUsers($input);
+                break;
+
             //Product manipulation    
             case "ProductByRetailer":
                 $this->handleProductByRetailer($input);
@@ -142,6 +150,10 @@ class API
 
             case "getUserFavourite":
                 $this->getUserFavourite($input);
+                break;
+
+            case "ChangePassword":
+                $this->handleChangePassword($input);
                 break;
 
             //Retailer Manipulation
@@ -384,40 +396,40 @@ class API
         JOIN Retailers ON Prices.Retailer_ID = Retailers.Retailer_ID");
 
         // Check if the query was successful
-       if ($result) {
-        if ($result->num_rows > 0) {
-            $groupedProducts = [];
+        if ($result) {
+            if ($result->num_rows > 0) {
+                $groupedProducts = [];
 
-            while ($row = $result->fetch_assoc()) {
-                $productNo = $row['Product_No'];
+                while ($row = $result->fetch_assoc()) {
+                    $productNo = $row['Product_No'];
 
-                if (!isset($groupedProducts[$productNo])) {
-                    $groupedProducts[$productNo] = [
-                        "Product_No" => $row['Product_No'],
-                        "Title" => $row['Title'],
-                        "Brand" => $row['Brand'],
-                        "Image_URL" => $row['Image_URL'],
-                        "Description" => $row['Description'],
-                        "Category" => $row['Category'],
-                        "Retailer_Names" => [],
-                        "Prices" => []
-                    ];
+                    if (!isset($groupedProducts[$productNo])) {
+                        $groupedProducts[$productNo] = [
+                            "Product_No" => $row['Product_No'],
+                            "Title" => $row['Title'],
+                            "Brand" => $row['Brand'],
+                            "Image_URL" => $row['Image_URL'],
+                            "Description" => $row['Description'],
+                            "Category" => $row['Category'],
+                            "Retailer_Names" => [],
+                            "Prices" => []
+                        ];
+                    }
+
+                    $groupedProducts[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
+                    $groupedProducts[$productNo]["Prices"][] = $row['Price'];
                 }
 
-                $groupedProducts[$productNo]["Retailer_Names"][] = $row['Retailer_Name'];
-                $groupedProducts[$productNo]["Prices"][] = $row['Price'];
+                http_response_code(200);
+                $this->response("200 OK", "success", ["Products" => array_values($groupedProducts)]);
+            } else {
+                http_response_code(200);
+                $this->response("200 OK", "success", ["Products" => []]);
             }
-
-            http_response_code(200);
-            $this->response("200 OK", "success", ["Products" => array_values($groupedProducts)]);
         } else {
-            http_response_code(200);
-            $this->response("200 OK", "success", ["Products" => []]);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
         }
-    } else {
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Query failed in getAllProducts");
-    }
     }
 
     //Delete Account: deleteAccount param = input
@@ -538,83 +550,83 @@ class API
     }
     private function AddFavourite($input)
     {
-         // Required keys
-    $req = ['apikey', 'Product_Name'];
+        // Required keys
+        $req = ['apikey', 'Product_Name'];
 
-    // Check for missing parameters
-    foreach ($req as $r) {
-        if (!isset($input[$r]) || empty($input[$r])) {
-            http_response_code(400);
-            $this->response("400 Bad Request", "error", "$r is missing");
+        // Check for missing parameters
+        foreach ($req as $r) {
+            if (!isset($input[$r]) || empty($input[$r])) {
+                http_response_code(400);
+                $this->response("400 Bad Request", "error", "$r is missing");
+                return;
+            }
+        }
+
+        // Get user from API key
+        $userInfo = $this->getUserByApiKey($input['apikey']);
+        if (!$userInfo || !isset($userInfo['User_ID'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "User not found");
             return;
         }
-    }
 
-    // Get user from API key
-    $userInfo = $this->getUserByApiKey($input['apikey']);
-    if (!$userInfo || !isset($userInfo['User_ID'])) {
-        http_response_code(404);
-        $this->response("404 Not Found", "error", "User not found");
-        return;
-    }
+        $userID = intval($userInfo['User_ID']);
 
-    $userID = intval($userInfo['User_ID']);
+        // Get product by title using helper
+        $productName = htmlspecialchars(trim($input['Product_Name']), ENT_QUOTES, 'UTF-8');
+        $productInfo = $this->getProductInfo($productName);
+        if (!$productInfo || !isset($productInfo['Product_No'])) {
+            http_response_code(404);
+            $this->response("404 Not Found", "error", "Product not found");
+            return;
+        }
 
-    // Get product by title using helper
-    $productName = htmlspecialchars(trim($input['Product_Name']), ENT_QUOTES,'UTF-8');
-    $productInfo = $this->getProductInfo($productName);
-    if (!$productInfo || !isset($productInfo['Product_No'])) {
-        http_response_code(404);
-        $this->response("404 Not Found", "error", "Product not found");
-        return;
-    }
+        $productNo = intval($productInfo['Product_No']);
 
-    $productNo = intval($productInfo['Product_No']);
+        // Check if it already exists in favourites
+        $check = $this->DB_Connection->prepare("SELECT * FROM favourites WHERE user_id = ? AND product_id = ?");
+        if (!$check) {
+            error_log("Prepare Failed (Check): " . $this->DB_Connection->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Database Error");
+            return;
+        }
 
-    // Check if it already exists in favourites
-    $check = $this->DB_Connection->prepare("SELECT * FROM favourites WHERE user_id = ? AND product_id = ?");
-    if (!$check) {
-        error_log("Prepare Failed (Check): " . $this->DB_Connection->error);
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Database Error");
-        return;
-    }
+        $check->bind_param("ii", $userID, $productNo);
+        if (!$check->execute()) {
+            error_log("Check Execution Failed: " . $check->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to check existing favourites");
+            return;
+        }
 
-    $check->bind_param("ii", $userID, $productNo);
-    if (!$check->execute()) {
-        error_log("Check Execution Failed: " . $check->error);
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Failed to check existing favourites");
-        return;
-    }
+        $result = $check->get_result();
+        if ($result && $result->num_rows > 0) {
+            http_response_code(409);
+            $this->response("409 Conflict", "error", "This product is already in your favourites.");
+            return;
+        }
 
-    $result = $check->get_result();
-    if ($result && $result->num_rows > 0) {
-        http_response_code(409);
-        $this->response("409 Conflict", "error", "This product is already in your favourites.");
-        return;
-    }
+        // Insert into favourites
+        $stmt = $this->DB_Connection->prepare("INSERT INTO favourites(user_id, product_id) VALUES (?, ?)");
+        if (!$stmt) {
+            error_log("Prepare Failed (Insert): " . $this->DB_Connection->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to prepare insert statement");
+            return;
+        }
 
-    // Insert into favourites
-    $stmt = $this->DB_Connection->prepare("INSERT INTO favourites(user_id, product_id) VALUES (?, ?)");
-    if (!$stmt) {
-        error_log("Prepare Failed (Insert): " . $this->DB_Connection->error);
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Failed to prepare insert statement");
-        return;
-    }
+        $stmt->bind_param("ii", $userID, $productNo);
+        if (!$stmt->execute()) {
+            error_log("Insert Failed: " . $stmt->error);
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
+            return;
+        }
 
-    $stmt->bind_param("ii", $userID, $productNo);
-    if (!$stmt->execute()) {
-        error_log("Insert Failed: " . $stmt->error);
-        http_response_code(500);
-        $this->response("500 Internal Server Error", "error", "Failed to add to favourites");
-        return;
-    }
-
-    // Success
-    http_response_code(200);
-    $this->response("200 OK", "success", "Product added to favourites");
+        // Success
+        http_response_code(200);
+        $this->response("200 OK", "success", "Product added to favourites");
     }
     private function getUserFavourite($input)
     {
@@ -1430,23 +1442,6 @@ class API
             }
         }
 
-        if (!empty($input['password'])) {
-            if (!$this->isValidPassword($input['password'])) {
-                http_response_code(400);
-                $this->response("400 Bad Request", "error", "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.");
-                return;
-            }
-            // generate salt (16 random chars and Letters) 
-            $salt = bin2hex(random_bytes(16));
-
-            // Hash password using Argon2ID (no manual salt needed)
-            $hash = password_hash($input['password'] . $salt, PASSWORD_ARGON2ID);
-
-            $fields[] = "Password = ?";
-            $params[] = $hash;
-            $types .= "s";
-        }
-
         if (count($fields) === 0) {
             http_response_code(400);
             $this->response("400 Bad Request", "error", "No fields to update");
@@ -1477,6 +1472,160 @@ class API
 
         $stmt->close();
     }
+    private function makeUserAdmin($input)
+    {
+        $needed = ['adminkey', 'targetkey'];
+        foreach ($needed as $field) {
+            if (empty($input[$field])) {
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request", "error", "$field is required");
+                return;
+            }
+        }
+        $admin = $input['adminkey'];
+        if (!$this->isValidApikey($admin)) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Admin key is not recognised as a valid key");
+            return;
+        }
+        if (!$this->isAdmin($admin)) {
+            http_response_code(403);
+            $this->response("403 Forbbidden", "error", "Non-admin user may not make users admin");
+            return;
+        }
+        $target = $input['targetkey'];
+        if (!$this->isValidApikey($target)) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Target key is not recognised as a valid key");
+            return;
+        }
+
+
+
+        if ($this->isAdmin($target)) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Target key is already an Admin");
+            return;
+        }
+
+        $stmt = $this->DB_Connection->prepare("UPDATE Users SET User_Type = 'admin' WHERE API_Key = ?");
+        if (!$stmt) {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Could not prepare update statement");
+            return;
+        }
+
+        $stmt->bind_param("s", $target);
+
+        if ($stmt->execute()) {
+            http_response_code(200);
+            $this->response("200 OK", "success", "Target is now an admin");
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Failed to make target an admin");
+        }
+
+        $stmt->close();
+    }
+    private function handleGetAllUsers($input)
+    {
+        $required = ['apikey'];
+        foreach ($required as $field) {
+            if (empty($input[$field])) {
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request", "error", "$field is required");
+                return;
+            }
+        }
+        if (!$this->isValidApikey($input['apikey'])) {
+            http_response_code(403);
+            $this->response("403 Forbidden", "error", data: "apikey is invalid");
+            return;
+        }
+
+        if (!$this->isAdmin($input['apikey'])) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "User is not an admin");
+            return;
+        }
+
+        $sql = "SELECT Email, API_Key FROM Users WHERE 1=1";
+        $stmt = $this->DB_Connection->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result && $result->num_rows > 0) {
+            $users = [];
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+            http_response_code(200);
+            $this->response("200 OK", "success",  $users);
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Could not fetch user data");
+        }
+        $stmt->close();
+    }
+    private function handleChangePassword($input)
+    {
+        $required = ['apikey', 'oldPassword', 'newPassword'];
+        foreach ($required as $field) {
+            if (empty($input[$field])) {
+                http_response_code(400); // Bad Request
+                $this->response("400 Bad Request", "error", "$field is required");
+                return;
+            }
+        }
+        if (!$this->isValidApikey($input['apikey'])) {
+            http_response_code(403);
+            $this->response("403 Forbidden", "error", data: "apikey is invalid");
+            return;
+        }
+
+        $oldPassword = htmlspecialchars(trim($input['oldPassword']), ENT_QUOTES, 'UTF-8');
+        $newPassword = htmlspecialchars(trim($input['newPassword']), ENT_QUOTES, 'UTF-8');
+
+        if ($user = $this->getUserByApiKey(trim($input['apikey']))) {
+            // verify old password
+            $saltedPassword = $oldPassword . $user["Salt"];
+            if (password_verify($saltedPassword, $user["Password"])) {
+                // validate new password
+                if (!$this->isValidPassword($newPassword)) {
+                    http_response_code(400);
+                    $this->response("400 Bad Request", "error", "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol.");
+                    return;
+                }
+                $salt = bin2hex(random_bytes(16));
+
+                // hash password (using Argon2ID)
+                $hash = password_hash($newPassword . $salt, PASSWORD_ARGON2ID, [
+                    'memory_cost' => 65536, // Uses 64mb RAM per hash which slows down brute force attacks
+                    'time_cost' => 4, // increased number of iterations means that hashing occurs more slowly but also means that the result would be harder to crack
+                    'threads' => 2 // 2 CPU threads to balance speed and security
+                ]);
+
+                // update: password, hash 
+                $updateSql = "UPDATE Users SET Password = ?, Salt = ? WHERE User_ID = ?";
+                $updateStmt = $this->DB_Connection->prepare($updateSql);
+                $updateStmt->bind_param("ssi", $hash, $salt, $user['User_ID']);
+                if ($updateStmt->execute()) {
+                    http_response_code(200);
+                    $this->response("200 OK", "success", "Password changed successfully");
+                } else {
+                    http_response_code(500);
+                    $this->response("500 Internal Server Error", "error", "Password change failed");
+                }
+                $updateStmt->close();
+            } else {
+                http_response_code(401);
+                $this->response("401 Unauthorized", "error", "Incorrect password.");
+            }
+        } else {
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Could not fetch a user with the given apikey");
+        }
+    }
+
     private function RemoveFromFavourite($input)
     {
         if (empty($input['apikey']) || !isset($input['apikey'])) {

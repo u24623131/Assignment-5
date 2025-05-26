@@ -13,7 +13,6 @@ include("header.php");
     <link rel="stylesheet" href="../css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 </head>
 
@@ -125,7 +124,17 @@ include("header.php");
             <button class="btn btnSignUp" type="button" id="btnShowUsers">Show Users</button>
 
         </div>
-        <script src="../JS/manage.js"></script>
+
+    </div>
+    <div id="usersModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+        <div style="background-color: black; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); border-radius: 20px; width: 800px;">
+            <span class="close-button" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h2>User Accounts</h2>
+            <div id="usersList" style="max-height: 300px; overflow-y: auto; border: 1px solid #eee; padding: 10px;">
+            </div>
+        </div>
+    </div>
+    <script src="../JS/manage.js"></script>
 </body>
 
 </html>

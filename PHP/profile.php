@@ -66,25 +66,20 @@ include("header.php");
                     <label class="LblPA"> Phone Number:</label>
                     <input type="text" class="CurVal" name="curPhoneNr"disabled required placeholder="Current Phone Number Val:">
                     <i id="pIcon" class="fa fa-phone"></i>
-                    <input type="email" id="phoneNumber" class="NewVal" name="phoneNumber" required placeholder="Phone Number:">
+                    <input type="text" id="phoneNumber" class="NewVal" name="phoneNumber" required placeholder="Phone Number:">
                     <label class="error-label" id="phoneNumber-error"></label>
                 </div>
 
                 <div class="input-group">
                     <label class="LblPA"> Password:</label>
-                    <input type="password" class="CurVal" name="curPwd" disabled required placeholder="Current Password Val (***):">
+                    <input type="password" class="CurVal" name="curPasswordInput" id="curPasswordInput" required placeholder="Current Password Val (***):">
                     <i class="fa fa-lock"></i>
-                    <input type="password" id="password" class="NewVal" name="password" required placeholder="Password:">
+                    <input type="password" id="newPasswordInput" class="NewVal" name="newPasswordInput" required placeholder="Password:">
                     <label class="error-label" id="password-error"></label>
                 </div>
                 <div class="input-group">
                     <label class="LblPA"> Account Type:</label>
                     <input type="text" class="CurVal" id="curAcc" disabled required placeholder="Current Account Type Val:">
-                  <!-- <i class="fa fa-user-tag"></i> -->
-                    <!-- <select id="type" name="type" class="Select_Type" required>
-                        <option value="Normal">Normal</option>
-                        <option value="Admin">Admin</option>
-                    </select> -->
                     <label class="error-label" id="type-error"></label>
                 </div>
                 <button class="btn btnSignUp" type="button" id="btnSave">Save</button>
