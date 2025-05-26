@@ -644,7 +644,7 @@ document.getElementById("btnShowUsers").addEventListener("click", function (even
 
 
     const payload = {
-        type: "ShowUsers",
+        type: "GetAllProducts",
         apikey: apiKey
     };
 
