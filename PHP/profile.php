@@ -66,13 +66,13 @@ include("header.php");
                     <label class="LblPA"> Phone Number:</label>
                     <input type="text" class="CurVal" name="curPhoneNr"disabled required placeholder="Current Phone Number Val:">
                     <i id="pIcon" class="fa fa-phone"></i>
-                    <input type="email" id="phoneNumber" class="NewVal" name="phoneNumber" required placeholder="Phone Number:">
+                    <input type="text" id="phoneNumber" class="NewVal" name="phoneNumber" required placeholder="Phone Number:">
                     <label class="error-label" id="phoneNumber-error"></label>
                 </div>
 
                 <div class="input-group">
                     <label class="LblPA"> Password:</label>
-                    <input type="password" class="CurVal" name="curPasswordInput" disabled required placeholder="Current Password Val (***):">
+                    <input type="password" class="CurVal" name="curPasswordInput" required placeholder="Current Password Val (***):">
                     <i class="fa fa-lock"></i>
                     <input type="password" id="password" class="NewVal" name="newPasswordInput" required placeholder="Password:">
                     <label class="error-label" id="password-error"></label>
