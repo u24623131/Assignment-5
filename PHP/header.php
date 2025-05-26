@@ -4,8 +4,8 @@ session_start();
 
 // Optionally set current page dynamically to highlight nav (if used)
 // $currentPage = basename($_SERVER['PHP_SELF'], ".php");
-$_SESSION['login'] = true; // Example: Set to false for testing login/signup display
-$_SESSION['admin'] = true;
+// $_SESSION['login'] = false; // Example: Set to false for testing login/signup display
+// $_SESSION['admin'] = true;
 $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
 ?>
 
@@ -37,7 +37,7 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
                     <li><a class="<?= ($currentPage == 'profile') ? 'active' : '' ?>"
                                 href="<?= $isLoggedIn ? 'profile.php' : 'login.php' ?>"><i class="fas fa-user"></i> Profile</a></li>
 
-                    <?php if ($_SESSION['admin'] == true) { ?>
+                    <?php if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) { ?>
                         <li><a class="<?= ($currentPage == 'manage') ? 'active' : '' ?>" href="manage.php"><i
                                         class="fas fa-user-plus"></i> Manager </a></li>
                     <?php } ?>

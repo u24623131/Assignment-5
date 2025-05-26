@@ -63,15 +63,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                         body: JSON.stringify({
                             type: "Login",
-                            email: email.value,
-                            password: password.value
+                            Email: email.value,
+                            Password: password.value
                         })
                     })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "success") {
                         // Redirect to homepage or reload
-                        window.location.href = "index.php";
+                        window.location.href = "home.php";
                     } else {
                         // Show error
                         console.error(data.data);
@@ -129,27 +129,27 @@ document.addEventListener("DOMContentLoaded", function () {
              }
         }
     }
-
-
-    // 4. Add event listener to the select dropdown
-    if (themeToggleSelect) {
-        themeToggleSelect.addEventListener("change", function() {
-            // Get the selected value from the dropdown
-            const selectedTheme = this.value; // Will be "Light" or "Dark"
-
-            // Apply the selected theme
-            applyThemePreference(selectedTheme);
-
-            // Save the selected preference to localStorage
-            try {
-                localStorage.setItem(localStorageKey, selectedTheme);
-                 console.log("Theme preference saved:", selectedTheme);
-            } catch (e) {
-                 console.error("Failed to save theme preference to localStorage:", e);
-            }
-        });
-    } else {
-        console.warn("Theme toggle select element not found (#theme-toggle).");
-    }
 });
+
+//     // 4. Add event listener to the select dropdown
+//     if (themeToggleSelect) {
+//         themeToggleSelect.addEventListener("change", function() {
+//             // Get the selected value from the dropdown
+//             const selectedTheme = this.value; // Will be "Light" or "Dark"
+
+//             // Apply the selected theme
+//             applyThemePreference(selectedTheme);
+
+//             // Save the selected preference to localStorage
+//             try {
+//                 localStorage.setItem(localStorageKey, selectedTheme);
+//                  console.log("Theme preference saved:", selectedTheme);
+//             } catch (e) {
+//                  console.error("Failed to save theme preference to localStorage:", e);
+//             }
+//         });
+//     } else {
+//         console.warn("Theme toggle select element not found (#theme-toggle).");
+//     }
+// });
 
