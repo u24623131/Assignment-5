@@ -59,6 +59,12 @@ include("header.php");
                     <button class="btn btnUpdateRet" type="button" id="btnUpdateRet">Update Retailer</button>
                 </form>
                 <br>
+
+                <label class="LblPA" id="upRet">Delete Retailer:</label>
+                <form id="delRetForm" class="Main_Form"> <label class="LblPA lbl"> Retailer's Name:</label>
+                    <input class="curVal delRetTitleInput" id="delRetTitleInput" type="text" name="retNameToDelete" required placeholder="Retailer To Delete's Name:">
+                    <button class="btn btnDelRet" type="button" id="btnDelRet">Delete Retailer</button>
+                </form><br>
             </div>
 
             <div id="userForms" style="display: none;"> <label class="LblPA" id="delAcc">Delete Account:</label>
