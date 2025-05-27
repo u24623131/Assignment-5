@@ -18,6 +18,104 @@ const sampleProductData = {
         { name: "Kabelo Maleka", rating: 4.7, date: "2024/05/25", text: "Absolutely thrilled with this toaster! The crumb tray slides out effortlessly. A joy to use." }
     ]
 };
+let allProducts = [];
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';'); // Split the cookie string into an array of individual cookies
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') { // Remove leading spaces (e.g., " my_cookie=value" -> "my_cookie=value")
+            c = c.substring(1, c.length);
+        }
+        if (c.indexOf(nameEQ) == 0) { // If this cookie starts with the name we're looking for
+            return c.substring(nameEQ.length, c.length); // Return the value
+        }
+    }
+    return null; // Cookie not found
+}
+
+const api_key = getCookie('api_key');
+
+let CompareProducts = {
+    type : "ProductCompare",
+    apikey : api_key
+}
+displayProducts () ;
+//Requests:
+
+function getCsrfToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.content : null;
+}
+
+async function sendRequest() {
+    console.log("SENDING REQUEST");
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+    const reqURL = '../api.php';
+
+    try {
+        const response = await fetch(reqURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify(CompareProducts)
+        });
+
+        const result = await response.json();
+        console.dir(result, {
+            depth: null
+        });
+
+        //  Store all products globally
+        allProducts = result.data.Products;
+        return allProducts;
+
+    } catch (error) {
+        console.error("Request failed", error);
+    }
+}
+
+//No Response Request
+
+async function sendAddRequest(dataToSend) {
+    console.log("SENDING REQUEST");
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+    const reqURL = '../api.php';
+
+    try {
+        const response = await fetch(reqURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify(dataToSend)
+        });
+
+        const result = await response.json();
+        console.dir(result, {
+            depth: null
+        });
+
+    } catch (error) {
+        console.error("Request failed", error);
+    }
+}
 
 //creating star rating
 function createStarRating(rating) {
@@ -252,110 +350,21 @@ function createProductCard(product) {
 }
 
 //render products
-document.addEventListener('DOMContentLoaded', () => {
+function displayProducts (){
+     
+    let otherProductData = sendRequest(CompareProducts);
+    
     const mainProductColumn = document.querySelector(".main-product-column");
     const comparedProductsColumn = document.querySelector(".compared-products-column");
     const mainProductCard = createProductCard(sampleProductData);
     mainProductColumn.appendChild(mainProductCard);
 
-    const otherProductData = [
-        { ...sampleProductData, Product_No: "TOAST002", Title: "Compact Toaster Pro", Image_URL: "../image/toaster2.jpg", Prices: [550.00, 570.00, 540.00] },
-        { ...sampleProductData, Product_No: "TOAST003", Title: "Retro Toaster", Image_URL: "../image/toaster3.jpg", Prices: [400.00, 420.00, 390.00] },
-        { ...sampleProductData, Product_No: "TOAST004", Title: "4-Slice Toaster", Image_URL: "../image/toaster4.jpg", Prices: [650.00, 680.00, 630.00] },
-        { ...sampleProductData, Product_No: "TOAST005", Title: "Mini Toaster", Image_URL: "../image/toaster5.jpg", Prices: [300.00, 320.00, 290.00] }
-    ];
 
-    otherProductData.forEach(product => {
-        const comparedCard = createProductCard(product);
-        comparedProductsColumn.appendChild(comparedCard);
-    });
-});
 
-function getCsrfToken() {
-    const metaTag = document.querySelector('meta[name="csrf-token"]');
-    return metaTag ? metaTag.content : null;
+    // otherProductData.forEach(product => {
+    //     const comparedCard = createProductCard(product);
+    //     comparedProductsColumn.appendChild(comparedCard);
+    // });
 }
 
-async function sendRequest() {
-    console.log("SENDING REQUEST");
-    const csrfToken = getCsrfToken();
 
-    if (!csrfToken) {
-        console.error("CSRF token not found. Aborting DeleteAccount request.");
-        alert("Security error: CSRF token missing. Please refresh the page.");
-        return;
-    }
-    const reqURL = '../api.php';
-
-    try {
-        const response = await fetch(reqURL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": csrfToken
-            },
-            body: JSON.stringify(getAllProducts)
-        });
-
-        const result = await response.json();
-        console.dir(result, {
-            depth: null
-        });
-
-        // Store all products globally
-        if (getAllProducts.type === "GetAllProducts" || getAllProducts.type === "Search") {
-            allProducts = result.data.Products;
-
-        } else {
-            allProducts = result.data;
-        }
-
-        //setting the Filter Items 
-        setFilterItems(allProducts)
-        // Set up pagination and render the first page
-        setupPagination(allProducts.length);
-        if (getAllProducts.type === "Search") {
-            renderProductsPage(1);
-        } else {
-            renderProductsPage(currentPage);
-        }
-
-        return allProducts;
-
-    } catch (error) {
-        console.error("Request failed", error);
-    }
-}
-
-//No Response Request
-
-async function sendAddRequest(dataToSend) {
-    console.log("SENDING REQUEST");
-    const csrfToken = getCsrfToken();
-
-    if (!csrfToken) {
-        console.error("CSRF token not found. Aborting DeleteAccount request.");
-        alert("Security error: CSRF token missing. Please refresh the page.");
-        return;
-    }
-    const reqURL = '../api.php';
-
-    try {
-        const response = await fetch(reqURL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": csrfToken
-            },
-            body: JSON.stringify(dataToSend)
-        });
-
-        const result = await response.json();
-        console.dir(result, {
-            depth: null
-        });
-
-    } catch (error) {
-        console.error("Request failed", error);
-    }
-}
