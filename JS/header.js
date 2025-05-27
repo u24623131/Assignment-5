@@ -98,7 +98,7 @@ function startPrimaryTimer() {
     currentTimerPhase = 'primary';
     saveTimerState();
 
-    console.log("Primary timer started. Next event in 5 minutes (persisted).");
+    //console.log("Primary timer started. Next event in 5 minutes (persisted).");
 
     primaryTimerTimeoutId = setTimeout(() => {
         console.log("Primary timer finished. Triggering random event (persisted).");
@@ -117,10 +117,10 @@ function triggerRandomEvent() {
     currentTimerPhase = 'random_delay';
     saveTimerState();
 
-    console.log(`Random delay of ${randomDelay / 1000} seconds before button appears (persisted).`);
+    //console.log(`Random delay of ${randomDelay / 1000} seconds before button appears (persisted).`);
 
     randomDelayTimeoutId = setTimeout(() => {
-        console.log("Random delay finished. Showing button (persisted).");
+        //console.log("Random delay finished. Showing button (persisted).");
         showButton();
     }, randomDelay);
 }
@@ -154,7 +154,7 @@ function showButton() {
     currentTimerPhase = 'button_visible';
     saveTimerState();
 
-    console.log("Button is now visible. It will disappear in 30 seconds (persisted).");
+    //console.log("Button is now visible. It will disappear in 30 seconds (persisted).");
 
     buttonVisibilityTimeoutId = setTimeout(handleButtonTimeout, BUTTON_VISIBILITY_DURATION);
 }
@@ -163,7 +163,7 @@ function showButton() {
  * Handles the event when the button's visibility time elapses.
  */
 function handleButtonTimeout() {
-    console.log("Button visibility time elapsed. Restarting timer (persisted).");
+    //console.log("Button visibility time elapsed. Restarting timer (persisted).");
     hideButton();
     startPrimaryTimer(); // Restart the entire process
 }
@@ -183,7 +183,7 @@ function hideButton() {
 
 // Event listener for the action button click
 actionButton.addEventListener('click', () => {
-    console.log("Button clicked! Restarting timer (persisted).");
+    //console.log("Button clicked! Restarting timer (persisted).");
     hideButton(); // Hide the button immediately
     makeApiCall(); // Call your API function here
     startPrimaryTimer(); // Restart the entire process
@@ -204,40 +204,40 @@ function initializeTimer() {
     if (currentTimerPhase === 'primary' && primaryTimerStartTime !== null) {
         const remainingTime = PRIMARY_TIMER_DURATION - (now - primaryTimerStartTime);
         if (remainingTime > 0) {
-            console.log(`Resuming primary timer. Remaining: ${remainingTime / 1000}s`);
+            //console.log(`Resuming primary timer. Remaining: ${remainingTime / 1000}s`);
             primaryTimerTimeoutId = setTimeout(() => {
-                console.log("Primary timer resumed & finished. Triggering random event.");
+                //console.log("Primary timer resumed & finished. Triggering random event.");
                 triggerRandomEvent();
             }, remainingTime);
         } else {
-            console.log("Primary timer already expired, moving to random event phase.");
+            //console.log("Primary timer already expired, moving to random event phase.");
             triggerRandomEvent();
         }
     } else if (currentTimerPhase === 'random_delay' && randomDelayTriggerTime !== null) {
         const remainingDelay = randomDelayTriggerTime - now;
         if (remainingDelay > 0) {
-            console.log(`Resuming random delay. Remaining: ${remainingDelay / 1000}s`);
+            //console.log(`Resuming random delay. Remaining: ${remainingDelay / 1000}s`);
             randomDelayTimeoutId = setTimeout(() => {
-                console.log("Random delay resumed & finished. Showing button.");
+                //console.log("Random delay resumed & finished. Showing button.");
                 showButton();
             }, remainingDelay);
         } else {
-            console.log("Random delay already expired, moving to button visible phase.");
+            //console.log("Random delay already expired, moving to button visible phase.");
             showButton();
         }
     } else if (currentTimerPhase === 'button_visible' && buttonDisplayFinishTime !== null) {
         const remainingVisibility = buttonDisplayFinishTime - now;
         if (remainingVisibility > 0) {
-            console.log(`Resuming button visibility. Remaining: ${remainingVisibility / 1000}s`);
+            //console.log(`Resuming button visibility. Remaining: ${remainingVisibility / 1000}s`);
             showButton(); // Make button visible and positioned
             buttonVisibilityTimeoutId = setTimeout(handleButtonTimeout, remainingVisibility);
         } else {
-            console.log("Button visibility already expired. Restarting timer.");
+            //console.log("Button visibility already expired. Restarting timer.");
             handleButtonTimeout(); // This will hide button and start primary timer
         }
     } else {
         // No saved state or state is invalid/completed, start fresh
-        console.log("No valid timer state found. Starting new primary timer.");
+        //console.log("No valid timer state found. Starting new primary timer.");
         startPrimaryTimer();
     }
 }
