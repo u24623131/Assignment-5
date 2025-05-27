@@ -72,19 +72,19 @@ class API {
 
         switch ($input["type"]) {
             //Account Management
-            case "Register":
+            case "Register": //yes
                 $this->handleRegister($input);
                 break;
 
-            case "Login":
+            case "Login": // yes
                 $this->handleLogin($input);
                 break;
 
-            case "ChangePassword":
+            case "ChangePassword": //yes
                 $this->handleChangePassword($input);
                 break;
 
-            case "DeleteAccount":
+            case "DeleteAccount": // yes
                 $this->deleteAccount($input);
                 break;
 
@@ -92,107 +92,107 @@ class API {
                 $this->getUserDetails($input);
                 break;
 
-            case "UpdateUserDetails":
+            case "UpdateUserDetails"://yes
                 $this->updateUserDetails($input);
                 break;
 
-            case "MakeUserAdmin":
+            case "MakeUserAdmin": //yes
                 $this->makeUserAdmin($input);
                 break;
 
-            case "GetAllUsers":
+            case "GetAllUsers": //yes
                 $this->handleGetAllUsers($input);
                 break;
             
-            case "AdminDeleteUser": // takes in email
+            case "AdminDeleteUser": // takes in email yes
                 $this-> AdminDeleteUser($input);
                 break;
             
-            case "GetUserXP":
+            case "GetUserXP":// yes
                 $this->getUserXP($input);
                 break;
 
-            case "AddUserXP":
+            case "AddUserXP"://yes
                 $this-> AddUserXP($input);
                 break;
 
             //Product manipulation    
-            case "ProductByRetailer":
+            case "ProductByRetailer": // yes
                 $this->handleProductByRetailer($input);
                 break;
 
-            case "UpdateProductDetails":
+            case "UpdateProductDetails": //yes
                 $this->handleUpdateProductDetails($input);
                 break;
 
-            case "UpdateProductPrices":
+            case "UpdateProductPrices": // yes
                 $this->handleUpdateProductPrices($input);
                 break;
 
-            case "DeleteProduct":
+            case "DeleteProduct": // yes
                 $this->deleteProduct($input);
                 break;
 
-            case "AddProduct":
+            case "AddProduct":// yes
                 $this->addProduct($input);
                 break;
 
-            case "GetAllProducts":
+            case "GetAllProducts": // yes
                 $this->getAllProducts();
                 break;
 
-            case "ProductCompare":
+            case "ProductCompare": // yes
                 $this->handleProductCompare($input);
                 break;
             
-            case "AddToCompare":
+            case "AddToCompare": //yes
                 $this->handleAddToCompare($input);
                 break;
 
-            case "RemoveFromCompare":
+            case "RemoveFromCompare"://yes
                 $this->handleRemoveFromCompare($input);
                 break;
 
             // Favourites manipulation
-            case "AddToFavourite":
+            case "AddToFavourite": //yes
                 $this->AddFavourite($input);
                 break;
 
-            case "RemoveFromFavourite":
+            case "RemoveFromFavourite": // yes
                 $this->RemoveFromFavourite($input);
                 break;
                 
-            case "GetUserFavourite":
+            case "GetUserFavourite"://yes
                 $this->getUserFavourite($input);
                 break;
 
             //Retailer Manipulation
-            case "AddRetailer":
+            case "AddRetailer": // yes
                 $this->AddRetailer($input);
                 break;
 
-            case "RemoveRetailer":
+            case "RemoveRetailer"://yes
                 $this->RemoveRetailer($input);
                 break;
             
-            case "UpdateRetailer":
+            case "UpdateRetailer": // yes
                 $this->UpdateRetailer($input);
                 break;
 
             //Review Manpulation
-            case "AddReview":
+            case "AddReview": //yes
                 $this->AddReview($input);
                 break;
 
-            case "RemoveReview":
+            case "RemoveReview": //yes
                 $this->RemoveReview($input);
                 break;
 
-            case "UpdateReview":
+            case "UpdateReview": //yes
                 $this->UpdateReview($input);
                 break;
             
-            case "GetProductReviews":
+            case "GetProductReviews"://yes
                 $this->getProductReviews($input);
                 break;
 
@@ -201,7 +201,7 @@ class API {
                 $this->handleFilter($input); 
                 break;
 
-            case "Search":
+            case "Search"://yes
                 $this->Search($input); 
                 break;
 
@@ -2275,7 +2275,7 @@ class API {
         }
     
         $result = $toCheck->get_result();
-        
+
         if ($result && $result->num_rows > 0) {
             $deleteSql = "DELETE FROM Compare WHERE user_id = ? AND product_id = ?";
             $deleteStmt = $this->DB_Connection->prepare($deleteSql);

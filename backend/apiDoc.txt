@@ -1293,3 +1293,773 @@ Required Fields:
   "timestamp": 1747948001001,
   "data": "Product not found"
 }
+==================================================================
+                      ADD TO Review
+==================================================================
+
+Required Fields:
+  - type        : "AddReview"
+  - apiKey      : Valid API key
+  - Title  : Name of product to add
+  - Rating: Between 0 and 5,
+  - Review: text
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "AddReview",
+  "apiKey": "0ce38b841cd526f2b18b9707aed7f772",
+  "Title": "Oreo",
+  "Rating": 5,
+  "Review": "yummy"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+"Review was inserted
+==================================================================
+                        CHANGE PASSWORD
+==================================================================
+
+Required Fields:
+  - type         : "ChangePassword"
+  - apikey       : Valid API key
+  - oldPassword  : Current password of the user
+  - newPassword  : New password (must meet security requirements)
+
+Password Requirements:
+  - At least 8 characters long
+  - Includes uppercase and lowercase letters
+  - Contains at least one number and one symbol
+
+Notes:
+  - The API key must belong to an authenticated user
+  - The old password must match the current one
+  - On success, the password is updated using Argon2ID hashing
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "ChangePassword",
+  "apikey": "youalreadyknowfakeapikey",
+  "oldPassword": "OldPass123!",
+  "newPassword": "NewStrongPass@456"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777999,
+  "data": "Password changed successfully"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "oldPassword is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "newPassword is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
+  "data": "apikey is invalid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888004,
+  "data": "Incorrect password."
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888005,
+  "data": "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol."
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888006,
+  "data": "Password change failed"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888007,
+  "data": "Could not fetch a user with the given apikey"
+}
+==================================================================
+                        GET ALL USERS
+==================================================================
+
+Required Fields:
+  - type     : "GetAllUsers"
+  - apikey   : Valid API key of an admin user
+
+Notes:
+  - Only admin users are authorized to access this endpoint
+  - Returns a list of all registered users with their email and API key
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "GetAllUsers",
+  "apikey": "youalreadyknowfakeapikey"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777998,
+  "data": [
+    {
+      "Email": "alice@example.com",
+      "API_Key": "apikey123..."
+    },
+    {
+      "Email": "bob@example.com",
+      "API_Key": "apikey456..."
+    }
+    ...
+  ]
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is invalid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "User is not an admin"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
+  "data": "Could not fetch user data"
+}
+==================================================================
+                      ADMIN DELETE USER
+==================================================================
+
+Required Fields:
+  - type   : "AdminDeleteUser"
+  - apikey : Valid API key of an admin user
+  - Email  : Email address of the user to delete
+
+Notes:
+  - Only users with admin privileges can delete other users
+  - The specified user must already exist in the database
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "AdminDeleteUser",
+  "apikey": "youalreadyknowfakeapikey",
+  "Email": "targetuser@example.com"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777997,
+  "data": "User was removed from database"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "email is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "Not a user in the db"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
+  "data": "Non-Admins may not delete users"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888004,
+  "data": "User is not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888005,
+  "data": "Failed to prepare statement"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888006,
+  "data": "Failed to delete from database"
+}
+==================================================================
+                          GET USER XP
+==================================================================
+
+Required Fields:
+  - type   : "GetUserXP"
+  - apikey : Valid API key of the user
+
+Notes:
+  - Returns the XP (experience points) of the authenticated user
+  - XP is a numeric value stored in the user's profile
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "GetUserXP",
+  "apikey": "youalreadyknowfakeapikey"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777996,
+  "data": {
+    "XP": 1200
+  }
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is not valid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "issue with api key"
+}
+==================================================================
+                         ADD USER XP
+==================================================================
+
+Required Fields:
+  - type   : "AddUserXP"
+  - apikey : Valid API key of the user
+  - xp     : Positive numeric value of XP to add
+
+Notes:
+  - The given XP value is added to the user's current XP
+  - XP must be a non-negative number
+  - Only valid users can increase their XP
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "AddUserXP",
+  "apikey": "youalreadyknowfakeapikey",
+  "xp": 150
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777995,
+  "data": "Congradulations, XP went up by 150"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": " is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is invalid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "xp is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
+  "data": "xp must be a number"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888004,
+  "data": "xp must be positive"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888005,
+  "data": "Could not increase XP :("
+}
+==================================================================
+                    UPDATE PRODUCT DETAILS
+==================================================================
+
+Required Fields:
+  - type         : "UpdateProductDetails"
+  - apikey       : Valid admin API key
+  - productTitle : Title of the product to update (must exist)
+
+Optional Fields (any can be provided to update):
+  - newTitle       : New title for the product
+  - newCategory    : New category
+  - newDescription : New description
+  - newBrand       : New brand
+  - newImageUrl    : Valid URL to the new image
+
+Notes:
+  - Product is identified using the current product title
+  - Only admin users may update product details
+  - If a field is not provided, the current value is kept
+  - If newImageUrl is provided, it must be a valid URL
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "UpdateProductDetails",
+  "apikey": "youalreadyknowfakeapikey",
+  "productTitle": "Black Jeans",
+  "newTitle": "Dark Black Jeans",
+  "newDescription": "Stylish and modern black jeans",
+  "newBrand": "UrbanEdge",
+  "newImageUrl": "https://example.com/images/blackjeans.png"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777995,
+  "data": "Product successfully updated"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is invalid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "User is not an admin"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
+  "data": "productTitle is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888004,
+  "data": "Product update failed"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888005,
+  "data": "Could not fetch product details"
+}
+==================================================================
+                        ADD TO COMPARE
+==================================================================
+
+Required Fields:
+  - type         : "AddToCompare"
+  - apikey       : Valid API key
+  - Product_Name : Name of the product to compare (must exist)
+
+Notes:
+  - Only authenticated users may add products to compare
+  - A user may not add the same product more than once
+  - Product names are matched case-sensitively
+  - Product must exist in the database
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "AddToCompare",
+  "apikey": "youalreadyknowfakeapikey",
+  "Product_Name": "Dante Hoodie"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747779999111,
+  "data": "Product added to Compare"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747780000001,
+  "data": "apikey is invalid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000002,
+  "data": "Product_Name is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000003,
+  "data": "User not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000004,
+  "data": "Product not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000005,
+  "data": "This product is already in your compares."
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000006,
+  "data": "Database Error"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000007,
+  "data": "Failed to check existing compares"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000008,
+  "data": "Failed to prepare insert statement"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747780000009,
+  "data": "Failed to add to Compare"
+}
+==================================================================
+                    REMOVE FROM COMPARE
+==================================================================
+
+Required Fields:
+  - type         : "RemoveFromCompare"
+  - apikey       : Valid API key
+  - Product_Name : Name of the product to remove from compare list
+
+Notes:
+  - Only authenticated users may remove products from their compare list
+  - The product must exist in the user's compare table
+  - Product names are matched case-sensitively
+  - Product must exist in the Products table
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "RemoveFromCompare",
+  "apikey": "youalreadyknowfakeapikey",
+  "Product_Name": "Dante Hoodie"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747781111222,
+  "data": "Product successfully removed from Compare table"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747781111333,
+  "data": "apikey is invalid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781111444,
+  "data": "Product_Name is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781111555,
+  "data": "User not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781111666,
+  "data": "Product not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781111777,
+  "data": "Database Error"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781111888,
+  "data": "Failed to check existing compares"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781111999,
+  "data": "Failed to prepare delete statement"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781112000,
+  "data": "Failed to delete from Compare"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747781112111,
+  "data": "Product not found within the Compare table"
+}
+==================================================================
+                        REMOVE RETAILER
+==================================================================
+
+Required Fields:
+  - type     : "RemoveRetailer"
+  - apikey   : Valid API key belonging to an admin
+  - retailer : The name of the retailer to remove
+
+Notes:
+  - Only admin users are allowed to remove a retailer
+  - Retailers are matched by exact name (case-sensitive)
+  - Retailer must already exist in the Retailers table
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "RemoveRetailer",
+  "apikey": "youalreadyknowfakeapikey",
+  "retailer": "GameStop"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747782222333,
+  "data": {
+    "message": "Retailer 'GameStop' has been deleted."
+  }
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747782222444,
+  "data": "apikey is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747782222555,
+  "data": "retailer is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747782222666,
+  "data": "User is not an admin"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747782222777,
+  "data": {
+    "message": "Retailer 'GameStop' not found."
+  }
+}
+
+{
+  "status": "error",
+  "timestamp": 1747782222888,
+  "data": {
+    "message": "Could not delete product: GameStop"
+  }
+}
+==================================================================
+                          UPDATE REVIEW
+==================================================================
+
+Required Fields:
+  - type    : "UpdateReview"
+  - apikey  : Valid user API key (admins NOT allowed to update reviews)
+  - Title   : The exact product title for which the review exists
+  - Rating  : New rating value (integer between 0 and 5)
+
+Notes:
+  - Only non-admin users can update their own reviews.
+  - User must have previously reviewed the product.
+  - Rating must be numeric, between 0 and 5 inclusive.
+  - Product must exist in the Products table.
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "UpdateReview",
+  "apikey": "userapikey123",
+  "Title": "Super Cool Widget",
+  "Rating": 4
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747783333000,
+  "data": "Review updated successfully"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747783333111,
+  "data": "apikey is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333222,
+  "data": "apikey is invalid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333333,
+  "data": "Admins may not Update reviews but they may remove"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333444,
+  "data": "Title is Empty"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333555,
+  "data": "Super Cool Widget may not exist"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333666,
+  "data": "Rating must be a number"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333777,
+  "data": "You did not review this product"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333888,
+  "data": "Rating may not be greater than 5"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783333999,
+  "data": "Rating may not be negative"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783334000,
+  "data": "Failed to prepare update query"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747783334111,
+  "data": "Failed to update review"
+}
