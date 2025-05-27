@@ -46,20 +46,13 @@
     height: auto;
 }
 
-#btnAddRet {
-    width: 20%;
-    margin-left: 32px;
-    position: absolute;
-    right: 20px;
-    bottom: 315px;
-}
 
 #btnChangeAcc {
     width: 20%;
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 222px;
+    bottom: 257px;
 }
 
 #btnDelRev {
@@ -67,7 +60,7 @@
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 15px;
+    bottom: 25px;
 }
 
 #btnUpProdPrice {
@@ -75,7 +68,7 @@
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 670px;
+    bottom: 765px;
 }
 
 #btnAddProd {
@@ -83,7 +76,7 @@
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 15px;
+    bottom: 25px;
 }
 
 #btnDelProd {
@@ -91,7 +84,15 @@
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 970px;
+    bottom: 1100px;
+}
+
+#btnAddRet {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 495px;
 }
 
 #btnUpdateRet {
@@ -99,7 +100,15 @@
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 17px;
+    bottom: 157px;
+}
+
+#btnDelRet {
+    width: 20%;
+    margin-left: 32px;
+    position: absolute;
+    right: 20px;
+    bottom: 19px;
 }
 
 #btnDelAcc {
@@ -107,7 +116,7 @@
     margin-left: 32px;
     position: absolute;
     right: 20px;
-    bottom: 345px;
+    bottom: 390 px;
 }
 
 
@@ -163,6 +172,12 @@
 }
 
 .retNameInput {
+    width: 30%;
+    margin-left: 32px;
+    margin-bottom: 12px;
+}
+
+.delRetTitleInput {
     width: 30%;
     margin-left: 32px;
     margin-bottom: 12px;
