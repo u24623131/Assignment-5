@@ -1277,7 +1277,7 @@ class API {
                         ];
                     }
 
-                    $products[$productNo]['Retailers'][] = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+                    $products[$productNo]['Retailer_Names'][] = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
                     $products[$productNo]['Prices'][] = (float)$row['Price'];
                 }
                 http_response_code(200);
