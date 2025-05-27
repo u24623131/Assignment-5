@@ -23,7 +23,7 @@
         <div class="ProductPlace" id="PPlace">
 
             <div class="prod-container">
-                <div class="col-4">
+                <div class="Maincol-4">
                     <img src="..\image\toaster.jpg">
                     <h4 id="Title">Toaster</h4>
                     <div class="retail">

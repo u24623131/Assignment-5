@@ -176,7 +176,7 @@ function createCompareListCard(productName, imageSource) {
 
     //title
     const productTitle = document.createElement("h4");
-    productTitle.id = "Title" ;
+    productTitle.id = "Title";
     productTitle.textContent = productName;
     CompareListElement.appendChild(productTitle);
 
@@ -238,18 +238,23 @@ async function sendRequest() {
         });
 
         // Store all products globally
-        if (getAllProducts.type === "GetAllProducts") {
+        if ( getAllProducts.type === "GetAllProducts" || getAllProducts.type === "Search" ) {
             allProducts = result.data.Products;
-        } else if (getAllProducts.type === "Search") {
+            
+        } else {
             allProducts = result.data;
         }
 
         //setting the Filter Items 
         setFilterItems(allProducts)
-
         // Set up pagination and render the first page
         setupPagination(allProducts.length);
-        renderProductsPage(currentPage);
+        if(getAllProducts.type === "Search"){
+            renderProductsPage(1);
+        }else{
+            renderProductsPage(currentPage);
+        }
+        
         return allProducts;
 
     } catch (error) {
@@ -260,7 +265,7 @@ async function sendRequest() {
 //No Response Request
 
 async function sendAddRequest(dataToSend) {
-    console.log("SENDING REQUEST" );
+    console.log("SENDING REQUEST");
     const reqURL = '../api.php';
 
     try {
@@ -287,11 +292,10 @@ async function sendAddRequest(dataToSend) {
 function renderProductsPage(page) {
     currentPage = page;
     PPlace.innerHTML = '';
-
+    console.log("Current page--------- : "+ currentPage)
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
     const productsToDisplay = allProducts.slice(startIndex, endIndex);
-
     if (!Array.isArray(productsToDisplay) || productsToDisplay.length === 0) {
         const noResultsMessage = document.createElement('p');
         noResultsMessage.textContent = "No products found on this page.";
@@ -505,24 +509,39 @@ document.addEventListener('DOMContentLoaded', (event) => {
     //     });
     // });
 
-    // const categorySelect = document.getElementById("Dropdown_Category");
+    const categorySelect = document.getElementById("Dropdown_Category");
     // const countrySelect = document.getElementById("Dropdown_country");
-    // const brandSelect = document.getElementById("Dropdown_brand");
+    const brandSelect = document.getElementById("Dropdown_brand");
 
-    // categorySelect.addEventListener("change", function () {
-    //     getAllProducts.search.categories = categorySelect.value;
-    //     sendRequest();
-    // });
+    categorySelect.addEventListener("change", function () {
+        getAllProducts = {
+            type: "Filter",
+            apikey: api_key,
+            filter: {
+                "byCategory": categorySelect.value
+            }
+        };
+        sendRequest();
+    });
 
     // countrySelect.addEventListener("change", function () {
     //     getAllProducts.search.country_of_origin = countrySelect.value;
     //     sendRequest();
     // });
 
-    // brandSelect.addEventListener("change", function () {
-    //     getAllProducts.search.brand = brandSelect.value;
-    //     sendRequest();
-    // });
+    brandSelect.addEventListener("change", function () {
+
+        getAllProducts = {
+            type: "Filter",
+            apikey: api_key,
+            filter: {
+                "byBrand": brandSelect.value
+            }
+        };
+        sendRequest();
+        
+        
+    });
     ///////////////////////////////////////////////////////////////////////////
     // const btnClear = document.getElementById(btnClear)
     // btnClear.addEventListener("click",function(){
@@ -580,7 +599,7 @@ document.addEventListener("click", async function (event) {
 });
 
 // Listener for removing compare items
-document.addEventListener("click", function(event) {
+document.addEventListener("click", function (event) {
     const clickedCompareItem = event.target.closest(".compareitem");
 
     if (clickedCompareItem) {

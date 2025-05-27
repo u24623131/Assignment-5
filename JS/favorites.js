@@ -248,7 +248,7 @@ document.addEventListener("click", function(event) {
 
 // Fetch Data from the database
 var GetUserFavourite = {
-    type: "getUserFavourite",
+    type: "GetUserFavourite",
     apikey : api_key
 };
 

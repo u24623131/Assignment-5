@@ -290,11 +290,11 @@ nav ul li .active::after {
 /* filters */
 .filter-sidebar {
     display: none;
-    z-index: 1;
-    height: 670px;
+    z-index: 0;
+    height: 550px;
     width: 234px;
     position: fixed;
-    top: 0;
+    top: 500;
     right: 0;
     background-color: black;
     border: 1px solid gray;
