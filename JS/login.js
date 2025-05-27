@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             window.location.href = "home.php";
                         } else {
                             // Show error
+                            alert("The credentials you entered are invalid!");
                             console.error(data.data);
                         }
                     });
