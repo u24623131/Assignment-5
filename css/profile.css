@@ -20,14 +20,14 @@
 
 .Top-Header h2 {
     color: white;
-    font-family: 'Dancing Script', cursive;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 26px;
     margin: 5px;
 }
 
 .Slogan {
     color: #ff523b;
-    font-family: 'Dancing Script', cursive;
+    font-family: Arial, Helvetica, sans-serif;
     margin-bottom: 16px;
     font-size: 13px;
 }
@@ -52,6 +52,12 @@
     right: 15px;
 }
 
+#btnSave {
+    position: absolute;
+    bottom: 10px;
+    right: 185px;
+}
+
 #btnDeleteAccount {
     position: absolute;
     top: -5px;
@@ -71,10 +77,19 @@
     margin-bottom: 11px;
 }
 
+.error-tooltip[data-field-id="curPasswordInput"] {
+    transform: translate(298px, 35px);
+}
+
+#expDisplay{
+    position: absolute;
+    top: -25px;
+}
+
 .LblPA {
     position: relative;
-    font-family: 'Dancing Script', cursive;
-    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
     margin: 8px;
     font-weight: bold;
     color: white;
@@ -125,7 +140,7 @@
     z-index: 2;
 }
 
-#pIcon{
+#pIcon {
     bottom: -3px;
 }
 
@@ -189,13 +204,17 @@
 }
 
 .Main_Form select option {
-    background-color: #333; /* Darker background for options */
-    color: #fff; /* White text for options */
-    padding: 5px; /* May or may not work depending on browser */
+    background-color: #333;
+    /* Darker background for options */
+    color: #fff;
+    /* White text for options */
+    padding: 5px;
+    /* May or may not work depending on browser */
 }
 
 .Main_Form select option:checked {
-    background-color: #ff523b; /* Highlight selected option */
+    background-color: #ff523b;
+    /* Highlight selected option */
     color: #000;
 }
 
@@ -286,31 +305,44 @@
 }
 
 .btnSignUp:hover {
-    background-color: #218838;
+    background-color: #563434;
 }
 
 /* In your profile.css or main.css */
 
 .error-tooltip {
-    position: absolute; /* Essential for precise positioning relative to its nearest positioned ancestor, or the document body if none. */
+    position: absolute;
+    /* Essential for precise positioning relative to its nearest positioned ancestor, or the document body if none. */
     margin-left: 220px;
     margin-top: -33px;
-    background-color: #dc3545; /* Red background for errors */
-    color: white; /* White text color */
-    padding: 8px 15px; /* Spacing inside the tooltip */
-    border-radius: 5px; /* Slightly rounded corners */
-    font-size: 10px; /* Smaller font size */
-    white-space: nowrap; /* Prevents text from wrapping to the next line */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
-    z-index: 1000; /* Ensures the tooltip appears on top of other content */
-    opacity: 0; /* Initial state: hidden for fade-in effect */
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth fade and potential movement */
+    background-color: #dc3545;
+    /* Red background for errors */
+    color: white;
+    /* White text color */
+    padding: 8px 15px;
+    /* Spacing inside the tooltip */
+    border-radius: 5px;
+    /* Slightly rounded corners */
+    font-size: 10px;
+    /* Smaller font size */
+    white-space: nowrap;
+    /* Prevents text from wrapping to the next line */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Soft shadow for depth */
+    z-index: 1000;
+    /* Ensures the tooltip appears on top of other content */
+    opacity: 0;
+    /* Initial state: hidden for fade-in effect */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    /* Smooth fade and potential movement */
 
 
 }
 
 /* For the input field itself when it has an error */
 .input-error-border {
-    border: 1px solid #dc3545 !important; /* Makes the input border red */
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); /* Optional: A red glow */
+    border: 1px solid #dc3545 !important;
+    /* Makes the input border red */
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    /* Optional: A red glow */
 }

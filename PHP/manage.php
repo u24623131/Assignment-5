@@ -1,5 +1,6 @@
 <?php
 include("header.php");
+$currentPage = 'manage';
 ?>
 
 <!DOCTYPE html>
@@ -14,15 +15,16 @@ include("header.php");
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf_token); ?>">
 </head>
 
 <body class="signup-page">
     <div class="MainDiv">
         <div class="Top-Header">
-            <h2>Safari</h2>
-            <h2>Speed</h2>
+            <h2>Compare</h2>
+            <h2>It</h2>
         </div>
-        <p class="Slogan">Shop Fast. Live Wild. Delivered Quick</p>
+        <p class="Slogan">Compare Fast. Get Coupons. Quick & Convenient</p>
 
         <div class="MainContainer">
             <div class="Containerdots">
@@ -46,6 +48,7 @@ include("header.php");
                     <label class="LblPA lbl"> Retailer Address: (Optional)</label>
                     <input class="curVal retAddressInput" type="text" name="retailAddress" placeholder="Retailer Address:">
                     <button class="btn btnAddRet" type="button" id="btnAddRet">Add Retailer</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
 
                 <br>
@@ -57,6 +60,7 @@ include("header.php");
                     <label class="LblPA lbl"> New Retailer Address: (Optional)</label>
                     <input class="curVal retAddressInput" type="text" name="retailAddress" placeholder="New Retailer Address:">
                     <button class="btn btnUpdateRet" type="button" id="btnUpdateRet">Update Retailer</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
                 <br>
 
@@ -64,6 +68,7 @@ include("header.php");
                 <form id="delRetForm" class="Main_Form"> <label class="LblPA lbl"> Retailer's Name:</label>
                     <input class="curVal delRetTitleInput" id="delRetTitleInput" type="text" name="retNameToDelete" required placeholder="Retailer To Delete's Name:">
                     <button class="btn btnDelRet" type="button" id="btnDelRet">Delete Retailer</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form><br>
             </div>
 
@@ -71,12 +76,14 @@ include("header.php");
                 <form id="delAccForm" class="Main_Form"> <label class="LblPA lbl"> Account's API Key:</label>
                     <input class="curVal delAccAPIInput" type="text" name="accToDeleteAPIKey" required placeholder="Account To Delete's API Key:">
                     <button class="btn btnDelAcc" type="button" id="btnDelAcc">Delete Account</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
 
                 <br><label class="LblPA" id="remRev">Change User's Account Type:</label>
                 <form id="changeAccTypeForm" class="Main_Form"> <label class="LblPA lbl"> Account's API Key:</label>
                     <input class="curVal changeAccTypeAPIInput" type="text" name="accToChangeAPIKey" required placeholder="Account To Change's API Key:">
                     <button class="btn btnChangeAcc" type="button" id="btnChangeAcc">Change Account</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
 
                 <br>
@@ -86,6 +93,7 @@ include("header.php");
                     <label class="LblPA lbl"> Product Title:</label>
                     <input class="curVal prodTitleInput" type="text" name="prodTitle" required placeholder="Product's Title:">
                     <button class="btn btnDelRev" type="button" id="btnDelRev">Remove Review</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
                 <br>
             </div>
@@ -94,6 +102,7 @@ include("header.php");
                 <form id="delProdForm" class="Main_Form"> <label class="LblPA lbl"> Product's Title:</label>
                     <input class="curVal delProdTitleInput" type="text" name="delProdTitleInput" required placeholder="Product's Title:">
                     <button class="btn btnDelProd" type="button" id="btnDelProd">Delete Product</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
 
                 <br>
@@ -105,6 +114,7 @@ include("header.php");
                     <label class="LblPA lbl"> New Price:</label>
                     <input class="curVal upPriceInput" type="text" name="newProdPrice" required placeholder="New Price:">
                     <button class="btn btnUpProdPrice" type="button" id="btnUpProdPrice">Update Price</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
                 <br>
 
@@ -124,6 +134,7 @@ include("header.php");
                     <label class="LblPA lbl"> Prices of Product At Corresponding Retailers:</label>
                     <input class="curVal addProdPricesInput" type="text" name="addProdPricesInput" required placeholder="Product's Prices Corresponding To Retailers:">
                     <button class="btn btnAddProd" type="button" id="btnAddProd">Add Product</button>
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 </form>
                 <br>
             </div>
@@ -144,3 +155,7 @@ include("header.php");
 </body>
 
 </html>
+
+<?php
+include 'footer.php';
+?>

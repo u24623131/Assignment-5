@@ -1,5 +1,6 @@
 <?php
 include("header.php");
+$currentPage = 'profile';
 ?>
 
 <!DOCTYPE html>
@@ -15,15 +16,16 @@ include("header.php");
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf_token); ?>">
 </head>
 
 <body class="signup-page">
     <div class="MainDiv">
         <div class="Top-Header">
-            <h2>Safari</h2>
-            <h2>Speed</h2>
+            <h2>Compare</h2>
+            <h2>It</h2>
         </div>
-        <p class="Slogan">Shop Fast. Live Wild. Delivered Quick</p>
+        <p class="Slogan">Compare Fast. Get Coupons. Quick & Convenient</p>
 
         <div class="MainContainer">
             <div class="Containerdots">
@@ -61,10 +63,10 @@ include("header.php");
                     <input type="email" id="email" class="NewVal" name="email" required placeholder="Email:">
                     <label class="error-label" id="email-error"></label>
                 </div>
-                
+
                 <div class="input-group">
                     <label class="LblPA"> Phone Number:</label>
-                    <input type="text" class="CurVal" name="curPhoneNr"disabled required placeholder="Current Phone Number Val:">
+                    <input type="text" class="CurVal" name="curPhoneNr" disabled required placeholder="Current Phone Number Val:">
                     <i id="pIcon" class="fa fa-phone"></i>
                     <input type="text" id="phoneNumber" class="NewVal" name="phoneNumber" required placeholder="Phone Number:">
                     <label class="error-label" id="phoneNumber-error"></label>
@@ -83,9 +85,11 @@ include("header.php");
                     <label class="error-label" id="type-error"></label>
                 </div>
                 <button class="btn btnSignUp" type="button" id="btnSave">Save</button>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
             </form>
             <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
             <button class="btn btnSignUp" type="button" id="btnDeleteAccount">Delete Account</button>
+            <h4 id="expDisplay">Experience: </h4>
 
         </div>
     </div>
@@ -93,3 +97,7 @@ include("header.php");
 </body>
 
 </html>
+
+<?php
+include 'footer.php';
+?>

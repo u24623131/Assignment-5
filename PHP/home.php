@@ -1,3 +1,7 @@
+    <?php
+    include 'header.php';
+    $currentPage = 'home';
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,14 +15,10 @@
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
-
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf_token); ?>">
 </head>
 
 <body>
-    <?php
-    $currentPage = 'home';
-    include 'header.php';
-    ?>
     <div id="filterMenu" class="filter-sidebar">
         <a class="close-btn" id="btnClose">✖</a>
         <h2>Filters</h2>
