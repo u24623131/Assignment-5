@@ -4,9 +4,6 @@
 - [Project Description](#project-description)
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Technical Details](#technical-details)
-- [Credits](#credits)
 
 ## Project Description
 A web application that allows users to compare product prices across different retailers. 
@@ -32,6 +29,13 @@ A web application that allows users to compare product prices across different r
 - Favorites
 
 ## Installation
+
+Make sure you have xampp installed then store the project folder in the htdocs directory.
+Run xampp and ensure you start the hosting for apache.
+Open the folder in vscode and host it using the live server extension.
+Connect to localhost using the liveserver chrome web extension.
+In the url type localhost/path to signup.php
+
 
 1. Clone the repository:
    ```bash
