@@ -75,14 +75,14 @@ function loadTimerState() {
 /**
  * Clears the timer state from localStorage.
  */
-function clearTimerState() {
-    try {
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-        // console.log("Timer state cleared from localStorage.");
-    } catch (e) {
-        console.error("Failed to clear timer state from localStorage:", e);
-    }
-}
+// function clearTimerState() {
+//     try {
+//         localStorage.removeItem(LOCAL_STORAGE_KEY);
+//         // console.log("Timer state cleared from localStorage.");
+//     } catch (e) {
+//         console.error("Failed to clear timer state from localStorage:", e);
+//     }
+// }
 
 /**
  * Initiates the primary 5-minute timer.
@@ -123,6 +123,39 @@ function triggerRandomEvent() {
         //console.log("Random delay finished. Showing button (persisted).");
         showButton();
     }, randomDelay);
+}
+
+const logoutButton = document.getElementById('logout');
+
+// Check if the logout button element exists before adding the event listener
+if (logoutButton) {
+    // Add a click event listener to the logout button
+    logoutButton.addEventListener('click', (event) => {
+        // Prevent the default link behavior (i.e., immediately navigating to logout.php)
+        event.preventDefault();
+
+        // Call the function to clear the timer state from localStorage
+        // This function is assumed to be defined elsewhere (e.g., in header.js)
+        if (typeof clearTimerState === 'function') {
+            clearTimerState(); // Clears the 'randomButtonTimerState' from localStorage
+            console.log("Timer state cleared on logout click.");
+        } else {
+            console.warn("clearTimerState() function not found. Local storage may not be cleared.");
+        }
+
+        // After clearing localStorage, manually navigate to the logout.php page
+        // This mimics the original href behavior but ensures localStorage is cleared first
+        window.location.href = logoutButton.href;
+    });
+}
+
+function clearTimerState() {
+    try {
+        localStorage.removeItem('randomButtonTimerState');
+        console.log("Timer state cleared from localStorage during logout.");
+    } catch (e) {
+        console.error("Failed to clear timer state from localStorage:", e);
+    }
 }
 
 /**
