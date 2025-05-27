@@ -45,7 +45,7 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
                     $userEmail = urldecode($userEmail);
                     echo "<h6 id='emailHeader'>" . htmlspecialchars($userEmail) . "</h6>";
                 } else {
-                    echo "User Email cookie not found.<br>";
+                    echo "";
                 } ?>
             </ul>
         </div>
