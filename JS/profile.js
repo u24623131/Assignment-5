@@ -193,10 +193,11 @@ function initializeForm() {
 
 
         // --- Name (Required Field for User Details Update) ---
-        if (!fname || fname.value.trim() === "") {
-            showError("name", "Name is required!"); // It's a required field for the update
-            isValid = false;
-        } else if (!regexNameSurname.test(fname.value)) {
+        // if (!fname || fname.value.trim() === "") {
+        //     showError("name", "Name is required!"); // It's a required field for the update
+        //     isValid = false;
+        // } else 
+        if (!regexNameSurname.test(fname.value)) {
             showError("name", "Name can only contain letters (e.g., John Doe).");
             isValid = false;
         } else {
@@ -205,10 +206,11 @@ function initializeForm() {
         }
 
         // --- Surname (Required Field for User Details Update) ---
-        if (!surname || surname.value.trim() === "") {
-            showError("surname", "Surname is required!");
-            isValid = false;
-        } else if (!regexNameSurname.test(surname.value)) {
+        // if (!surname || surname.value.trim() === "") {
+        //     showError("surname", "Surname is required!");
+        //     isValid = false;
+        // } else 
+        if (!regexNameSurname.test(surname.value)) {
             showError("surname", "Surname can only contain letters (e.g., Smith).");
             isValid = false;
         } else {
@@ -217,10 +219,11 @@ function initializeForm() {
         }
 
         // --- Email (Required Field for User Details Update) ---
-        if (!email || email.value.trim() === "") {
-            showError("email", "Email is required!");
-            isValid = false;
-        } else if (!regexEmail.test(email.value)) {
+        // if (!email || email.value.trim() === "") {
+        //     showError("email", "Email is required!");
+        //     isValid = false;
+        // } else 
+        if (!regexEmail.test(email.value)) {
             showError("email", "Please enter a valid email address!");
             isValid = false;
         } else {

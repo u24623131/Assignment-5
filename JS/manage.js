@@ -1186,7 +1186,7 @@ document.getElementById("btnDelRev").addEventListener("click", function (event) 
 
     if (isValid) {
         const payload = {
-            type: "removeReview",
+            type: "RemoveReview",
             apikey: apiKey,
             Title: prodTitle,
             userapikey: reviewerAPIKey
@@ -1240,7 +1240,7 @@ document.getElementById("btnDelProd").addEventListener("click", function (event)
 
     if (isValid) {
         const payload = {
-            type: "deleteProduct",
+            type: "DeleteProduct",
             apikey: apiKey,
             productTitle: prodToDelete
         };
@@ -1320,7 +1320,7 @@ document.getElementById("btnUpProdPrice").addEventListener("click", function (ev
 
     if (isValid) {
         const payload = {
-            type: "updateProductPrice",
+            type: "UpdateProductPrices",
             apikey: apiKey,
             productTitle: prodToUpdate,
             retailer: retailerName,
@@ -1478,7 +1478,7 @@ document.getElementById("btnAddProd").addEventListener("click", function (event)
     // --- If all validations pass, proceed with API call ---
     if (isValid) {
         const payload = {
-            type: "addProduct",
+            type: "AddProduct",
             apikey: apiKey,
             Title: prodToAdd,
             Category: category,
