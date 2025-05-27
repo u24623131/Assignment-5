@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.status === "success") {
+                        if (data.status === "success") {1
 
                             console.log(data);
                             const apiKey = data.data.apikey;
@@ -114,11 +114,11 @@ document.addEventListener("DOMContentLoaded", function () {
                                     if (data.status === "success") {
                                         console.log("+15xp")
                                     } else {
-                                        console.error("Failed to fetch user experience:", data.data);
+                                        console.error("Failed to add user experience:", data.data);
                                     }
                                 })
                                 .catch(error => {
-                                    console.error("Network error fetching user experience:", error);
+                                    console.error("Network error adding user experience:", error);
                                 });
                             window.location.href = "home.php";
                         } else {

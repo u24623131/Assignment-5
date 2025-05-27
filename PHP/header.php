@@ -82,4 +82,12 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
     </div>
 </div>
 
+<?php if($isLoggedIn){ ?>
+<button id="actionButton" class="action-button">Click Me!</button>
+
+    <script>
+        const csrfToken = "<?php echo htmlspecialchars($csrf_token); ?>";
+    </script>
+
 <script src="..\JS\header.js"></script>
+<?php }?>
