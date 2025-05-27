@@ -95,6 +95,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             document.cookie = `api_key=${apiKey}; ${expires}; path=/; Secure; SameSite=Lax`;
                             document.cookie = `user_email=${encodeURIComponent(email)}; ${expires}; path=/; Secure; SameSite=Lax`;
+
+                            // Fetch Experience
+                            fetch("../api.php", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-Token": csrfToken
+                                },
+                                body: JSON.stringify({
+                                    type: "AddUserXP",
+                                    apikey: apiKey,
+                                    xp: 15
+                                })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status === "success") {
+                                        console.log("+15xp")
+                                    } else {
+                                        console.error("Failed to fetch user experience:", data.data);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error("Network error fetching user experience:", error);
+                                });
                             window.location.href = "home.php";
                         } else {
                             // Show error
