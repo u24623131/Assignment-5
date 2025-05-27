@@ -179,6 +179,11 @@ class API {
                 $this->UpdateRetailer($input);
                 break;
 
+            case "GetAllRetailers": // yes
+                $this->getAllRetailers();
+                break;
+
+
             //Review Manpulation
             case "AddReview": //yes
                 $this->AddReview($input);
@@ -213,6 +218,24 @@ class API {
 
     }
 
+    private function getAllRetailers(){
+        $sql = "SELECT * FROM Retailers";
+        $stmt = $this->DB_Connection->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result && $result->num_rows > 0) {
+            $users = [];
+            while($row = $result->fetch_assoc()){
+                $users[] = $row;
+            }
+            http_response_code(200);
+            $this->response("200 OK", "success",  $users);
+        }else{
+            http_response_code(500);
+            $this->response("500 Internal Server Error", "error", "Could not fetch user data");
+        }
+        $stmt->close();
+    }
     //Register: name = handleRegister, param = input
     private function handleRegister($input){
         // required = Name Surname Email 
