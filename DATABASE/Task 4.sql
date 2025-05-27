@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 27, 2025 at 10:13 PM
+-- Generation Time: May 27, 2025 at 11:04 PM
 -- Server version: 10.3.39-MariaDB-0+deb10u2
 -- PHP Version: 7.3.31-1~deb10u7
 
@@ -208,29 +208,29 @@ ALTER TABLE `Users`
 -- Constraints for table `Compare`
 --
 ALTER TABLE `Compare`
-  ADD CONSTRAINT `Compare_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`User_ID`),
-  ADD CONSTRAINT `Compare_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `Products` (`Product_No`);
+  ADD CONSTRAINT `Compare_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`User_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `Compare_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `Products` (`Product_No`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `favourites`
 --
 ALTER TABLE `favourites`
-  ADD CONSTRAINT `favourites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`User_ID`),
-  ADD CONSTRAINT `favourites_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `Products` (`Product_No`);
+  ADD CONSTRAINT `favourites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`User_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `favourites_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `Products` (`Product_No`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `Prices`
 --
 ALTER TABLE `Prices`
-  ADD CONSTRAINT `Prices_ibfk_1` FOREIGN KEY (`Retailer_ID`) REFERENCES `Retailers` (`Retailer_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `Prices_ibfk_2` FOREIGN KEY (`Product_No`) REFERENCES `Products` (`Product_No`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `Prices_ibfk_1` FOREIGN KEY (`Retailer_ID`) REFERENCES `Retailers` (`Retailer_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `Prices_ibfk_2` FOREIGN KEY (`Product_No`) REFERENCES `Products` (`Product_No`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `Reviews`
 --
 ALTER TABLE `Reviews`
-  ADD CONSTRAINT `Reviews_ibfk_1` FOREIGN KEY (`Prod_ID`) REFERENCES `Products` (`Product_No`),
-  ADD CONSTRAINT `Reviews_ibfk_2` FOREIGN KEY (`U_ID`) REFERENCES `Users` (`User_ID`);
+  ADD CONSTRAINT `Reviews_ibfk_1` FOREIGN KEY (`Prod_ID`) REFERENCES `Products` (`Product_No`) ON DELETE CASCADE,
+  ADD CONSTRAINT `Reviews_ibfk_2` FOREIGN KEY (`U_ID`) REFERENCES `Users` (`User_ID`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
