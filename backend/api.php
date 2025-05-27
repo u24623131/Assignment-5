@@ -1272,7 +1272,7 @@ class API {
                             "Description" => htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8'),
                             "Brand" => htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8'),
                             "Image_URL" => filter_var($row['Image_URL'], FILTER_VALIDATE_URL) ? htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8') : null,
-                            "Retailers" => [],
+                            "Retailer_Names" => [],
                             "Prices" => []
                         ];
                     }
