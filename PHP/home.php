@@ -24,8 +24,8 @@
         <h2>Filters</h2>
         <div class="filter-section">
             <label class="Label-filter">Price Range:</label>
-            <input class="Input_range" type="range" id="priceRange" min="0" max="10000" value="10000" step="50">
-            <label>Max Price: $<input type="number" class="inputPrice" id="priceValue" value="10000"></label>
+            <input class="Input_range" type="range" id="priceRange" min="0" max="100" value="100" step="1">
+            <label>Max Price: $<input type="number" class="inputPrice" id="priceValue" value="100"></label>
         </div>
 
         <div class="filter-section">

@@ -539,40 +539,32 @@ document.addEventListener('DOMContentLoaded', (event) => {
         sendRequest();
     })
 
-    // const sortSelect = document.querySelector(".filters-btn");
-    // sortSelect.addEventListener("change", function () {
-    //     var selectedSort = this.value;
+    
 
-    //     if (selectedSort === "price_asc") {
-    //         getAllProducts.sort = "final_price";
-    //         getAllProducts.order = "ASC";
-    //     } else if (selectedSort === "price_desc") {
-    //         getAllProducts.sort = "final_price";
-    //         getAllProducts.order = "DESC";
-    //     } else if (selectedSort === "Title") {
-    //         getAllProducts.sort = "title";
-    //         getAllProducts.order = "ASC";
-    //     } else if (selectedSort === "Latest") {
-    //         getAllProducts.sort = "date_first_available";
-    //         getAllProducts.order = "DESC";
-    //     } else if (selectedSort === "Country") {
-    //         getAllProducts.sort = "country_of_origin";
-    //         getAllProducts.order = "ASC";
-    //     }
+    var priceRange = document.getElementById("priceRange");
 
-    //     sendRequest(); // Refresh products after sorting
-    // });
-
-    // var priceRange = document.querySelectorAll('input[id="priceRange"]');
-    // priceRange.forEach(input => {
-    // input.addEventListener("input", function () {
-    //         sendRequest();
-    //     });
-    // });
+    document.addEventListener("input", function () {
+        console.log(priceRange.value)
+           getAllProducts = {
+            type: "Filter",
+            apikey: api_key,
+            filter: {
+                "byMaxPrice": priceRange.value
+            }
+        };
+            sendRequest();
+        });
 
     // var priceRange = document.querySelectorAll('input[id="priceValue"]');
     // priceRange.forEach(input => {
     // input.addEventListener("input", function () {
+    //      getAllProducts = {
+    //         type: "Filter",
+    //         apikey: api_key,
+    //         filter: {
+    //             "byMaxPrice": priceRange.value
+    //         }
+    //     };
     //         sendRequest();
     //     });
     // });
