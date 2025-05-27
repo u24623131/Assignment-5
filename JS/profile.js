@@ -2,12 +2,12 @@ document.getElementById("btnLogout").addEventListener("click", function () {
     window.location.href = "logout.php";
 });
 
-document.getElementById("btnDeleteAccount").addEventListener("click", function (event) { // <-- Added 'event' parameter
+document.getElementById("btnDeleteAccount").addEventListener("click", function (event) {
     event.preventDefault();
 
     if (!confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.")) {
         console.log("Account deletion cancelled by user.");
-        return; // Stop the function if the user cancels
+        return;
     }
 
     const payload = {
@@ -28,7 +28,7 @@ document.getElementById("btnDeleteAccount").addEventListener("click", function (
         .then(data => {
             if (data.status === "success") {
                 alert("Successfully deleted account!");
-                window.location.href = "logout.php"; // Redirect on success
+                window.location.href = "logout.php";
             } else {
                 alert("Failed to delete account: " + (data.data || "Unknown error."));
                 console.error("API error:", data.data);
@@ -43,17 +43,17 @@ document.getElementById("btnDeleteAccount").addEventListener("click", function (
 
 function getCookie(name) {
     const nameEQ = name + "=";
-    const ca = document.cookie.split(';'); // Split the cookie string into an array of individual cookies
+    const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
-        while (c.charAt(0) === ' ') { // Remove leading spaces (e.g., "; my_cookie=value" -> "my_cookie=value")
+        while (c.charAt(0) === ' ') {
             c = c.substring(1, c.length);
         }
-        if (c.indexOf(nameEQ) === 0) { // If this cookie starts with the name we're looking for
-            return c.substring(nameEQ.length, c.length); // Return the value
+        if (c.indexOf(nameEQ) === 0) {
+            return c.substring(nameEQ.length, c.length);
         }
     }
-    return null; // Cookie not found
+    return null;
 }
 
 const apiKey = getCookie('api_key');
@@ -64,12 +64,6 @@ const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{
 const regexPhoneNr = /^\+?(\d{1,3})?[-.\s]?(\(?\d{3}\)?)[-.\s]?\d{3}[-.\s]?\d{4}$/;
 
 
-if (document.readyState === 'loading') {
-    document.addEventListener("DOMContentLoaded", initializeForm);
-} else {
-    initializeForm();
-}
-
 // Function to show tooltip error
 function showError(fieldId, message) {
     const field = document.getElementById(fieldId);
@@ -78,20 +72,17 @@ function showError(fieldId, message) {
         return;
     }
 
-    // Clear any existing tooltip for this field
     clearError(fieldId);
 
     const tooltip = document.createElement('div');
     tooltip.className = 'error-tooltip';
     tooltip.textContent = message;
-    tooltip.setAttribute('data-field-id', fieldId); // Link tooltip to its field
+    tooltip.setAttribute('data-field-id', fieldId);
 
-    // Position the tooltip relative to the input field
     const rect = field.getBoundingClientRect();
     tooltip.style.position = 'absolute';
-    tooltip.style.top = `${rect.bottom + window.scrollY + 5}px`; // 5px below the input
+    tooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
     tooltip.style.left = `${rect.left + window.scrollX}px`;
-    // Add these styles to your CSS file for better practice, but they work inline for now
     tooltip.style.backgroundColor = '#dc3545';
     tooltip.style.color = 'white';
     tooltip.style.padding = '5px 10px';
@@ -126,25 +117,14 @@ function clearError(fieldId) {
     }
 }
 
-
+// Function to initialize or re-initialize form data
 function initializeForm() {
     // Get current details elements (disabled)
     let curFname = document.getElementsByName("curName")[0];
     let curSurname = document.getElementsByName("curSurname")[0];
     let curEmail = document.getElementsByName("curEmail")[0];
     let curPhoneNr = document.getElementsByName("curPhoneNr")[0];
-    let curPasswordInput = document.getElementsByName("curPasswordInput")[0];
     let curType = document.getElementById("curAcc");
-
-    // Get the NEW input fields for validation and update
-    let fname = document.getElementById("name");
-    let surname = document.getElementById("surname");
-    let email = document.getElementById("email");
-    let phoneNumber = document.getElementById("phoneNumber"); // Using 'phoneNumber' for the input ID
-    let newPasswordInput = document.getElementsByName("newPasswordInput")[0];
-    // let typeSelect = document.getElementById("type");
-
-    let submit = document.getElementById("btnSave");
 
     // Fetch current user details
     fetch("../api.php", {
@@ -164,10 +144,8 @@ function initializeForm() {
                 if (curSurname) curSurname.value = data.data.Surname;
                 if (curEmail) curEmail.value = data.data.Email;
                 if (curPhoneNr) {
-                    // Assuming data.data.Cell_No is the key from your GetUserDetails API for phone number
                     curPhoneNr.value = data.data.Cell_No ? data.data.Cell_No : "No Phone Number Saved";
                 }
-                // if (curPasswordInput) curPasswordInput.value = "Enter current password to change password!";
                 if (curType) curType.value = data.data.User_Type;
             } else {
                 console.error("Failed to fetch user details:", data.data);
@@ -176,59 +154,72 @@ function initializeForm() {
         .catch(error => {
             console.error("Network error fetching user details:", error);
         });
+}
 
+// Call initializeForm on DOMContentLoaded to populate initial data
+if (document.readyState === 'loading') {
+    document.addEventListener("DOMContentLoaded", initializeForm);
+} else {
+    initializeForm();
+}
+
+
+// Attach the submit event listener ONLY ONCE after the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", function() {
+    const submit = document.getElementById("btnSave");
+    // Get the NEW input fields for validation and update
+    const fname = document.getElementById("name");
+    const surname = document.getElementById("surname");
+    const email = document.getElementById("email");
+    const phoneNumber = document.getElementById("phoneNumber");
+    const curPasswordInput = document.getElementById("curPasswordInput");
+    const newPasswordInput = document.getElementById("newPasswordInput");
 
     submit.addEventListener("click", function (event) {
         event.preventDefault();
 
-        let isValid = true; // Flag to track overall form validity
-        const updatedUserDetailsFields = {}; // Object to store only the non-empty user details fields for update
-        let oldPassword = null; // To store the current password for the ChangePassword API call
-        let newPasswordVal = null; // To store the new password for the ChangePassword API call
+        let isValid = true;
+        const updatedUserDetailsFields = {};
+        let oldPassword = null;
+        let newPasswordVal = null;
 
-        // Get references to the password input fields (assuming their variables are correctly defined)
-        // You might need to declare these if they are not already.
-        // Example: const curPasswordInput = document.getElementById("curPasswordInputId");
-        // Example: const newPasswordInput = document.getElementById("newPasswordInputId");
-
-
-        // --- Name (Required Field for User Details Update) ---
-        // if (!fname || fname.value.trim() === "") {
-        //     showError("name", "Name is required!"); // It's a required field for the update
-        //     isValid = false;
-        // } else 
-        if (!regexNameSurname.test(fname.value)) {
-            showError("name", "Name can only contain letters (e.g., John Doe).");
-            isValid = false;
+        // --- Name (Optional Field for User Details Update) ---
+        if (fname && fname.value.trim() !== "") {
+            if (!regexNameSurname.test(fname.value)) {
+                showError("name", "Name can only contain letters (e.g., John Doe).");
+                isValid = false;
+            } else {
+                clearError("name");
+                updatedUserDetailsFields.name = fname.value.trim();
+            }
         } else {
             clearError("name");
-            updatedUserDetailsFields.name = fname.value.trim();
         }
 
-        // --- Surname (Required Field for User Details Update) ---
-        // if (!surname || surname.value.trim() === "") {
-        //     showError("surname", "Surname is required!");
-        //     isValid = false;
-        // } else 
-        if (!regexNameSurname.test(surname.value)) {
-            showError("surname", "Surname can only contain letters (e.g., Smith).");
-            isValid = false;
+        // --- Surname (Optional Field for User Details Update) ---
+        if (surname && surname.value.trim() !== "") {
+            if (!regexNameSurname.test(surname.value)) {
+                showError("surname", "Surname can only contain letters (e.g., Smith).");
+                isValid = false;
+            } else {
+                clearError("surname");
+                updatedUserDetailsFields.surname = surname.value.trim();
+            }
         } else {
             clearError("surname");
-            updatedUserDetailsFields.surname = surname.value.trim();
         }
 
-        // --- Email (Required Field for User Details Update) ---
-        // if (!email || email.value.trim() === "") {
-        //     showError("email", "Email is required!");
-        //     isValid = false;
-        // } else 
-        if (!regexEmail.test(email.value)) {
-            showError("email", "Please enter a valid email address!");
-            isValid = false;
+        // --- Email (Optional Field for User Details Update) ---
+        if (email && email.value.trim() !== "") {
+            if (!regexEmail.test(email.value)) {
+                showError("email", "Please enter a valid email address!");
+                isValid = false;
+            } else {
+                clearError("email");
+                updatedUserDetailsFields.email = email.value.trim();
+            }
         } else {
             clearError("email");
-            updatedUserDetailsFields.email = email.value.trim();
         }
 
         // --- Phone Number (Optional Field for User Details Update) ---
@@ -238,28 +229,15 @@ function initializeForm() {
                 isValid = false;
             } else {
                 clearError("phoneNumber");
-                updatedUserDetailsFields.cell_no = phoneNumber.value.trim(); // API expects 'cell_no'
+                updatedUserDetailsFields.cell_no = phoneNumber.value.trim();
             }
         } else {
             clearError("phoneNumber");
-            // If optional field is empty, do not add it to updatedUserDetailsFields
         }
 
-        // --- Account Type (Required Field for User Details Update) ---
-        // if (!typeSelect || typeSelect.value.trim() === "") {
-        //     showError("type", "Account Type is required!");
-        //     isValid = false;
-        // } else {
-        //     clearError("type");
-        //     updatedUserDetailsFields.type = typeSelect.value;
-        // }
-
-
         // --- Password Change Logic ---
-        // Check if *either* old password or new password fields have values.
-        // This indicates the user intends to change the password.
         const isPasswordChangeAttempted = (curPasswordInput && curPasswordInput.value.trim() !== "") ||
-            (newPasswordInput && newPasswordInput.value.trim() !== "");
+                                          (newPasswordInput && newPasswordInput.value.trim() !== "");
 
         if (isPasswordChangeAttempted) {
             // Old Password (Required for password change)
@@ -289,36 +267,37 @@ function initializeForm() {
                 isValid = false;
             }
         } else {
-            // If no password change is attempted, clear any existing errors for these fields
             clearError("curPasswordInput");
             clearError("newPasswordInput");
         }
 
+        // Determine if any update attempt was made (either user details or password)
+        const hasUserDetailsToUpdate = Object.keys(updatedUserDetailsFields).length > 0;
+        const isAnyChangeAttempted = hasUserDetailsToUpdate || isPasswordChangeAttempted;
+
 
         // --- API Call Logic ---
         if (isValid) {
-            const fetchPromises = []; // Array to hold promises for API calls
+            if (!isAnyChangeAttempted) {
+                alert("No changes detected. Please update at least one field or attempt a password change to save.");
+                console.log("No changes detected to update.");
+                return;
+            }
 
-            // 1. User Details Update (if any mutable field was changed)
-            // Check if any of the user detail fields have values to send (excluding type and apikey for now)
-            const hasUserDetailsToUpdate = Object.keys(updatedUserDetailsFields).some(key =>
-                key !== 'type' && key !== 'apikey' // Exclude these, as they are added later
-            );
+            const fetchPromises = [];
 
             if (hasUserDetailsToUpdate) {
                 const userDetailsPayload = {
                     type: "UpdateUserDetails",
                     apikey: apiKey,
-                    ...updatedUserDetailsFields // Spread operator to add all collected fields
+                    ...updatedUserDetailsFields
                 };
                 console.log("Sending User Details to API:", userDetailsPayload);
 
                 fetchPromises.push(
                     fetch("../api.php", {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(userDetailsPayload),
                     })
                         .then(res => {
@@ -340,7 +319,6 @@ function initializeForm() {
                 );
             }
 
-            // 2. Password Change (if attempted and valid)
             if (isPasswordChangeAttempted && oldPassword && newPasswordVal) {
                 const passwordChangePayload = {
                     type: "ChangePassword",
@@ -353,9 +331,7 @@ function initializeForm() {
                 fetchPromises.push(
                     fetch("../api.php", {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(passwordChangePayload),
                     })
                         .then(res => {
@@ -377,38 +353,27 @@ function initializeForm() {
                 );
             }
 
-            // Execute all promises in parallel
             if (fetchPromises.length > 0) {
                 Promise.all(fetchPromises)
                     .then(results => {
-                        // Check if all individual promises were successful
                         const allSuccess = results.every(res => res.success);
                         if (allSuccess) {
                             alert("Profile updated successfully!");
-                            initializeForm(); // Re-fetch details to show updated values and clear password fields
+                            initializeForm(); // Re-fetch details to show updated values
                             // Clear password fields only after successful update
                             if (curPasswordInput) curPasswordInput.value = "";
                             if (newPasswordInput) newPasswordInput.value = "";
-                        } else {
-                            // This block might be hit if some promises succeed but others fail,
-                            // but our current .then structure for individual fetches throws on failure.
-                            // So, typically, if any fails, it jumps to the .catch block.
                         }
                     })
                     .catch(err => {
                         console.error("API error during profile update:", err);
-                        alert("Error updating profile: " + err.message); // Display specific error message
+                        alert("Error updating profile: " + err.message);
                     });
-            } else {
-                alert("No changes detected to update.");
-                console.log("No changes detected to update.");
             }
 
             console.log("✅ All validations passed. Proceeding with API call(s).");
         } else {
             console.log("❌ Form has validation errors. Not submitting.");
         }
-
     });
-
-}
+});
