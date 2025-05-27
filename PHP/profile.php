@@ -1,6 +1,11 @@
 <?php
 include("header.php");
 $currentPage = 'profile';
+
+
+if (isset($_COOKIE['temp_user_level'])) {
+    $_SESSION['user_level'] = (int)$_COOKIE['temp_user_level']; // Cast to int for safety
+}
 ?>
 
 <!DOCTYPE html>

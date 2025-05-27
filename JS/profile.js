@@ -131,6 +131,12 @@ function clearError(fieldId) {
     }
 }
 
+function deleteCookie(name, path = '/') {
+    // Set cookie with past expiration date to delete it
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=" + path + "; SameSite=Lax";
+    console.log(`Cookie '${name}' deleted.`);
+}
+
 // Function to initialize or re-initialize form data
 function initializeForm() {
     const csrfToken = getCsrfToken();
@@ -177,43 +183,122 @@ function initializeForm() {
             console.error("Network error fetching user details:", error);
         });
 
-
-    // Fetch Experience
     fetch("../api.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrfToken
-        },
-        body: JSON.stringify({
-            type: "GetUserXP",
-            apikey: apiKey,
-        })
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken
+    },
+    body: JSON.stringify({
+        type: "GetUserXP",
+        apikey: apiKey,
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                document.getElementById("expDisplay").innerHTML = "Experience: " + data.data.XP;
-                if(data.data.XP < 100){
-                    document.getElementById("lvlDisplay").innerHTML = "Level: 0";
-                }
-                else if(data.data.XP < 200){
-                    document.getElementById("lvlDisplay").innerHTML = "Level: 1";
-                }
-                else if(data.data.XP < 300){
-                    document.getElementById("lvlDisplay").innerHTML = "Level: 2";
-                }
-                else{
-                    document.getElementById("lvlDisplay").innerHTML = "Level: 3";                    
-                }
-            } else {
-                console.error("Failed to fetch user experience:", data.data);
-            }
-        })
-        .catch(error => {
-            console.error("Network error fetching user experience:", error);
-        });
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === "success") {
+        const xp = data.data.XP;
+        let level;
+        
+        document.getElementById("expDisplay").innerHTML = "Experience: " + xp;
+        
+        // Determine level based on XP
+        if (xp < 100) {
+            level = 0;
+            document.getElementById("lvlDisplay").innerHTML = "Level: 0";
+        } else if (xp < 200) {
+            level = 1;
+            document.getElementById("lvlDisplay").innerHTML = "Level: 1";
+        } else if (xp < 300) {
+            level = 2;
+            document.getElementById("lvlDisplay").innerHTML = "Level: 2";
+        } else {
+            level = 3;
+            document.getElementById("lvlDisplay").innerHTML = "Level: 3";
+        }
+        
+        // Set the level cookie with improved management
+        console.log(`Setting level cookie to: ${level} (XP: ${xp})`);
+        setLevelCookie(level);
+        
+        // Alternative: Use the more forceful approach if regular method doesn't work
+        // forceSetLevelCookie(level);
+        
+    } else {
+        console.error("Failed to fetch user experience:", data.data);
+    }
+})
+.catch(error => {
+    console.error("Network error fetching user experience:", error);
+});
 }
+
+function forceSetLevelCookie(level) {
+    const cookieName = 'temp_user_level';
+    
+    // Always delete first, regardless of existence
+    deleteCookie(cookieName);
+    
+    // Small delay to ensure deletion is processed
+    setTimeout(() => {
+        const d = new Date();
+        d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
+        const expires = "expires=" + d.toUTCString();
+        
+        document.cookie = cookieName + "=" + level + ";" + expires + ";path=/;SameSite=Lax";
+        
+        console.log(`Cookie '${cookieName}' forcefully set to:`, level);
+        
+        // Verify after a short delay
+        setTimeout(() => {
+            const verifySetCookie = getCookie(cookieName);
+            if (verifySetCookie === level.toString()) {
+                console.log(`✅ Cookie successfully verified with value: ${verifySetCookie}`);
+            } else {
+                console.error(`❌ Cookie verification failed. Expected: ${level}, Got: ${verifySetCookie}`);
+            }
+        }, 100);
+    }, 100);
+}
+
+function setLevelCookie(level) {
+        const cookieName = 'temp_user_level';
+    
+    // Check if cookie already exists
+    const existingCookie = getCookie(cookieName);
+    
+    if (existingCookie !== null) {
+        console.log(`Existing cookie found with value: ${existingCookie}`);
+        // Delete the existing cookie first
+        deleteCookie(cookieName);
+    }
+    
+    // Create new cookie with updated level
+    const d = new Date();
+    d.setTime(d.getTime() + (24 * 60 * 60 * 1000)); // Cookie expires in 1 day
+    const expires = "expires=" + d.toUTCString();
+    
+    // Set the new cookie
+    document.cookie = cookieName + "=" + level + ";" + expires + ";path=/;SameSite=Lax";
+    
+    console.log(`Cookie '${cookieName}' set to:`, level);
+    
+    // Verify the cookie was set correctly
+    const verifySetCookie = getCookie(cookieName);
+    if (verifySetCookie === level.toString()) {
+        console.log(`✅ Cookie successfully verified with value: ${verifySetCookie}`);
+        
+        // Notify coupon system of level change (if it exists)
+        if (typeof window.updateUserLevel === 'function') {
+            console.log('Notifying coupon system of level change');
+            window.updateUserLevel(level);
+        }
+        
+    } else {
+        console.error(`❌ Cookie verification failed. Expected: ${level}, Got: ${verifySetCookie}`);
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const btnExpHelp = document.getElementById('btnExpHelp');

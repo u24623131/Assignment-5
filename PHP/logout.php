@@ -22,6 +22,7 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 setcookie("api_key", "", time() - (24 * 60 * 60 * 1000), "/");
 setcookie("user_email", "", time() - (24 * 60 * 60 * 1000), "/");
+setcookie("temp_user_level", "", time() - (24 * 60 * 60 * 1000), "/");
 // Redirect to login or home page
 header("Location: login.php");
 exit();

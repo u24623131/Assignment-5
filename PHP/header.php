@@ -27,6 +27,19 @@ $csrf_token = generateCsrfToken();
 // $_SESSION['admin'] = true;
 
 $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
+
+// UPDATED: Check for cookie level first, then session, then default to 0
+$userLevel = 0; // Default level
+
+// First, check if there's a cookie with updated level
+if (isset($_COOKIE['temp_user_level'])) {
+    $userLevel = (int)$_COOKIE['temp_user_level'];
+    // Also update the session to keep them in sync
+    $_SESSION['user_level'] = $userLevel;
+} elseif (isset($_SESSION['user_level'])) {
+    // Fallback to session value if no cookie
+    $userLevel = (int)$_SESSION['user_level'];
+}
 ?>
 
 <div class="container">
@@ -87,7 +100,26 @@ $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
 
     <script>
         const csrfToken = "<?php echo htmlspecialchars($csrf_token); ?>";
+        const userLevel = <?php echo $userLevel; ?>; // Pass user level to JavaScript
+        
+        // DEBUG: Log the user level being passed
+        console.log('[HEADER DEBUG] User level from PHP:', <?php echo $userLevel; ?>);
     </script>
 
-<script src="..\JS\header.js"></script>
+    <!-- Load the original header.js -->
+    <script src="..\JS\header.js"></script>
+    
+    <!-- Load the coupon system -->
+    <script src="..\JS\coupon-system.js"></script>
+    
+    <script>
+        // Initialize coupon system after page loads
+        window.addEventListener('load', function() {
+            console.log('[HEADER DEBUG] Initializing coupon system with level:', userLevel);
+            // Initialize user level and start coupon system
+            if (typeof initializeUserLevel === 'function') {
+                initializeUserLevel(userLevel);
+            }
+        });
+    </script>
 <?php }?>
