@@ -165,81 +165,97 @@
 .retNameInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .changeAccTypeAPIInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .addProdTitleInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .addProdCatInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .addProdDescInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .addProdBrandInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .addImgUrlInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .addProdRetailersInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .addProdPricesInput {
     width: 40%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .upProdTitleInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .upProdRetNameInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .upPriceInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .delProdTitleInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .retAddressInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .delAccAPIInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .prodTitleInput {
     width: 30%;
     margin-left: 32px;
+    margin-bottom: 12px;
 }
 
 .input-group {
@@ -428,4 +444,39 @@
     top: -5px;
     right: 15px;
     width: auto;
+}
+
+/*  */
+/* In manage.css or a shared CSS file like main.css */
+
+.error-tooltip {
+    position: absolute;
+    /* Essential for precise positioning relative to its nearest positioned ancestor, or the document body if none. */
+    /* margin-left: 220px;
+    margin-top: -33px; */
+    background-color: #dc3545;
+    /* Red background for errors */
+    color: white;
+    /* White text color */
+    padding: 8px 15px;
+    /* Spacing inside the tooltip */
+    border-radius: 5px;
+    /* Slightly rounded corners */
+    font-size: 10px;
+    /* Smaller font size */
+    white-space: nowrap;
+    /* Prevents text from wrapping to the next line */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Soft shadow for depth */
+    z-index: 2;
+    /* Ensures the tooltip appears on top of other content */
+    opacity: 0;
+    /* Initial state: hidden for fade-in effect */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    /* Smooth fade and potential movement */
+}
+
+.input-error-border {
+    border: 1px solid #dc3545 !important;
+    /* Red border for erroneous inputs */
 }

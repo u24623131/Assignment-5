@@ -167,7 +167,7 @@ function initializeForm() {
                     // Assuming data.data.Cell_No is the key from your GetUserDetails API for phone number
                     curPhoneNr.value = data.data.Cell_No ? data.data.Cell_No : "No Phone Number Saved";
                 }
-                if (curPasswordInput) curPasswordInput.value = "********";
+                // if (curPasswordInput) curPasswordInput.value = "Enter current password to change password!";
                 if (curType) curType.value = data.data.User_Type;
             } else {
                 console.error("Failed to fetch user details:", data.data);

@@ -72,7 +72,7 @@ include("header.php");
 
                 <div class="input-group">
                     <label class="LblPA"> Password:</label>
-                    <input type="password" class="CurVal" name="curPasswordInput" id="curPasswordInput" required placeholder="Current Password Val (***):">
+                    <input type="password" class="CurVal" name="curPasswordInput" id="curPasswordInput" required placeholder="Enter Current Password:">
                     <i class="fa fa-lock"></i>
                     <input type="password" id="newPasswordInput" class="NewVal" name="newPasswordInput" required placeholder="Password:">
                     <label class="error-label" id="password-error"></label>
