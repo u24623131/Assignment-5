@@ -231,7 +231,7 @@ sendRequest();
 
 //Request ----
 async function sendRequest() {
-    console.log("SENDING REQUEST");
+    //console.log("SENDING REQUEST");
     const csrfToken = getCsrfToken();
 
     if (!csrfToken) {
@@ -286,7 +286,7 @@ async function sendRequest() {
 //No Response Request
 
 async function sendAddRequest(dataToSend) {
-    console.log("SENDING REQUEST");
+    //console.log("SENDING REQUEST");
     const csrfToken = getCsrfToken();
 
     if (!csrfToken) {
@@ -360,7 +360,7 @@ async function sendCompRequest(dataToSend) {
 function renderProductsPage(page) {
     currentPage = page;
     PPlace.innerHTML = '';
-    console.log("Current page--------- : " + currentPage)
+    //console.log("Current page--------- : " + currentPage)
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
     const productsToDisplay = allProducts.slice(startIndex, endIndex);
@@ -370,7 +370,7 @@ function renderProductsPage(page) {
         noResultsMessage.classList.add('no-results-message');
         PPlace.appendChild(noResultsMessage);
     } else {
-        console.log(`Displaying products for page ${currentPage}...`);
+        //console.log(`Displaying products for page ${currentPage}...`);
         productsToDisplay.forEach(Product => {
             const productToAdd = createProductCard(Product);
             PPlace.appendChild(productToAdd);
@@ -490,7 +490,7 @@ function setFilterItems(data) {
             categories.push(product.Category);
         }
     });
-    console.log("Collected Retailers:", Retailer);
+    //console.log("Collected Retailers:", Retailer);
     const categorySelect = document.getElementById("Dropdown_Category");
     const RetailerSelect = document.getElementById("Dropdown_Retailer");
     const brandSelect = document.getElementById("Dropdown_brand");
@@ -633,7 +633,7 @@ document.addEventListener("click", async function (event) {
 
         if (productCard) {
             var titleElement = productCard.querySelector("#Title");
-            console.log("Product ID to add to Favourites :", titleElement.textContent);
+            //console.log("Product ID to add to Favourites :", titleElement.textContent);
 
             const addToFavPayload = {
                 type: "AddToFavourite",
@@ -673,7 +673,7 @@ document.addEventListener("click", function (event) {
     if (clickedCompareItem) {
         var titleElement = clickedCompareItem.querySelector("#Title");
         if (titleElement) {
-            console.log("Removing product ID:", titleElement);
+            //console.log("Removing product ID:", titleElement);
             // Remove item from DOM
             clickedCompareItem.remove();
              const AddRequest = {

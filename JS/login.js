@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .then(data => {
                         if (data.status === "success") {1
 
-                            console.log(data);
+                            //console.log(data);
                             const apiKey = data.data.apikey;
                             const email = data.data.email;
                             const d = new Date();
@@ -132,74 +132,5 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("Submit button not found!");
     }
-
-    const themeToggleSelect = document.getElementById("theme-toggle");
-    const body = document.body; // Get the body element
-
-    // Define the class name for dark mode
-    const darkModeClass = 'dark-mode';
-    const localStorageKey = 'themePreference'; // Key for localStorage (renamed for clarity)
-
-    // 2. Function to apply the theme state
-    function applyThemePreference(theme) {
-        if (theme === 'Dark') {
-            body.classList.add(darkModeClass);
-            console.log("Dark theme applied.");
-        } else { // Assuming 'Light' is the other option
-            body.classList.remove(darkModeClass);
-            console.log("Light theme applied.");
-        }
-        // Optional: Update the select dropdown value to match the applied theme
-        if (themeToggleSelect) {
-            themeToggleSelect.value = theme;
-        }
-    }
-
-    // 3. Load the saved preference on page load
-    const savedPreference = localStorage.getItem(localStorageKey);
-
-    if (savedPreference !== null) {
-        // If a preference is saved, apply it
-        applyThemePreference(savedPreference); // Use the saved value ('Light' or 'Dark')
-    } else {
-        // Optional: Check user's system preference (prefers-color-scheme)
-        // if no preference is saved yet, and no 'selected' attribute is on options.
-        // If you rely on <option selected>, you might skip this system check.
-        // Let's check the *initially selected* option in HTML first as a fallback.
-        const initiallySelectedOption = themeToggleSelect ? themeToggleSelect.value : 'Light'; // Default to 'Light' if select not found
-
-        if (initiallySelectedOption) {
-            applyThemePreference(initiallySelectedOption);
-        } else {
-            // Fallback to system preference if no saved preference and no default selected option
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                applyThemePreference('Dark');
-            } else {
-                applyThemePreference('Light'); // Default to light if system preference is not dark
-            }
-        }
-    }
 });
-
-//     // 4. Add event listener to the select dropdown
-//     if (themeToggleSelect) {
-//         themeToggleSelect.addEventListener("change", function() {
-//             // Get the selected value from the dropdown
-//             const selectedTheme = this.value; // Will be "Light" or "Dark"
-
-//             // Apply the selected theme
-//             applyThemePreference(selectedTheme);
-
-//             // Save the selected preference to localStorage
-//             try {
-//                 localStorage.setItem(localStorageKey, selectedTheme);
-//                  console.log("Theme preference saved:", selectedTheme);
-//             } catch (e) {
-//                  console.error("Failed to save theme preference to localStorage:", e);
-//             }
-//         });
-//     } else {
-//         console.warn("Theme toggle select element not found (#theme-toggle).");
-//     }
-// });
 

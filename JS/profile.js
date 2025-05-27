@@ -11,7 +11,7 @@ document.getElementById("btnDeleteAccount").addEventListener("click", function (
     event.preventDefault();
 
     if (!confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.")) {
-        console.log("Account deletion cancelled by user.");
+        //console.log("Account deletion cancelled by user.");
         return;
     }
 
@@ -28,7 +28,7 @@ document.getElementById("btnDeleteAccount").addEventListener("click", function (
         apikey: apiKey
     };
 
-    console.log("Sending payload:", payload);
+    //console.log("Sending payload:", payload);
 
     fetch("../api.php", {
         method: "POST",
@@ -82,7 +82,7 @@ const regexPhoneNr = /^\+?(\d{1,3})?[-.\s]?(\(?\d{3}\)?)[-.\s]?\d{3}[-.\s]?\d{4}
 function showError(fieldId, message) {
     const field = document.getElementById(fieldId);
     if (!field) {
-        console.error(`Field with ID '${fieldId}' not found for error display.`);
+        //console.error(`Field with ID '${fieldId}' not found for error display.`);
         return;
     }
 
@@ -134,7 +134,7 @@ function clearError(fieldId) {
 function deleteCookie(name, path = '/') {
     // Set cookie with past expiration date to delete it
     document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=" + path + "; SameSite=Lax";
-    console.log(`Cookie '${name}' deleted.`);
+    //console.log(`Cookie '${name}' deleted.`);
 }
 
 // Function to initialize or re-initialize form data
@@ -218,7 +218,7 @@ function initializeForm() {
         }
         
         // Set the level cookie with improved management
-        console.log(`Setting level cookie to: ${level} (XP: ${xp})`);
+        //console.log(`Setting level cookie to: ${level} (XP: ${xp})`);
         setLevelCookie(level);
         
         // Alternative: Use the more forceful approach if regular method doesn't work
@@ -247,7 +247,7 @@ function forceSetLevelCookie(level) {
         
         document.cookie = cookieName + "=" + level + ";" + expires + ";path=/;SameSite=Lax";
         
-        console.log(`Cookie '${cookieName}' forcefully set to:`, level);
+        //console.log(`Cookie '${cookieName}' forcefully set to:`, level);
         
         // Verify after a short delay
         setTimeout(() => {
@@ -268,7 +268,7 @@ function setLevelCookie(level) {
     const existingCookie = getCookie(cookieName);
     
     if (existingCookie !== null) {
-        console.log(`Existing cookie found with value: ${existingCookie}`);
+        //console.log(`Existing cookie found with value: ${existingCookie}`);
         // Delete the existing cookie first
         deleteCookie(cookieName);
     }
@@ -281,16 +281,16 @@ function setLevelCookie(level) {
     // Set the new cookie
     document.cookie = cookieName + "=" + level + ";" + expires + ";path=/;SameSite=Lax";
     
-    console.log(`Cookie '${cookieName}' set to:`, level);
+    //console.log(`Cookie '${cookieName}' set to:`, level);
     
     // Verify the cookie was set correctly
     const verifySetCookie = getCookie(cookieName);
     if (verifySetCookie === level.toString()) {
-        console.log(`✅ Cookie successfully verified with value: ${verifySetCookie}`);
+        //console.log(`✅ Cookie successfully verified with value: ${verifySetCookie}`);
         
         // Notify coupon system of level change (if it exists)
         if (typeof window.updateUserLevel === 'function') {
-            console.log('Notifying coupon system of level change');
+            //console.log('Notifying coupon system of level change');
             window.updateUserLevel(level);
         }
         
@@ -465,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isValid) {
             if (!isAnyChangeAttempted) {
                 alert("No changes detected. Please update at least one field or attempt a password change to save.");
-                console.log("No changes detected to update.");
+                //console.log("No changes detected to update.");
                 return;
             }
 
@@ -477,7 +477,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     apikey: apiKey,
                     ...updatedUserDetailsFields
                 };
-                console.log("Sending User Details to API:", userDetailsPayload);
+                //console.log("Sending User Details to API:", userDetailsPayload);
 
                 fetchPromises.push(
                     fetch("../api.php", {
@@ -495,7 +495,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         })
                         .then(data => {
                             if (data.status === "success") {
-                                console.log("User details updated successfully:", data);
+                                //console.log("User details updated successfully:", data);
                                 return { success: true, message: "User details updated." };
                             } else {
                                 throw new Error("Failed to update user details: " + (data.data || "Unknown error."));
@@ -511,7 +511,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     oldPassword: oldPassword,
                     newPassword: newPasswordVal
                 };
-                console.log("Sending Password Change to API:", passwordChangePayload);
+                //console.log("Sending Password Change to API:", passwordChangePayload);
 
                 fetchPromises.push(
                     fetch("../api.php", {
@@ -529,7 +529,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         })
                         .then(data => {
                             if (data.status === "success") {
-                                console.log("Password changed successfully:", data);
+                                //console.log("Password changed successfully:", data);
                                 return { success: true, message: "Password changed." };
                             } else {
                                 throw new Error("Failed to change password: " + (data.data || "Unknown error."));
@@ -551,12 +551,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     })
                     .catch(err => {
-                        console.error("API error during profile update:", err);
+                        //console.error("API error during profile update:", err);
                         alert("Error updating profile: " + err.message);
                     });
             }
 
-            console.log("✅ All validations passed. Proceeding with API call(s).");
+            //console.log("✅ All validations passed. Proceeding with API call(s).");
         } else {
             console.log("❌ Form has validation errors. Not submitting.");
         }

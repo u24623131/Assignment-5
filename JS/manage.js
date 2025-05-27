@@ -177,7 +177,7 @@ document.getElementById("btnAddRet").addEventListener("click", function (event) 
             payload.retailAddress = retailerAddress;
         }
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -262,7 +262,7 @@ document.getElementById("btnUpdateRet").addEventListener("click", function (even
             payload.newRetailName = newRetailerName;
         }
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -324,7 +324,7 @@ document.getElementById("btnDelAcc").addEventListener("click", function (event) 
         };
 
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -385,7 +385,7 @@ document.getElementById("btnChangeAcc").addEventListener("click", function (even
         };
 
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -456,7 +456,7 @@ document.getElementById("btnDelRev").addEventListener("click", function (event) 
         };
 
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -517,7 +517,7 @@ document.getElementById("btnDelProd").addEventListener("click", function (event)
             productTitle: prodToDelete
         };
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -608,7 +608,7 @@ document.getElementById("btnUpProdPrice").addEventListener("click", function (ev
             newPrice: newProdPrice
         };
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -779,7 +779,7 @@ document.getElementById("btnAddProd").addEventListener("click", function (event)
             Prices: pricesArray
         };
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",
@@ -831,7 +831,7 @@ document.getElementById("btnShowUsers").addEventListener("click", function (even
         apikey: apiKey
     };
 
-    console.log("Sending payload:", payload);
+    //console.log("Sending payload:", payload);
 
     fetch("../api.php", {
         method: "POST",
@@ -953,7 +953,7 @@ document.getElementById("btnDelRet").addEventListener("click", function (event) 
         };
 
 
-        console.log("Sending payload:", payload);
+        //console.log("Sending payload:", payload);
 
         fetch("../api.php", {
             method: "POST",

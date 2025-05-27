@@ -146,7 +146,7 @@ function initializeForm() {
                 delete json.Cell_No; // Remove the property from the object
             }
             json.type = "Register";
-            console.log(json); // To check if form data is correctly formatted
+            //console.log(json); // To check if form data is correctly formatted
 
             fetch("../api.php", {
                 method: "POST",
@@ -158,7 +158,7 @@ function initializeForm() {
             })
                 .then(res => {
                     if (res.ok) {
-                        console.log("Submitted successfully.");
+                        //console.log("Submitted successfully.");
                         window.location.href = "login.php";
                     } else {
                         console.error("API error:", res.status);
