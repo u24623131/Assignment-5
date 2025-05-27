@@ -21,10 +21,10 @@ $currentPage = 'manage';
 <body class="signup-page">
     <div class="MainDiv">
         <div class="Top-Header">
-            <h2>Safari</h2>
-            <h2>Speed</h2>
+            <h2>Compare</h2>
+            <h2>It</h2>
         </div>
-        <p class="Slogan">Shop Fast. Live Wild. Delivered Quick</p>
+        <p class="Slogan">Compare Fast. Get Coupons. Quick & Convenient</p>
 
         <div class="MainContainer">
             <div class="Containerdots">

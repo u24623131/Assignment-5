@@ -20,14 +20,14 @@
 
 .Top-Header h2 {
     color: white;
-    font-family: 'Dancing Script', cursive;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 26px;
     margin: 5px;
 }
 
 .Slogan {
     color: #ff523b;
-    font-family: 'Dancing Script', cursive;
+    font-family: Arial, Helvetica, sans-serif;
     margin-bottom: 16px;
     font-size: 13px;
 }
@@ -134,8 +134,8 @@
 
 .LblPA {
     position: relative;
-    font-family: 'Dancing Script', cursive;
-    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
     margin: 8px;
     font-weight: bold;
     color: white;
