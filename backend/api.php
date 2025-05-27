@@ -1258,9 +1258,30 @@ class API {
                 return;
             }
             $searchResult = $searchStmt->get_result();
-            if ($searchResult) {
+            if ($searchResult && $searchResult->num_rows > 0) {
+                $products = [];
+                while($row = $searchResult->fetch_assoc()){
+                    $productNo = $row['Product_No'];
+
+                    // init product if not already added
+                    if (!isset($products[$productNo])) {
+                        $products[$productNo] = [
+                            "Product_No" => $row['Product_No'],
+                            "Title" => htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8'),
+                            "Category" => htmlspecialchars($row['Category'], ENT_QUOTES, 'UTF-8'),
+                            "Description" => htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8'),
+                            "Brand" => htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8'),
+                            "Image_URL" => filter_var($row['Image_URL'], FILTER_VALIDATE_URL) ? htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8') : null,
+                            "Retailers" => [],
+                            "Prices" => []
+                        ];
+                    }
+
+                    $products[$productNo]['Retailers'][] = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+                    $products[$productNo]['Prices'][] = (float)$row['Price'];
+                }
                 http_response_code(200);
-                $this->response("200 OK","success", $searchResult->fetch_all(MYSQLI_ASSOC));
+                $this->response("200 OK","success", array_values($products));
                 return;
             }else{
                 http_response_code(400);
