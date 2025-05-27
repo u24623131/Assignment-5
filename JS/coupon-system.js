@@ -46,6 +46,24 @@ const COUPON_CONFIG = {
             discount: '$5 OFF',
             description: 'Starter Member Bonus',
             expires: '15 days'
+        },
+        {
+            code: 'LEVEL1-BOOST',
+            discount: '5% OFF',
+            description: 'Level 1 Special Boost',
+            expires: '20 days'
+        },
+        {
+            code: 'FIRSTBUY10',
+            discount: '$10 OFF',
+            description: 'First Purchase Reward',
+            expires: '25 days'
+        },
+        {
+            code: 'LEVEL1-SAVE3',
+            discount: '$3 OFF',
+            description: 'Level 1 Savings Deal',
+            expires: '10 days'
         }
     ],
     2: [
@@ -60,6 +78,24 @@ const COUPON_CONFIG = {
             discount: '$20 OFF',
             description: 'Bronze Tier Reward',
             expires: '30 days'
+        },
+        {
+            code: 'BRONZE-BONUS10',
+            discount: '$10 OFF',
+            description: 'Bronze Level Bonus',
+            expires: '20 days'
+        },
+        {
+            code: 'LEVEL2-REWARD',
+            discount: '12% OFF',
+            description: 'Bronze Loyalty Reward',
+            expires: '35 days'
+        },
+        {
+            code: 'SAVE15BRNZ',
+            discount: '$15 OFF',
+            description: 'Bronze Saver Special',
+            expires: '25 days'
         }
     ],
     3: [
@@ -74,6 +110,24 @@ const COUPON_CONFIG = {
             discount: '$50 OFF',
             description: 'Premium Member Bonus',
             expires: '45 days'
+        },
+        {
+            code: 'GOLD-SPECIAL30',
+            discount: '$30 OFF',
+            description: 'Gold Tier Limited Deal',
+            expires: '40 days'
+        },
+        {
+            code: 'LEVEL3-VIP20',
+            discount: '20% OFF',
+            description: 'VIP Gold Level Discount',
+            expires: '50 days'
+        },
+        {
+            code: 'GOLD-SAVE40',
+            discount: '$40 OFF',
+            description: 'Gold Exclusive Savings',
+            expires: '35 days'
         }
     ]
 };
