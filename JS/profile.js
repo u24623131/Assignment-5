@@ -176,7 +176,77 @@ function initializeForm() {
         .catch(error => {
             console.error("Network error fetching user details:", error);
         });
+
+
+    // Fetch Experience
+    fetch("../api.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+            type: "GetUserXP",
+            apikey: apiKey,
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                document.getElementById("expDisplay").innerHTML = "Experience: " + data.data.XP;
+                if(data.data.XP < 100){
+                    document.getElementById("lvlDisplay").innerHTML = "Level: 0";
+                }
+                else if(data.data.XP < 200){
+                    document.getElementById("lvlDisplay").innerHTML = "Level: 1";
+                }
+                else if(data.data.XP < 300){
+                    document.getElementById("lvlDisplay").innerHTML = "Level: 2";
+                }
+                else{
+                    document.getElementById("lvlDisplay").innerHTML = "Level: 3";                    
+                }
+            } else {
+                console.error("Failed to fetch user experience:", data.data);
+            }
+        })
+        .catch(error => {
+            console.error("Network error fetching user experience:", error);
+        });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const btnExpHelp = document.getElementById('btnExpHelp');
+    const expHelpModal = document.getElementById('expHelpModal');
+    const closeExpHelpModal = document.getElementById('closeExpHelpModal');
+
+    // Toggle visibility of the modal
+    if (btnExpHelp) {
+        btnExpHelp.addEventListener('click', function() {
+            if (expHelpModal) {
+                expHelpModal.style.display = 'block'; // Show the modal
+            }
+        });
+    }
+
+    // Close the modal when the close button is clicked
+    if (closeExpHelpModal) {
+        closeExpHelpModal.addEventListener('click', function() {
+            if (expHelpModal) {
+                expHelpModal.style.display = 'none'; // Hide the modal
+            }
+        });
+    }
+
+    // Close the modal if the user clicks anywhere outside the modal content
+    if (expHelpModal) {
+        window.addEventListener('click', function(event) {
+            if (event.target === expHelpModal) {
+                expHelpModal.style.display = 'none';
+            }
+        });
+    }
+});
 
 // Call initializeForm on DOMContentLoaded to populate initial data
 if (document.readyState === 'loading') {

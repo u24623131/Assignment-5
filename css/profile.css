@@ -43,7 +43,7 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 11px;
     width: 700px;
-    height: 425px;
+    height: 400px;
 }
 
 #btnLogout {
@@ -54,7 +54,7 @@
 
 #btnSave {
     position: absolute;
-    bottom: 10px;
+    bottom: 15px;
     right: 185px;
 }
 
@@ -81,9 +81,22 @@
     transform: translate(298px, 35px);
 }
 
-#expDisplay{
+#expDisplay {
     position: absolute;
     top: -25px;
+}
+
+#lvlDisplay {
+    position: absolute;
+    top: -25px;
+    left: 550px;
+}
+
+#btnExpHelp {
+    width: fit-content;
+    position: absolute;
+    top: -85px;
+    left: 550px;
 }
 
 .LblPA {

@@ -90,6 +90,39 @@ $currentPage = 'profile';
             <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
             <button class="btn btnSignUp" type="button" id="btnDeleteAccount">Delete Account</button>
             <h4 id="expDisplay">Experience: </h4>
+            <h4 id="lvlDisplay">Level: </h4>
+            <button class="btn btnSignUp" type="button" id="btnExpHelp">Experience Info</button>
+
+            <div id="expHelpModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);">
+                <div style="background-color: #1a1a1a; margin: 10% auto; padding: 30px; border: 1px solid #ff523b; border-radius: 15px; width: 80%; max-width: 600px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-align: center; color: white;">
+                    <span class="close-button" id="closeExpHelpModal" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                    <h2 style="color: #ff523b; margin-bottom: 20px;">Experience & Level System</h2>
+                    <p style="margin-bottom: 15px;">
+                        Welcome to the Compare It loyalty program! Earn experience points (XP) as you interact with the platform.
+                    </p>
+                    <p style="margin-bottom: 15px;">
+                        Your level reflects your engagement and unlocks exclusive benefits and features.
+                    </p>
+                    <h3 style="color: #ff523b; margin-top: 25px; margin-bottom: 10px;">How to Earn XP:</h3>
+                    <ul style="list-style-type: none; padding: 0; margin-bottom: 20px;">
+                        <li style="margin-bottom: 8px;"><strong>Making Comparisons:</strong> Earn XP for every comparison made.</li>
+                        <li style="margin-bottom: 8px;"><strong>Leaving Reviews:</strong> Share your thoughts on products to gain XP.</li>
+                        <li style="margin-bottom: 8px;"><strong>Interactive Games:</strong> Whilst using the platform interactive games will appear in which you can gain experience points!</li>
+                        <li style="margin-bottom: 8px;"><strong>Daily Logins:</strong> Consistent visits reward you with bonus XP.</li>
+                    </ul>
+                    <h3 style="color: #ff523b; margin-top: 25px; margin-bottom: 10px;">Level Tiers:</h3>
+                    <ul style="list-style-type: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><strong>Level 0:</strong> 0 - 99 XP (Deal Dabbler)</li>
+                        <li style="margin-bottom: 8px;"><strong>Level 1:</strong> 100 - 199 XP (Deal Detective)</li>
+                        <li style="margin-bottom: 8px;"><strong>Level 2:</strong> 200 - 299 XP (Savvy Sorter)</li>
+                        <li style="margin-bottom: 8px;"><strong>Level 3:</strong> 300+ XP (Elite Evaluator)</li>
+                    </ul>
+                    <p style="margin-top: 25px; font-style: italic; color: #ccc;">
+                        Keep comparing and exploring to reach higher levels and unlock exciting rewards!
+                    </p>
+                </div>
+            </div>
+
 
         </div>
     </div>

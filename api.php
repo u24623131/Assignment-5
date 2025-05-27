@@ -2163,8 +2163,8 @@ class API {
 
         if($this->getUserByApiKey($api)){
             $xp = $this->getUserByApiKey($api)['XP'];
-            http_response_code(404);
-            $this->response("404 Not Found","error",["XP"=>$xp]);
+            http_response_code(200);
+            $this->response("200 OK","success",["XP"=>$xp]);
             return;
         }else{
             http_response_code(404);
