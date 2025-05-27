@@ -1,24 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Products - ArtStore</title>
-    <link id="themeStylesheet" rel="stylesheet" href="..\css\main.css">
-    <link id="themeStylesheet" rel="stylesheet" href="..\css\compare.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
-    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf_token); ?>">
-</head>
-
-<body>
     <?php
-    $currentPage = 'product';
     include 'header.php';
+    $currentPage = 'comparison';
     ?>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>All Products - ArtStore</title>
+        <link id="themeStylesheet" rel="stylesheet" href="..\css\main.css">
+        <link id="themeStylesheet" rel="stylesheet" href="..\css\compare.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+        <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf_token); ?>">
+    </head>
+
+    <body>
 
         <div class="ProductPlace" id="PPlace">
 
@@ -156,19 +156,19 @@
         </div>
 
 
-    </div>
-    <div class="page-btn">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>&#8594;</span>
-    </div>
+        </div>
+        <div class="page-btn">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>&#8594;</span>
+        </div>
 
-    <?php
-    include 'footer.php';
-    ?>
+        <?php
+        include 'footer.php';
+        ?>
 
-</body>
+    </body>
 
-</html>
+    </html>

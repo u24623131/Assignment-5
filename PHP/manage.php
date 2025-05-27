@@ -1,5 +1,6 @@
 <?php
 include("header.php");
+$currentPage = 'manage';
 ?>
 
 <!DOCTYPE html>

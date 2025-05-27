@@ -1,3 +1,7 @@
+    <?php
+    include 'header.php';
+    $currentPage = 'home';
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,10 +19,6 @@
 </head>
 
 <body>
-    <?php
-    $currentPage = 'home';
-    include 'header.php';
-    ?>
     <div id="filterMenu" class="filter-sidebar">
         <a class="close-btn" id="btnClose">✖</a>
         <h2>Filters</h2>
