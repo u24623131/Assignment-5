@@ -591,24 +591,46 @@ document.addEventListener('DOMContentLoaded', (event) => {
     //     });
     // });
 
-    // const categorySelect = document.getElementById("Dropdown_Category");
-    // const countrySelect = document.getElementById("Dropdown_country");
-    // const brandSelect = document.getElementById("Dropdown_brand");
+    const categorySelect = document.getElementById("Dropdown_Category");
+    const retailerSelect = document.getElementById("Dropdown_Retailer");
+    const brandSelect = document.getElementById("Dropdown_brand");
 
-    // categorySelect.addEventListener("change", function () {
-    //     getAllProducts.search.categories = categorySelect.value;
-    //     sendRequest();
-    // });
+    categorySelect.addEventListener("change", function () {
+        getAllProducts = {
+            type: "Filter",
+            apikey: api_key,
+            filter: {
+                "byCategory": categorySelect.value
+            }
+        };
+        sendRequest();
+    });
 
-    // countrySelect.addEventListener("change", function () {
-    //     getAllProducts.search.country_of_origin = countrySelect.value;
-    //     sendRequest();
-    // });
+    retailerSelect.addEventListener("change", function () {
+ 
+        getAllProducts = {
+            type: "Filter",
+            apikey: api_key,
+            filter: {
+                "byRetailer": retailerSelect.value
+            }
+        };
+        sendRequest();
+    });
 
-    // brandSelect.addEventListener("change", function () {
-    //     getAllProducts.search.brand = brandSelect.value;
-    //     sendRequest();
-    // });
+    brandSelect.addEventListener("change", function () {
+
+        getAllProducts = {
+            type: "Filter",
+            apikey: api_key,
+            filter: {
+                "byBrand": brandSelect.value
+            }
+        };
+        sendRequest();
+
+
+    });
     ///////////////////////////////////////////////////////////////////////////
     // const btnClear = document.getElementById(btnClear)
     // btnClear.addEventListener("click",function(){
