@@ -155,3 +155,7 @@ $currentPage = 'manage';
 </body>
 
 </html>
+
+<?php
+include 'footer.php';
+?>

@@ -131,7 +131,7 @@ body {
 
 #emailHeader{
     position: relative;
-    left: 30px;
+    left: 20px;
 }
 
 .logo img {
@@ -412,4 +412,58 @@ nav ul li .active::after {
     display: flex;
     gap: 13px;
     line-height: 20px;
+}
+
+
+/*  */
+footer {
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    border-top: 1px solid #ff523b;
+    margin-top: 20px;
+}
+
+footer .footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+footer .footer-content .col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+footer .footer-content .logo {
+    margin-bottom: 10px;
+}
+
+footer .footer-content h4 {
+    padding-bottom: 20px;
+}
+
+footer .footer-content p {
+    padding-bottom: 20px;
+    margin: 0 0 5px 0;
+}
+
+footer .footer-content a {
+    text-decoration: none;
+    color: white;
+    padding-bottom: 20px;
+}
+
+footer .copyright {
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 14px;
+}
+
+#footerLogo{
+    margin-top: 20px;
+    margin-bottom: 40px;
 }

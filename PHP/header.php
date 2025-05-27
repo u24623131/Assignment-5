@@ -27,9 +27,6 @@ $csrf_token = generateCsrfToken();
 // $_SESSION['admin'] = true;
 
 $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] === true;
-
-
-
 ?>
 
 <div class="container">
