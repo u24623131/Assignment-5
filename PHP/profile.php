@@ -15,6 +15,7 @@ include("header.php");
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf_token); ?>">
 </head>
 
 <body class="signup-page">
@@ -83,6 +84,7 @@ include("header.php");
                     <label class="error-label" id="type-error"></label>
                 </div>
                 <button class="btn btnSignUp" type="button" id="btnSave">Save</button>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
             </form>
             <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
             <button class="btn btnSignUp" type="button" id="btnDeleteAccount">Delete Account</button>

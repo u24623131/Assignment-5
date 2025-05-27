@@ -19,31 +19,36 @@ function getCookie(name) {
     return null; // Cookie not found
 }
 
+function getCsrfToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.content : null;
+}
+
 const api_key = getCookie('api_key');
 
 
 // fliters
-    var btnFliter = document.getElementById("BtnFliter");
-    btnFliter.addEventListener("click",function(){
-        var filterMenu = document.getElementById("filterMenu");
-        if (filterMenu.style.display === "none" || filterMenu.style.display === "") {
-            filterMenu.style.display = "block"; // Show sidebar
-        } else {
-            filterMenu.style.display = "none"; // Hide sidebar
-        }
-    })
-    var btnClose = document.getElementById("btnClose");
-    btnClose.addEventListener("click",function(){
-        filterMenu.style.display = "none";
-    })
+var btnFliter = document.getElementById("BtnFliter");
+btnFliter.addEventListener("click", function () {
+    var filterMenu = document.getElementById("filterMenu");
+    if (filterMenu.style.display === "none" || filterMenu.style.display === "") {
+        filterMenu.style.display = "block"; // Show sidebar
+    } else {
+        filterMenu.style.display = "none"; // Hide sidebar
+    }
+})
+var btnClose = document.getElementById("btnClose");
+btnClose.addEventListener("click", function () {
+    filterMenu.style.display = "none";
+})
 
-    document.addEventListener("DOMContentLoaded", function() {
-        let priceRange = document.getElementById("priceRange");
-        let priceValue = document.getElementById("priceValue");
-        priceRange.addEventListener("input", function() {
-            priceValue.value = priceRange.value;
-        });
+document.addEventListener("DOMContentLoaded", function () {
+    let priceRange = document.getElementById("priceRange");
+    let priceValue = document.getElementById("priceValue");
+    priceRange.addEventListener("input", function () {
+        priceValue.value = priceRange.value;
     });
+});
 
 function createProductCard(product) {
     // Create the main product card container
@@ -204,7 +209,7 @@ function createCompareListCard(productName, imageSource) {
 
     //title
     const productTitle = document.createElement("h4");
-    productTitle.id = "Title" ;
+    productTitle.id = "Title";
     productTitle.textContent = productName;
     CompareListElement.appendChild(productTitle);
 
@@ -219,7 +224,7 @@ function createCompareListCard(productName, imageSource) {
 }
 
 //Listing if an add to campare list button pressed ;
-document.addEventListener("click", function(event) {
+document.addEventListener("click", function (event) {
     if (event.target.closest(".btn-compare")) {
         let compareList = document.getElementById("compareList");
         var btn = event.target.closest(".btn-compare");
@@ -249,7 +254,7 @@ document.addEventListener("click", function(event) {
 // Fetch Data from the database
 var GetUserFavourite = {
     type: "GetUserFavourite",
-    apikey : api_key
+    apikey: api_key
 };
 
 sendRequest();
@@ -257,13 +262,21 @@ sendRequest();
 //Request ----
 async function sendRequest() {
     console.log("SENDING REQUEST");
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
     const reqURL = '../api.php';
 
     try {
         const response = await fetch(reqURL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(GetUserFavourite)
         });
@@ -274,7 +287,7 @@ async function sendRequest() {
         });
 
         // Store all products globally
-        allProducts = result.data ;
+        allProducts = result.data;
 
         //setting the Filter Items 
         setFilterItems(allProducts)
@@ -292,14 +305,22 @@ async function sendRequest() {
 //No Response Request
 
 async function sendRemoveRequest(dataToSend) {
-    console.log("SENDING REQUEST" );
+    console.log("SENDING REQUEST");
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
     const reqURL = '../api.php';
 
     try {
         const response = await fetch(reqURL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(dataToSend)
         });
@@ -562,7 +583,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 // Listener for removing compare items
-document.addEventListener("click", function(event) {
+document.addEventListener("click", function (event) {
     const clickedCompareItem = event.target.closest(".compareitem");
 
     if (clickedCompareItem) {
@@ -579,8 +600,8 @@ document.addEventListener("click", function(event) {
 
 //Removing from fravorites 
 
-document.addEventListener("click", function(event) {
-    if (event.target.closest(".btn-remove")) { 
+document.addEventListener("click", function (event) {
+    if (event.target.closest(".btn-remove")) {
         var btn = event.target.closest(".btn-remove");
         var productCardElement = btn.closest(".col-4");
 
@@ -588,13 +609,13 @@ document.addEventListener("click", function(event) {
             var titleElement = productCardElement.querySelector(".title-price-row h4");
 
             if (titleElement) {
-               var RemoveFromFavourite = {
+                var RemoveFromFavourite = {
                     type: "RemoveFromFavourite",
                     "apikey": api_key,
                     "Title": titleElement.textContent
-               }
-               sendRemoveRequest(RemoveFromFavourite);
-               productCardElement.remove();
+                }
+                sendRemoveRequest(RemoveFromFavourite);
+                productCardElement.remove();
             } else {
                 console.warn("Could not find required element title", {
                     titleElement

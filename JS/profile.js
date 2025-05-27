@@ -2,11 +2,24 @@ document.getElementById("btnLogout").addEventListener("click", function () {
     window.location.href = "logout.php";
 });
 
+function getCsrfToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.content : null;
+}
+
 document.getElementById("btnDeleteAccount").addEventListener("click", function (event) {
     event.preventDefault();
 
     if (!confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.")) {
         console.log("Account deletion cancelled by user.");
+        return;
+    }
+
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
         return;
     }
 
@@ -20,7 +33,8 @@ document.getElementById("btnDeleteAccount").addEventListener("click", function (
     fetch("../api.php", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
         },
         body: JSON.stringify(payload)
     })
@@ -119,6 +133,13 @@ function clearError(fieldId) {
 
 // Function to initialize or re-initialize form data
 function initializeForm() {
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
     // Get current details elements (disabled)
     let curFname = document.getElementsByName("curName")[0];
     let curSurname = document.getElementsByName("curSurname")[0];
@@ -130,7 +151,8 @@ function initializeForm() {
     fetch("../api.php", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
         },
         body: JSON.stringify({
             type: "GetUserDetails",
@@ -165,7 +187,7 @@ if (document.readyState === 'loading') {
 
 
 // Attach the submit event listener ONLY ONCE after the DOM is fully loaded
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const submit = document.getElementById("btnSave");
     // Get the NEW input fields for validation and update
     const fname = document.getElementById("name");
@@ -182,6 +204,14 @@ document.addEventListener("DOMContentLoaded", function() {
         const updatedUserDetailsFields = {};
         let oldPassword = null;
         let newPasswordVal = null;
+
+        const csrfToken = getCsrfToken();
+
+        if (!csrfToken) {
+            console.error("CSRF token not found. Aborting DeleteAccount request.");
+            alert("Security error: CSRF token missing. Please refresh the page.");
+            return;
+        }
 
         // --- Name (Optional Field for User Details Update) ---
         if (fname && fname.value.trim() !== "") {
@@ -237,7 +267,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // --- Password Change Logic ---
         const isPasswordChangeAttempted = (curPasswordInput && curPasswordInput.value.trim() !== "") ||
-                                          (newPasswordInput && newPasswordInput.value.trim() !== "");
+            (newPasswordInput && newPasswordInput.value.trim() !== "");
 
         if (isPasswordChangeAttempted) {
             // Old Password (Required for password change)
@@ -297,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 fetchPromises.push(
                     fetch("../api.php", {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
                         body: JSON.stringify(userDetailsPayload),
                     })
                         .then(res => {
@@ -331,7 +361,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 fetchPromises.push(
                     fetch("../api.php", {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
                         body: JSON.stringify(passwordChangePayload),
                     })
                         .then(res => {

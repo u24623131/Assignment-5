@@ -9,6 +9,11 @@ if (document.readyState === 'loading') {
     initializeForm();
 }
 
+function getCsrfToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.content : null;
+}
+
 function initializeForm() {
     // Get form elements
     let fname = document.getElementsByName("Name")[0];
@@ -64,6 +69,14 @@ function initializeForm() {
 
     submit.addEventListener("click", function (event) {
         event.preventDefault();
+
+        const csrfToken = getCsrfToken();
+
+        if (!csrfToken) {
+            console.error("CSRF token not found. Aborting DeleteAccount request.");
+            alert("Security error: CSRF token missing. Please refresh the page.");
+            return;
+        }
 
         let isValid = true;
 
@@ -139,6 +152,7 @@ function initializeForm() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
                 },
                 body: JSON.stringify(json), // This is the form data in JSON
             })

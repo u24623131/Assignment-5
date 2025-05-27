@@ -11,7 +11,7 @@
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
-
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf_token); ?>">
 </head>
 
 <body>

@@ -19,6 +19,11 @@ function getCookie(name) {
     return null; // Cookie not found
 }
 
+function getCsrfToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.content : null;
+}
+
 const api_key = getCookie('api_key');
 
 // fliters 
@@ -221,13 +226,21 @@ sendRequest();
 //Request ----
 async function sendRequest() {
     console.log("SENDING REQUEST");
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
     const reqURL = '../api.php';
 
     try {
         const response = await fetch(reqURL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(getAllProducts)
         });
@@ -238,9 +251,9 @@ async function sendRequest() {
         });
 
         // Store all products globally
-        if ( getAllProducts.type === "GetAllProducts" || getAllProducts.type === "Search" ) {
+        if (getAllProducts.type === "GetAllProducts" || getAllProducts.type === "Search") {
             allProducts = result.data.Products;
-            
+
         } else {
             allProducts = result.data;
         }
@@ -249,12 +262,12 @@ async function sendRequest() {
         setFilterItems(allProducts)
         // Set up pagination and render the first page
         setupPagination(allProducts.length);
-        if(getAllProducts.type === "Search"){
+        if (getAllProducts.type === "Search") {
             renderProductsPage(1);
-        }else{
+        } else {
             renderProductsPage(currentPage);
         }
-        
+
         return allProducts;
 
     } catch (error) {
@@ -266,13 +279,21 @@ async function sendRequest() {
 
 async function sendAddRequest(dataToSend) {
     console.log("SENDING REQUEST");
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
     const reqURL = '../api.php';
 
     try {
         const response = await fetch(reqURL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(dataToSend)
         });
@@ -292,7 +313,7 @@ async function sendAddRequest(dataToSend) {
 function renderProductsPage(page) {
     currentPage = page;
     PPlace.innerHTML = '';
-    console.log("Current page--------- : "+ currentPage)
+    console.log("Current page--------- : " + currentPage)
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
     const productsToDisplay = allProducts.slice(startIndex, endIndex);
@@ -539,8 +560,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         };
         sendRequest();
-        
-        
+
+
     });
     ///////////////////////////////////////////////////////////////////////////
     // const btnClear = document.getElementById(btnClear)

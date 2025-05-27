@@ -13,6 +13,11 @@ function getCookie(name) {
     return null; // Cookie not found
 }
 
+function getCsrfToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.content : null;
+}
+
 const apiKey = getCookie('api_key');
 
 // Function to show tooltip error
@@ -139,6 +144,14 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById("btnAddRet").addEventListener("click", function (event) {
     event.preventDefault();
 
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+
     let retNameInput = document.querySelector("#addRetForm input[name='retailName']"); // Select specific input
     let retAddressInput = document.querySelector("#addRetForm input[name='retailAddress']"); // Select specific input
 
@@ -169,7 +182,8 @@ document.getElementById("btnAddRet").addEventListener("click", function (event) 
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -197,6 +211,14 @@ document.getElementById("btnAddRet").addEventListener("click", function (event) 
 
 document.getElementById("btnUpdateRet").addEventListener("click", function (event) {
     event.preventDefault();
+
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
 
     let retNameInput = document.querySelector("#updateRetForm input[name='retailName']"); // Select specific input
     let newRetNameInput = document.querySelector("#updateRetForm input[name='newRetailName']"); // Select specific input
@@ -245,7 +267,8 @@ document.getElementById("btnUpdateRet").addEventListener("click", function (even
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -274,6 +297,14 @@ document.getElementById("btnUpdateRet").addEventListener("click", function (even
 document.getElementById("btnDelAcc").addEventListener("click", function (event) {
     event.preventDefault();
 
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+
     let accToDeleteInput = document.querySelector("#delAccForm input[name='accToDeleteAPIKey']"); // Select specific input
 
     let isValid = true;
@@ -298,7 +329,8 @@ document.getElementById("btnDelAcc").addEventListener("click", function (event) 
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -325,6 +357,14 @@ document.getElementById("btnDelAcc").addEventListener("click", function (event) 
 document.getElementById("btnChangeAcc").addEventListener("click", function (event) {
     event.preventDefault();
 
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+
     let accToChangeInput = document.querySelector("#changeAccTypeForm input[name='accToChangeAPIKey']"); // Select specific input
 
     let isValid = true;
@@ -350,7 +390,8 @@ document.getElementById("btnChangeAcc").addEventListener("click", function (even
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -376,6 +417,14 @@ document.getElementById("btnChangeAcc").addEventListener("click", function (even
 
 document.getElementById("btnDelRev").addEventListener("click", function (event) {
     event.preventDefault();
+
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
 
     let reviewerAPIKeyInput = document.querySelector("#remRevForm input[name='reviewerAPIKey']"); // Select specific input
     let productTitleInput = document.querySelector("#remRevForm input[name='prodTitle']"); // Select specific input
@@ -412,7 +461,8 @@ document.getElementById("btnDelRev").addEventListener("click", function (event) 
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -440,6 +490,14 @@ document.getElementById("btnDelRev").addEventListener("click", function (event) 
 document.getElementById("btnDelProd").addEventListener("click", function (event) {
     event.preventDefault();
 
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+
     let prodToDeleteInput = document.querySelector("#delProdForm input[name='delProdTitleInput']"); // Select specific input
 
     let isValid = true;
@@ -464,7 +522,8 @@ document.getElementById("btnDelProd").addEventListener("click", function (event)
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -490,6 +549,14 @@ document.getElementById("btnDelProd").addEventListener("click", function (event)
 
 document.getElementById("btnUpProdPrice").addEventListener("click", function (event) {
     event.preventDefault();
+
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
 
     let prodToUpdateInput = document.querySelector("#updateProdPriceForm input[name='upProdTitleInput']");
     let retailerNameInput = document.querySelector("#updateProdPriceForm input[name='retailerNameInput']");
@@ -546,7 +613,8 @@ document.getElementById("btnUpProdPrice").addEventListener("click", function (ev
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -574,6 +642,14 @@ document.getElementById("btnUpProdPrice").addEventListener("click", function (ev
 
 document.getElementById("btnAddProd").addEventListener("click", function (event) {
     event.preventDefault();
+
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
 
     // Get references to input elements
     let prodToAddInput = document.querySelector("#addProdForm input[name='addProdTitleInput']");
@@ -708,7 +784,8 @@ document.getElementById("btnAddProd").addEventListener("click", function (event)
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })
@@ -741,6 +818,14 @@ document.getElementById("btnAddProd").addEventListener("click", function (event)
 document.getElementById("btnShowUsers").addEventListener("click", function (event) {
     event.preventDefault();
 
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+
     const payload = {
         type: "GetAllUsers",
         apikey: apiKey
@@ -751,93 +836,102 @@ document.getElementById("btnShowUsers").addEventListener("click", function (even
     fetch("../api.php", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
         },
         body: JSON.stringify(payload)
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(errorData.data || `HTTP error! Status: ${response.status}`);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === "success" && data.data) {
-            const usersListDiv = document.getElementById("usersList");
-            const usersModal = document.getElementById("usersModal");
-
-            usersListDiv.innerHTML = '';
-
-            if (data.data.length > 0) {
-                const table = document.createElement('table');
-                table.style.width = '100%';
-                table.style.borderCollapse = 'collapse';
-
-                const thead = table.createTHead();
-                const headerRow = thead.insertRow();
-                const emailHeader = document.createElement('th');
-                emailHeader.textContent = 'Email';
-                emailHeader.style.border = '1px solid #ddd';
-                emailHeader.style.padding = '8px';
-                emailHeader.style.textAlign = 'left';
-                headerRow.appendChild(emailHeader);
-
-                const apiKeyHeader = document.createElement('th');
-                apiKeyHeader.textContent = 'API Key';
-                apiKeyHeader.style.border = '1px solid #ddd';
-                apiKeyHeader.style.padding = '8px';
-                apiKeyHeader.style.textAlign = 'left';
-                headerRow.appendChild(apiKeyHeader);
-                
-                const tbody = table.createTBody();
-                data.data.forEach(user => {
-                    const row = tbody.insertRow();
-                    const emailCell = row.insertCell();
-                    emailCell.textContent = user.Email;
-                    emailCell.style.border = '1px solid #ddd';
-                    emailCell.style.padding = '8px';
-
-                    const apiKeyCell = row.insertCell();
-                    apiKeyCell.textContent = user.API_Key;
-                    apiKeyCell.style.border = '1px solid #ddd';
-                    apiKeyCell.style.padding = '8px';
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.data || `HTTP error! Status: ${response.status}`);
                 });
-                usersListDiv.appendChild(table);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success" && data.data) {
+                const usersListDiv = document.getElementById("usersList");
+                const usersModal = document.getElementById("usersModal");
+
+                usersListDiv.innerHTML = '';
+
+                if (data.data.length > 0) {
+                    const table = document.createElement('table');
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+
+                    const thead = table.createTHead();
+                    const headerRow = thead.insertRow();
+                    const emailHeader = document.createElement('th');
+                    emailHeader.textContent = 'Email';
+                    emailHeader.style.border = '1px solid #ddd';
+                    emailHeader.style.padding = '8px';
+                    emailHeader.style.textAlign = 'left';
+                    headerRow.appendChild(emailHeader);
+
+                    const apiKeyHeader = document.createElement('th');
+                    apiKeyHeader.textContent = 'API Key';
+                    apiKeyHeader.style.border = '1px solid #ddd';
+                    apiKeyHeader.style.padding = '8px';
+                    apiKeyHeader.style.textAlign = 'left';
+                    headerRow.appendChild(apiKeyHeader);
+
+                    const tbody = table.createTBody();
+                    data.data.forEach(user => {
+                        const row = tbody.insertRow();
+                        const emailCell = row.insertCell();
+                        emailCell.textContent = user.Email;
+                        emailCell.style.border = '1px solid #ddd';
+                        emailCell.style.padding = '8px';
+
+                        const apiKeyCell = row.insertCell();
+                        apiKeyCell.textContent = user.API_Key;
+                        apiKeyCell.style.border = '1px solid #ddd';
+                        apiKeyCell.style.padding = '8px';
+                    });
+                    usersListDiv.appendChild(table);
+
+                } else {
+                    usersListDiv.innerHTML = '<p>No users found.</p>';
+                }
+
+                usersModal.style.display = "block";
+
+                const closeButton = usersModal.querySelector('.close-button');
+                if (closeButton) {
+                    closeButton.onclick = function () {
+                        usersModal.style.display = "none";
+                    }
+                }
+
+                window.onclick = function (event) {
+                    if (event.target === usersModal) {
+                        usersModal.style.display = "none";
+                    }
+                }
 
             } else {
-                usersListDiv.innerHTML = '<p>No users found.</p>';
+                alert("Failed to retrieve users: " + (data.data || "Unknown API response data."));
+                console.error("API error:", data.data);
             }
-
-            usersModal.style.display = "block";
-
-            const closeButton = usersModal.querySelector('.close-button');
-            if (closeButton) {
-                closeButton.onclick = function() {
-                    usersModal.style.display = "none";
-                }
-            }
-
-            window.onclick = function(event) {
-                if (event.target === usersModal) {
-                    usersModal.style.display = "none";
-                }
-            }
-
-        } else {
-            alert("Failed to retrieve users: " + (data.data || "Unknown API response data."));
-            console.error("API error:", data.data);
-        }
-    })
-    .catch(error => {
-        console.error("Fetch error:", error);
-        alert("Error retrieving users: " + error.message);
-    });
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            alert("Error retrieving users: " + error.message);
+        });
 });
 
 document.getElementById("btnDelRet").addEventListener("click", function (event) {
     event.preventDefault();
+
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting DeleteAccount request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
 
     let retToDeleteInput = document.getElementById("delRetTitleInput"); // Select specific input
 
@@ -864,7 +958,8 @@ document.getElementById("btnDelRet").addEventListener("click", function (event) 
         fetch("../api.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify(payload)
         })

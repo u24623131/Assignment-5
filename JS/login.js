@@ -1,6 +1,11 @@
 const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
+function getCsrfToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.content : null;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     let email = document.getElementsByName("Email")[0];
     let password = document.getElementsByName("Password")[0];
@@ -9,6 +14,15 @@ document.addEventListener("DOMContentLoaded", function () {
     if (submit) {
         submit.addEventListener("click", function (event) {
             event.preventDefault();
+
+            const csrfToken = getCsrfToken();
+
+            if (!csrfToken) {
+                console.error("CSRF token not found. Aborting DeleteAccount request.");
+                alert("Security error: CSRF token missing. Please refresh the page.");
+                return;
+            }
+
             // Logging to check the values
             if (regexEmail.test(email.value)) {
                 let errorContainer = document.getElementById("email-error");
@@ -59,7 +73,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 fetch("../api.php", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": csrfToken
                     },
                     body: JSON.stringify({
                         type: "Login",

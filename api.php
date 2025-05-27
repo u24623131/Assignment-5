@@ -1,5 +1,11 @@
 <?php
+// ini_set('display_errors', 0); // Turn off display of errors to the browser
+// ini_set('log_errors', 1);    // Log errors to the PHP error log
+// // You might also want to explicitly set an error log file for easier access during development:
+// ini_set('error_log', './php_error.log'); // Replace with actual path
+// error_reporting(E_ALL);
 
+session_start();
 use GrahamCampbell\ResultType\Result;
 // Clear any output BOM chars / whitespace
 if (ob_get_level()) ob_end_clean();
@@ -10,6 +16,35 @@ require_once(__DIR__."/config.php"); //feel free to change accordingly // no nee
 header("Content-Type: application/json"); // specifies that json data is outputted
 header("Access-Control-Allow-Origin: *"); // allows any origin to access api
 header("Access-Control-Allow-Methods: POST"); // ensures that only post-method requests can be  to access api
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    // 1. Get the token from the request header (sent by your JavaScript)
+    $request_csrf_token = null;
+    $headers = getallheaders(); // This function gets all HTTP headers of the current request
+
+    // Check for the X-CSRF-Token header
+    if (isset($headers['X-CSRF-Token'])) {
+        $request_csrf_token = $headers['X-CSRF-Token'];
+    } elseif (isset($headers['x-csrf-token'])) { // Check for lowercase header as well
+        $request_csrf_token = $headers['x-csrf-token'];
+    }
+
+    // 2. Get the token from the user's session
+    $session_csrf_token = $_SESSION['csrf_token'] ?? null;
+
+    // 3. Validate the token
+    if (!$request_csrf_token || $request_csrf_token !== $session_csrf_token) {
+        // Log the error for debugging, but don't expose too much info to the client
+        error_log("CSRF token mismatch detected. Request token: " . ($request_csrf_token ?? 'NULL') . ", Session token: " . ($session_csrf_token ?? 'NULL'));
+
+        // Return an error response and terminate script execution
+        echo json_encode([
+            'status' => 'error',
+            'data' => 'CSRF token validation failed. Request blocked.'
+        ]);
+        exit(); // Crucially, stop execution if validation fails
+    }
+}
 
 class API {
     private $DB_Connection;
@@ -346,7 +381,7 @@ class API {
         $pass = trim($input['Password']);
         
         //find the user and ensure they exist
-        $stmt = $this->DB_Connection->prepare("SELECT Password, Salt, API_Key,Email FROM Users WHERE Email = ?");
+        $stmt = $this->DB_Connection->prepare("SELECT Password, Salt, API_Key,Email, User_Type FROM Users WHERE Email = ?");
 
         // if prepare didn't prep
         if(!$stmt){
