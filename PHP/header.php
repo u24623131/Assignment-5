@@ -50,7 +50,7 @@ if (isset($_COOKIE['temp_user_level'])) {
                     <li><a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                     <li><a id="asignup" href="signup.php"><i class="fas fa-user-plus"></i>Signup</a></li>
                 <?php } else { ?>
-                    <li><a class="btn" href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                    <li><a class="btn" id="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
                 <?php }
                 if (isset($_COOKIE['user_email'])) {
                     $userEmail = $_COOKIE['user_email'];
