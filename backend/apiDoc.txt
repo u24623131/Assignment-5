@@ -1181,6 +1181,7 @@ Optional Filter Keys (can be combined):
   - byCategory     : Filter by category name
   - byDescription  : Filter by exact description
   - byBrand        : Filter by brand name
+  - byRetailer     : Filter by retailer name
 
 ------------------ REQUEST EXAMPLE ------------------
 
