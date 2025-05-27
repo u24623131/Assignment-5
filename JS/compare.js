@@ -1,63 +1,51 @@
-const sampleProductData = {
-    Product_No: "TOAST001",
-    Image_URL: "../image/toaster.jpg",
-    Title: "Compact Smart Toaster",
-    Brand: "BakePro",
-    Category: "Kitchen Appliances",
-    Retailer_Names: ["AmazingDeals", "ElectroMart", "HomeGadgets"],
-    Prices: [499.99, 529.00, 485.50],
-    Description: "Enjoy perfect toast every time with this compact toaster. Features wide slots for thick bread, 6 browning levels, and easy-clean crumb tray—all in a sleek, modern design. It's built for durability and convenience, ensuring a great start to your day.",
-    Reviews: [
-        { name: "Nomusa Dlamini", rating: 4.0, date: "2024/01/15", text: "Works well and fits thick bread slices. Only wish the cord was a bit longer. Otherwise, a solid buy!" },
-        { name: "Sipho Khumalo", rating: 4.5, date: "2024/02/20", text: "Heats evenly and looks great on my kitchen counter. Super easy to clean too! Highly recommended." },
-        { name: "Lerato Modise", rating: 5.0, date: "2024/03/10", text: "This toaster is a game changer! Perfect crisp every time. No more burnt edges. Love it!" },
-        { name: "Thabo Mokoena", rating: 3.5, date: "2024/04/01", text: "It's decent for the price. The browning levels are a bit inconsistent, but generally satisfactory." },
-        { name: "Zinhle Ngcobo", rating: 4.8, date: "2024/04/25", text: "Fantastic toaster! Quick and efficient. The design is sleek and doesn't take up too much space." },
-        { name: "Andile Nkosi", rating: 4.2, date: "2024/05/18", text: "Good basic toaster. Does what it's supposed to. No fancy features but reliable." },
-        { name: "Palesa Kunene", rating: 3.0, date: "2024/05/20", text: "Got stuck a couple of times with thicker bagels. Otherwise, it functions. Average product." },
-        { name: "Kabelo Maleka", rating: 4.7, date: "2024/05/25", text: "Absolutely thrilled with this toaster! The crumb tray slides out effortlessly. A joy to use." }
-    ]
-};
 let allProducts = [];
 
 function getCookie(name) {
     const nameEQ = name + "=";
-    const ca = document.cookie.split(';'); // Split the cookie string into an array of individual cookies
+    const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
-        while (c.charAt(0) == ' ') { // Remove leading spaces (e.g., " my_cookie=value" -> "my_cookie=value")
+        while (c.charAt(0) == ' ') {
             c = c.substring(1, c.length);
         }
-        if (c.indexOf(nameEQ) == 0) { // If this cookie starts with the name we're looking for
-            return c.substring(nameEQ.length, c.length); // Return the value
+        if (c.indexOf(nameEQ) == 0) {
+            return c.substring(nameEQ.length, c.length);
         }
     }
-    return null; // Cookie not found
+    return null;
 }
 
 const api_key = getCookie('api_key');
 
-let CompareProducts = {
-    type : "ProductCompare",
-    apikey : api_key
-}
-displayProducts () ;
-//Requests:
 
+// New DOM elements for the modal
+const reviewModal = document.getElementById('reviewModal');
+const reviewModalHeader = document.getElementById('reviewModalHeader');
+const reviewForm = document.getElementById('reviewForm');
+const reviewDescriptionInput = document.getElementById('reviewDescription');
+const reviewRatingInput = document.getElementById('reviewRating');
+const submitReviewButton = document.getElementById('submitReviewButton');
+const closeButton = document.querySelector('.close-button');
+const reviewFormMessage = document.getElementById('reviewFormMessage');
+
+let initialProductsRequest = {
+    type: "ProductCompare",
+    apikey: api_key
+};
+
+
+// Requests:
 function getCsrfToken() {
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     return metaTag ? metaTag.content : null;
 }
 
-async function sendRequest() {
-    console.log("SENDING REQUEST");
+async function sendRequest(requestData) {
     const csrfToken = getCsrfToken();
-
     if (!csrfToken) {
-        console.error("CSRF token not found. Aborting DeleteAccount request.");
-        alert("Security error: CSRF token missing. Please refresh the page.");
-        return;
+        throw new Error("Security error: CSRF token missing. Please refresh the page.");
     }
+
     const reqURL = '../api.php';
 
     try {
@@ -67,56 +55,116 @@ async function sendRequest() {
                 'Content-Type': 'application/json',
                 "X-CSRF-Token": csrfToken
             },
-            body: JSON.stringify(CompareProducts)
+            body: JSON.stringify(requestData)
         });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            try {
+                const errorJson = JSON.parse(errorText);
+                throw new Error(`API error! Status: ${response.status}, Message: ${errorJson.message || JSON.stringify(errorJson)}`);
+            } catch (e) {
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+            }
+        }
 
         const result = await response.json();
         console.dir(result, {
             depth: null
         });
 
-        //  Store all products globally
-        allProducts = result.data.Products;
-        return allProducts;
+
+        if (requestData.type === "ProductCompare") {
+            return (result && result.data && Array.isArray(result.data.products)) ? result.data.products : [];
+        } else if (requestData.type === "GetProductReviews") {
+            return (result && result.data && Array.isArray(result.data)) ? result.data : [];
+        } else if (requestData.type === "RemoveFromCompare") {
+            if (result ) {
+                console.log(`Product '${requestData.Product_Name}' removed successfully from comparison.`);
+                return true; 
+            } else {
+                
+                console.error(`Failed to remove product '${requestData.Product_Name}':`, result);
+                return false; 
+            }
+        } else {
+            return result;
+        }
 
     } catch (error) {
-        console.error("Request failed", error);
+        console.error("Request failed:", error);
+        throw error;
     }
 }
 
-//No Response Request
 
-async function sendAddRequest(dataToSend) {
-    console.log("SENDING REQUEST");
-    const csrfToken = getCsrfToken();
-
-    if (!csrfToken) {
-        console.error("CSRF token not found. Aborting DeleteAccount request.");
-        alert("Security error: CSRF token missing. Please refresh the page.");
-        return;
+function moveProductInArray(arr, fromIndex, toIndex) {
+    if (toIndex < 0 || toIndex >= arr.length) {
+        return false; // Invalid target index
     }
-    const reqURL = '../api.php';
+    const element = arr.splice(fromIndex, 1)[0]; 
+    arr.splice(toIndex, 0, element);
+    return true;
+}
 
+
+async function displayProducts() {
+    ClearDisplay()
+    const mainProductColumn = document.querySelector(".main-product-column");
+    const comparedProductsColumn = document.querySelector(".compared-products-column");
     try {
-        const response = await fetch(reqURL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": csrfToken
-            },
-            body: JSON.stringify(dataToSend)
-        });
 
-        const result = await response.json();
-        console.dir(result, {
-            depth: null
-        });
+        if (allProducts.length === 0) {
+            allProducts = await sendRequest(initialProductsRequest);
+        }
 
+        if (!allProducts || allProducts.length === 0) {
+            const noProductsMessage = document.createElement('p');
+            noProductsMessage.textContent = "No products available for comparison.";
+            if (comparedProductsColumn) comparedProductsColumn.appendChild(noProductsMessage);
+            return;
+        }
+
+        const mainProductData = { ...allProducts[0] }; // Shallow copy
+
+        if (mainProductColumn && mainProductData) {
+            const mainProductReviewRequest = {
+                type: "GetProductReviews",
+                Title: mainProductData.Title
+            };
+            try {
+                mainProductData.Reviews = await sendRequest(mainProductReviewRequest);
+            } catch (error) {
+                console.error(`Failed to fetch reviews for main product ${mainProductData.Title}:`, error);
+                mainProductData.Reviews = [];
+            }
+            const mainCard = createProductCard(mainProductData, 0);
+            mainProductColumn.appendChild(mainCard);
+        }
+
+        for (let i = 1; i < allProducts.length; i++) {
+            const product = allProducts[i];
+            const reviewRequest = {
+                type: "GetProductReviews",
+                Title: product.Title
+            };
+
+            try {
+                product.Reviews = await sendRequest(reviewRequest);
+            } catch (error) {
+                console.error(`Failed to fetch reviews for ${product.Title}:`, error);
+                product.Reviews = [];
+            }
+            const comparedCard = createProductCard(product, i);
+            if (comparedProductsColumn) comparedProductsColumn.appendChild(comparedCard);
+        }
     } catch (error) {
-        console.error("Request failed", error);
+        console.error("An error occurred during product display:", error);
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = "Error loading products. Please try again later.";
+        if (comparedProductsColumn) comparedProductsColumn.appendChild(errorMessage);
     }
 }
-
 //creating star rating
 function createStarRating(rating) {
     const fragment = document.createDocumentFragment();
@@ -138,21 +186,23 @@ function createStarRating(rating) {
 }
 
 //creating product card
-function createProductCard(product) {
+
+function createProductCard(product, currentIndex) {
     const productCardElement = document.createElement("div");
     productCardElement.className = "product-card";
     productCardElement.dataset.productId = product.Product_No;
+    productCardElement.dataset.productIndex = currentIndex; 
 
-    //creating product img
+    // creating product img
     const productCardHeader = document.createElement("div");
     productCardHeader.classList.add("product-card-header");
 
     const productImage = document.createElement("img");
-    productImage.src = product.Image_URL;
-    productImage.alt = product.Title;
+    productImage.src = product.ImageUrl ;
+    productImage.alt = product.Title ;
     productCardHeader.appendChild(productImage);
 
-    //creating alternate prices
+    // creating alternate prices
     const alternatePricesBox = document.createElement("div");
     alternatePricesBox.classList.add("alternate-prices-box");
 
@@ -160,22 +210,27 @@ function createProductCard(product) {
     alternatePricesTitle.textContent = "Alternate Prices:";
     alternatePricesBox.appendChild(alternatePricesTitle);
 
-    if (product.Retailer_Names && product.Retailer_Names.length > 0) {
-        product.Retailer_Names.forEach((retailer, index) => {
-            const priceItem = document.createElement("div");
-            priceItem.classList.add("price-item");
+    if (product.retailers && Array.isArray(product.retailers) &&
+        product.prices && Array.isArray(product.prices) &&
+        product.retailers.length > 0) {
 
-            const retailerName = document.createElement("h4");
-            retailerName.classList.add("retailer-name");
-            retailerName.textContent = retailer;
-            priceItem.appendChild(retailerName);
+        product.retailers.forEach((retailer, index) => {
+            if (retailer !== undefined && product.prices[index] !== undefined) {
+                const priceItem = document.createElement("div");
+                priceItem.classList.add("price-item");
 
-            const productPrice = document.createElement("h4");
-            productPrice.classList.add("product-price");
-            productPrice.textContent = `R${parseFloat(product.Prices[index]).toFixed(2)}`;
-            priceItem.appendChild(productPrice);
+                const retailerName = document.createElement("h4");
+                retailerName.classList.add("retailer-name");
+                retailerName.textContent = retailer;
+                priceItem.appendChild(retailerName);
 
-            alternatePricesBox.appendChild(priceItem);
+                const productPrice = document.createElement("h4");
+                productPrice.classList.add("product-price");
+                productPrice.textContent = `R${parseFloat(product.prices[index]).toFixed(2)}`;
+                priceItem.appendChild(productPrice);
+
+                alternatePricesBox.appendChild(priceItem);
+            }
         });
     } else {
         const noPricesMessage = document.createElement("p");
@@ -185,43 +240,43 @@ function createProductCard(product) {
     productCardHeader.appendChild(alternatePricesBox);
     productCardElement.appendChild(productCardHeader);
 
-    //creating product details
+    // creating product details
     const productDetails = document.createElement("div");
     productDetails.classList.add("product-details");
 
     const productTitle = document.createElement("h4");
     productTitle.classList.add("product-title");
-    productTitle.textContent = product.Title;
+    productTitle.textContent = product.Title || 'Unknown Product';
     productDetails.appendChild(productTitle);
 
-    //creating rating
+    // creating rating
     const productRatingDiv = document.createElement("div");
     productRatingDiv.classList.add("product-rating");
-    const averageRating = product.Reviews && product.Reviews.length > 0
-        ? product.Reviews.reduce((sum, rev) => sum + rev.rating, 0) / product.Reviews.length
+    const averageRating = (product.Reviews && Array.isArray(product.Reviews) && product.Reviews.length > 0)
+        ? product.Reviews.reduce((sum, rev) => sum + (rev.Rating || 0), 0) / product.Reviews.length
         : 0;
     productRatingDiv.appendChild(createStarRating(averageRating));
     productDetails.appendChild(productRatingDiv);
 
-    //creating description
+    // creating description
     const productDescriptionDiv = document.createElement("div");
     productDescriptionDiv.classList.add("product-description");
     const descriptionHeading = document.createElement("h4");
     descriptionHeading.textContent = "Description";
     productDescriptionDiv.appendChild(descriptionHeading);
     const descriptionParagraph = document.createElement("p");
-    descriptionParagraph.textContent = product.Description;
+    descriptionParagraph.textContent = product.Description || 'No description provided for this product.';
     productDescriptionDiv.appendChild(descriptionParagraph);
     productDetails.appendChild(productDescriptionDiv);
 
-    //creating reviews section
+    // creating reviews section
     const reviewsSection = document.createElement("div");
     reviewsSection.classList.add("reviews-section");
     const reviewsHeading = document.createElement("h4");
     reviewsHeading.textContent = "Reviews";
     reviewsSection.appendChild(reviewsHeading);
 
-    //creating review buttons
+    // creating review buttons
     const reviewButtonGroup = document.createElement("div");
     reviewButtonGroup.classList.add("review-buttons-group");
 
@@ -230,24 +285,50 @@ function createProductCard(product) {
     reviewButtonGroup.appendChild(moreReviewsButton);
 
     const addReviewButton = document.createElement("button");
-    addReviewButton.classList.add("btn-review");
-    addReviewButton.innerHTML = '<i class="fas fa-plus-square"></i> Add Review';
+    addReviewButton.classList.add("btn-review","add-review-btn");
+    addReviewButton.innerHTML = '<i class="fas fa-plus-square"></i> ';
     reviewButtonGroup.appendChild(addReviewButton);
 
     const likeButton = document.createElement("button");
-    likeButton.classList.add("btn-review");
-    likeButton.innerHTML = '<i class="fas fa-heart"></i> Like';
+    likeButton.classList.add("btn-review","add-to-favourite-btn");
+    likeButton.innerHTML = '<i class="fas fa-heart"></i> ';
     reviewButtonGroup.appendChild(likeButton);
 
     const removeButton = document.createElement("button");
-    removeButton.classList.add("btn-review");
-    removeButton.innerHTML = '<i class="fas fa-remove"></i> remove';
+    removeButton.classList.add("btn-review", "remove-product-btn");
+    removeButton.innerHTML = '<i class="fas fa-times-circle"></i> '; 
     reviewButtonGroup.appendChild(removeButton);
+
+    // Position Changer Elements
+    const positionChangerDiv = document.createElement("div");
+    positionChangerDiv.classList.add("position-changer");
+
+    const positionInput = document.createElement("input");
+    positionInput.classList.add("position-input");
+    positionInput.type = "number";
+    positionInput.min = "1";
+    positionInput.max = allProducts.length.toString();
+    positionInput.value = (currentIndex + 1).toString(); 
+    positionInput.title = `Enter new position (1-${allProducts.length})`;
+
+    const positionButton = document.createElement("button");
+    positionButton.classList.add("btn-review","position-button");
+    positionButton.innerHTML = '<i class="fas fa-arrows-alt-h"></i> '; 
+
+    positionChangerDiv.appendChild(positionButton);
+    positionChangerDiv.appendChild(positionInput);
+    reviewButtonGroup.appendChild(positionChangerDiv); 
+
 
     reviewsSection.appendChild(reviewButtonGroup);
 
     //handling review logic
     const allReviews = product.Reviews || [];
+    if (Array.isArray(allReviews)) {
+        // console.log(allReviews[0]) // Removed for cleaner console
+    } else {
+        // console.log(product.Reviews); // Removed for cleaner console
+    }
     let reviewsDisplayedCount = 0;
     const reviewsToLoadPerClick = 2;
 
@@ -255,11 +336,11 @@ function createProductCard(product) {
         if (isEndOfReviews) {
             moreReviewsButton.innerHTML = '<i class="fas fa-undo-alt"></i> Back';
         } else {
-            moreReviewsButton.innerHTML = '<i class="fas fa-chevron-down"></i> More';
+            moreReviewsButton.innerHTML = '<i class="fas fa-chevron-down"></i> ';
         }
 
         if (allReviews.length <= reviewsToLoadPerClick && allReviews.length > 0) {
-             moreReviewsButton.style.display = "none";
+            moreReviewsButton.style.display = "none";
         } else if (allReviews.length === 0) {
             moreReviewsButton.style.display = "none";
             const noReviewsMessage = document.createElement('p');
@@ -278,7 +359,7 @@ function createProductCard(product) {
     function displayReviews(startIndex, count) {
         clearReviewsFromDOM();
 
-        const reviewsToRender = allReviews.slice(startIndex, startIndex + count);
+        let reviewsToRender = allReviews.slice(startIndex, startIndex + count);
 
         if (reviewsToRender.length === 0 && startIndex === 0 && allReviews.length > 0) {
             reviewsToRender.push(...allReviews);
@@ -303,25 +384,25 @@ function createProductCard(product) {
             const reviewNameLabel = document.createElement("label");
             reviewNameLabel.classList.add("review-name");
             reviewNameLabel.setAttribute("for", "Rating");
-            reviewNameLabel.textContent = review.name;
+            reviewNameLabel.textContent = review.name || (review.U_ID ? ("Review ID " + review.U_ID) : 'Anonymous'); // Use review.name or U_ID
             reviewHeader.appendChild(reviewNameLabel);
 
             const reviewRatingLabel = document.createElement("label");
             reviewRatingLabel.classList.add("review-rating");
             reviewRatingLabel.setAttribute("for", "Rating");
-            reviewRatingLabel.textContent = review.rating;
+            reviewRatingLabel.textContent = review.Rating;
             reviewHeader.appendChild(reviewRatingLabel);
 
             const reviewDateLabel = document.createElement("label");
             reviewDateLabel.classList.add("review-date");
             reviewDateLabel.setAttribute("for", "Rating");
-            reviewDateLabel.textContent = review.date;
+            reviewDateLabel.textContent = review.Date; // Corrected to review.Date based on previous assumption
             reviewHeader.appendChild(reviewDateLabel);
 
             reviewItem.appendChild(reviewHeader);
 
             const reviewParagraph = document.createElement("p");
-            reviewParagraph.textContent = review.text;
+            reviewParagraph.textContent = review.review_text;
             reviewItem.appendChild(reviewParagraph);
 
             reviewsSection.insertBefore(reviewItem, reviewButtonGroup);
@@ -349,22 +430,235 @@ function createProductCard(product) {
     return productCardElement;
 }
 
-//render products
-function displayProducts (){
-     
-    let otherProductData = sendRequest(CompareProducts);
-    
+// --- DELEGATED EVENT LISTENER FOR REMOVE BUTTONS ---
+document.addEventListener("click", function (event) {
+    const btn = event.target.closest(".remove-product-btn");
+    if (btn) {
+        const productCardElement = btn.closest(".product-card");
+        if (productCardElement) {
+            const titleElement = productCardElement.querySelector(".product-title");
+            if (titleElement) {
+                const productTitle = titleElement.textContent;
+                removeProduct(productTitle, productCardElement);
+            } else {
+                console.warn("Could not find product title element within the product card.", productCardElement);
+            }
+        } else {
+            console.warn("Could not find parent .product-card for the remove button.", btn);
+        }
+    }
+});
+
+// --- NEW: DELEGATED EVENT LISTENER FOR POSITION BUTTONS ---
+document.addEventListener("click", function (event) {
+    const btn = event.target.closest(".position-button");
+
+    if (btn) {
+        const productCardElement = btn.closest(".product-card");
+        if (productCardElement) {
+            const currentProductIndex = parseInt(productCardElement.dataset.productIndex);
+            const positionInput = productCardElement.querySelector(".position-input");
+            const newPosition = parseInt(positionInput.value); 
+
+            if (isNaN(newPosition) || newPosition < 1 || newPosition > allProducts.length) {
+                alert(`Invalid position. Please enter a number between 1 and ${allProducts.length}.`);
+                return;
+            }
+            const newIndex = newPosition - 1;
+
+            if (currentProductIndex !== newIndex) { 
+                const moved = moveProductInArray(allProducts, currentProductIndex, newIndex);
+                if (moved) {
+                    console.log(`Moved product from index ${currentProductIndex} to ${newIndex}.`);
+                    displayProducts(); 
+                } else {
+                    console.error("Failed to move product in array (should not happen with valid input).");
+                }
+            } else {
+                 console.log("Product is already in the desired position.");
+            }
+        } else {
+            console.warn("Could not find parent .product-card for the position button.", btn);
+        }
+    }
+});
+
+async function removeProduct(productTitle, productCardElement) {
+   
+    try {
+        const removeRequest = {
+            type: "RemoveFromCompare",
+            apikey: api_key,
+            Product_Name: productTitle 
+        };
+        const success = await sendRequest(removeRequest);
+
+        if (success) {
+            allProducts = allProducts.filter(p => p.Title !== productTitle);
+            console.log(`Product "${productTitle}" removed. Remaining products:`, allProducts);
+            displayProducts();
+        } else {
+            alert(`Failed to remove "${productTitle}". Please try again.`);
+        }
+    } catch (error) {
+        console.error("Error during product removal:", error);
+        alert(`An error occurred while trying to remove "${productTitle}". Check console for details.`);
+    }
+}
+
+// --- Call displayProducts to initiate the process when the DOM is ready ---
+function ClearDisplay(){
     const mainProductColumn = document.querySelector(".main-product-column");
     const comparedProductsColumn = document.querySelector(".compared-products-column");
-    const mainProductCard = createProductCard(sampleProductData);
-    mainProductColumn.appendChild(mainProductCard);
-
-
-
-    // otherProductData.forEach(product => {
-    //     const comparedCard = createProductCard(product);
-    //     comparedProductsColumn.appendChild(comparedCard);
-    // });
+    if (mainProductColumn) {
+        console.log("here");
+        mainProductColumn.innerHTML = "";
+    }
+    if (comparedProductsColumn) comparedProductsColumn.innerHTML = "";
 }
 
 
+// Variable to store the title of the product being reviewed
+let currentProductTitleForReview = '';
+
+// Function to open the review modal
+function openReviewModal(productTitle) {
+    currentProductTitleForReview = productTitle;
+    reviewModalHeader.textContent = `Add Review for "${productTitle}"`;
+    reviewDescriptionInput.value = ''; 
+    reviewRatingInput.value = ''; 
+    reviewFormMessage.textContent = ''; 
+    reviewFormMessage.classList.remove('success', 'error');
+    reviewModal.style.display = 'flex'; 
+}
+
+// Function to close the review modal
+function closeReviewModal() {
+    reviewModal.style.display = 'none';
+}
+
+// Event listener for opening the modal (delegated to document)
+document.addEventListener('click', function(event) {
+    const addReviewBtn = event.target.closest('.add-review-btn'); 
+
+    if (addReviewBtn) {
+        const productCardElement = addReviewBtn.closest('.product-card');
+        if (productCardElement) {
+            const titleElement = productCardElement.querySelector('.product-title');
+            if (titleElement) {
+                const productTitle = titleElement.textContent;
+                openReviewModal(productTitle);
+            } else {
+                console.warn("Could not find product title for review modal.");
+            }
+        }
+    }
+});
+
+// Event listeners for closing the modal
+closeButton.addEventListener('click', closeReviewModal);
+// Close modal if user clicks outside of the modal content
+window.addEventListener('click', function(event) {
+    if (event.target === reviewModal) {
+        closeReviewModal();
+    }
+});
+
+// Event listener for submitting the review form inside the modal
+reviewForm.addEventListener('submit', async function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const description = reviewDescriptionInput.value.trim();
+    const rating = parseFloat(reviewRatingInput.value);
+
+    // Basic validation
+    if (!description || description.length < 5) {
+        reviewFormMessage.textContent = 'Please enter a description (at least 5 characters).';
+        reviewFormMessage.className = 'form-message error';
+        return;
+    }
+    if (isNaN(rating) || rating < 1 || rating > 5) {
+        reviewFormMessage.textContent = 'Please enter a rating between 1 and 5.';
+        reviewFormMessage.className = 'form-message error';
+        return;
+    }
+
+    const reviewData = {
+        type: "AddReview", 
+        apikey: api_key,
+        Title: currentProductTitleForReview, 
+        Rating: rating, 
+        Review : description 
+    };
+
+    try {
+       
+        submitReviewButton.disabled = true;
+        submitReviewButton.textContent = 'Submitting...';
+
+        const response = await sendRequest(reviewData); 
+        if (response ) { 
+            reviewFormMessage.textContent = 'Review added successfully!';
+            reviewFormMessage.className = 'form-message success';
+            setTimeout(() => {
+                closeReviewModal();
+                displayProducts(); 
+            }, 1000); 
+        } 
+    } catch (error) {
+        console.error("Error adding review:", error);
+        reviewFormMessage.textContent = 'An error occurred while adding review.';
+        reviewFormMessage.className = 'form-message error';
+    } finally {
+        submitReviewButton.disabled = false;
+        submitReviewButton.textContent = 'Add Review';
+    }
+});
+
+document.addEventListener("click", async function(event) {
+    const addToFavouriteBtn = event.target.closest(".add-to-favourite-btn");
+
+    if (addToFavouriteBtn) {
+        const productCardElement = addToFavouriteBtn.closest(".product-card");
+        if (productCardElement) {
+            const titleElement = productCardElement.querySelector(".product-title");
+            if (titleElement) {
+                const productTitle = titleElement.textContent;
+
+                try {
+                    const addToFavouriteRequest = {
+                        type: "AddToFavourite",
+                        apikey: api_key,
+                        Product_Name: productTitle
+                    };
+                    addToFavouriteBtn.disabled = true;
+                    addToFavouriteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+
+                    const success = await sendRequest(addToFavouriteRequest);
+
+                    if (success) {
+                        alert(`"${productTitle}" added to your favourites!`);
+                        addToFavouriteBtn.innerHTML = '<i class="fas fa-heart" style="color: red;"></i> Liked';
+                        addToFavouriteBtn.style.cursor = 'default';
+                    } else {
+                        alert(`Failed to add "${productTitle}" to favourites. Please try again.`);
+                        addToFavouriteBtn.innerHTML = '<i class="fas fa-heart"></i> Like'; 
+                    }
+                } catch (error) {
+                    console.error("Error adding to favourites:", error);
+                    alert(`An error occurred while adding "${productTitle}" to favourites.`);
+                    addToFavouriteBtn.innerHTML = '<i class="fas fa-heart"></i> Like'; 
+                    addToFavouriteBtn.disabled = false;
+                }
+            } else {
+                console.warn("Could not find product title for add to favourite.", productCardElement);
+            }
+        } else {
+            console.warn("Could not find parent .product-card for the add to favourite button.", addToFavouriteBtn);
+        }
+    }
+});
+
+
+
+document.addEventListener('DOMContentLoaded', displayProducts);

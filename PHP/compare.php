@@ -22,10 +22,29 @@ $currentPage = 'comparison';
 
     <div class="product-comparison-container">
         <div class="main-product-column">
-            </div>
+        </div>
 
         <div class="compared-products-column">
-            </div>
+        </div>
+    </div>
+
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="reviewModalHeader">Add Review for "Product Title"</h3>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="reviewDescription">Description:</label>
+                    <textarea id="reviewDescription" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reviewRating">Rating:</label>
+                    <input type="number" id="reviewRating" min="1" max="5" required>
+                </div>
+                <button type="submit" id="submitReviewButton">Add Review</button>
+            </form>
+            <p id="reviewFormMessage" class="form-message"></p>
+        </div>
     </div>
 
     <script src="../JS/compare.js"></script>

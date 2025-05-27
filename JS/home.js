@@ -212,6 +212,12 @@ document.addEventListener("click", function (event) {
         let newItem = createCompareListCard(titleElement.textContent, imgElement.src);
         // Insert the new card before the last element (the button)
         compareList.insertBefore(newItem, compareList.lastElementChild);
+        const AddRequest = {
+            type: "AddToCompare",
+            apikey : api_key ,
+            Product_Name : titleElement.textContent
+        };
+        sendAddRequest(AddRequest)
 
     }
 })
@@ -264,6 +270,8 @@ async function sendRequest() {
         setupPagination(allProducts.length);
         if (getAllProducts.type === "Search") {
             renderProductsPage(1);
+        }else if(getAllProducts.type === "ProductCompare"){
+                return allProducts;
         } else {
             renderProductsPage(currentPage);
         }
@@ -306,9 +314,48 @@ async function sendAddRequest(dataToSend) {
     } catch (error) {
         console.error("Request failed", error);
     }
+    return result.data.products ;
 }
 
+async function sendCompRequest(dataToSend) {
+    console.log("SENDING REQUEST");
 
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+
+    const reqURL = '../api.php';
+
+    try {
+        const response = await fetch(reqURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify(dataToSend)
+        });
+
+        const result = await response.json();
+        console.dir(result, { depth: null });
+
+        // Check if the result has the expected structure
+        if (result && result.data && result.data.products) {
+            return result.data.products;
+        } else {
+            console.warn("Unexpected response structure:", result);
+            return []; // fallback if structure is not as expected
+        }
+
+    } catch (error) {
+        console.error("Request failed", error);
+        return []; // fallback if request fails
+    }
+}
 
 function renderProductsPage(page) {
     currentPage = page;
@@ -629,8 +676,39 @@ document.addEventListener("click", function (event) {
             console.log("Removing product ID:", titleElement);
             // Remove item from DOM
             clickedCompareItem.remove();
+             const AddRequest = {
+            type: "RemoveFromCompare",
+            apikey : api_key ,
+            Product_Name : titleElement.textContent
+        };
+        sendAddRequest(AddRequest)
         } else {
             console.warn("Missing data-product-id on:", clickedCompareItem);
         }
     }
 });
+
+//Listing if an add to campare list button pressed ;
+async function displayCompare() {
+    let compareList = document.getElementById("compareList");
+
+    const AddRequest = {
+        type: "ProductCompare",
+        apikey: api_key
+    };
+
+    let allProducts = await sendCompRequest(AddRequest);
+
+    for (let i = 0; i < allProducts.length; i++) {
+        const product = allProducts[i];
+
+        // Assuming the product object has Title and ImageURL fields
+        const title = product.Title;
+        const image = product.ImageUrl; // or whatever the correct field is
+
+        let newItem = createCompareListCard(title, image);
+        compareList.insertBefore(newItem, compareList.lastElementChild);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', displayCompare);
