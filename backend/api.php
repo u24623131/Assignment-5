@@ -424,12 +424,12 @@ class API {
                     $productNo = $row['Product_No'];
 
                     // Escape output
-                    $title = htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8');
-                    $category = htmlspecialchars($row['Category'], ENT_QUOTES, 'UTF-8');
-                    $description = htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8');
-                    $brand = htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8');
-                    $imageURL = htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8');
-                    $retailerName = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+                    $title = $row['Title'];
+                    $category = $row['Category'];
+                    $description = $row['Description'];
+                    $brand = $row['Brand'];
+                    $imageURL = $row['Image_URL'];
+                    $retailerName = $row['Retailer_Name'];
 
                     if (!isset($groupedProducts[$productNo])) {
                         $groupedProducts[$productNo] = [
@@ -560,11 +560,11 @@ class API {
                     http_response_code(200);
                     $this->response("200 OK","success",[
                         "ProductNo" => (int)$productData['Product_No'],
-                        "Title" => htmlspecialchars($productData['Title'], ENT_QUOTES, 'UTF-8'),
-                        "Category" => htmlspecialchars($productData['Category'], ENT_QUOTES, 'UTF-8'),
-                        "Description" => htmlspecialchars($productData['Description'], ENT_QUOTES, 'UTF-8'),
-                        "Brand" => htmlspecialchars($productData['Brand'], ENT_QUOTES, 'UTF-8'),
-                        "ImageUrl" => filter_var($productData['Image_URL'], FILTER_VALIDATE_URL) ? htmlspecialchars($productData['Image_URL'], ENT_QUOTES, 'UTF-8') : null,
+                        "Title" => $productData['Title'],
+                        "Category" => $productData['Category'],
+                        "Description" => $productData['Description'],
+                        "Brand" => $productData['Brand'],
+                        "ImageUrl" => filter_var($productData['Image_URL'], FILTER_VALIDATE_URL) ? $productData['Image_URL'] : null,
                         "Price" => (float)$price['Price']
                     ]);
                 }else{
@@ -1511,12 +1511,12 @@ class API {
 
         while ($row = $result->fetch_assoc()) {
             $productNo = $row['Product_No'];
-            $title = htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8');
-            $category = htmlspecialchars($row['Category'], ENT_QUOTES, 'UTF-8');
-            $description = htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8');
-            $brand = htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8');
-            $imageUrl = htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8');
-            $retailerName = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+            $title = $row['Title'];
+            $category =$row['Category'];
+            $description = $row['Description'];
+            $brand = $row['Brand'];
+            $imageUrl = $row['Image_URL'];
+            $retailerName = $row['Retailer_Name'];
 
             if (!isset($groupedProducts[$productNo])) {
                 $groupedProducts[$productNo] = [
@@ -2128,8 +2128,8 @@ class API {
 
         if($this->getUserByApiKey($api)){
             $xp = $this->getUserByApiKey($api)['XP'];
-            http_response_code(404);
-            $this->response("404 Not Found","error",["XP"=>$xp]);
+            http_response_code(200);
+            $this->response("200 OK","success",["XP"=>$xp]);
             return;
         }else{
             http_response_code(404);
@@ -2240,6 +2240,7 @@ class API {
         }
 
         $user = $this->getUserByApiKey($apikey);
+
         if (!isset($user['User_ID'])) {
             http_response_code(404);
             $this->response("404 Not Found", "error", "User not found");
@@ -2274,6 +2275,7 @@ class API {
         }
     
         $result = $toCheck->get_result();
+        
         if ($result && $result->num_rows > 0) {
             $deleteSql = "DELETE FROM Compare WHERE user_id = ? AND product_id = ?";
             $deleteStmt = $this->DB_Connection->prepare($deleteSql);
