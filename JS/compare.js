@@ -79,13 +79,13 @@ async function sendRequest(requestData) {
         } else if (requestData.type === "GetProductReviews") {
             return (result && result.data && Array.isArray(result.data)) ? result.data : [];
         } else if (requestData.type === "RemoveFromCompare") {
-            if (result ) {
+            if (result) {
                 console.log(`Product '${requestData.Product_Name}' removed successfully from comparison.`);
-                return true; 
+                return true;
             } else {
-                
+
                 console.error(`Failed to remove product '${requestData.Product_Name}':`, result);
-                return false; 
+                return false;
             }
         } else {
             return result;
@@ -102,7 +102,7 @@ function moveProductInArray(arr, fromIndex, toIndex) {
     if (toIndex < 0 || toIndex >= arr.length) {
         return false; // Invalid target index
     }
-    const element = arr.splice(fromIndex, 1)[0]; 
+    const element = arr.splice(fromIndex, 1)[0];
     arr.splice(toIndex, 0, element);
     return true;
 }
@@ -191,15 +191,15 @@ function createProductCard(product, currentIndex) {
     const productCardElement = document.createElement("div");
     productCardElement.className = "product-card";
     productCardElement.dataset.productId = product.Product_No;
-    productCardElement.dataset.productIndex = currentIndex; 
+    productCardElement.dataset.productIndex = currentIndex;
 
     // creating product img
     const productCardHeader = document.createElement("div");
     productCardHeader.classList.add("product-card-header");
 
     const productImage = document.createElement("img");
-    productImage.src = product.ImageUrl ;
-    productImage.alt = product.Title ;
+    productImage.src = product.ImageUrl;
+    productImage.alt = product.Title;
     productCardHeader.appendChild(productImage);
 
     // creating alternate prices
@@ -285,18 +285,18 @@ function createProductCard(product, currentIndex) {
     reviewButtonGroup.appendChild(moreReviewsButton);
 
     const addReviewButton = document.createElement("button");
-    addReviewButton.classList.add("btn-review","add-review-btn");
+    addReviewButton.classList.add("btn-review", "add-review-btn");
     addReviewButton.innerHTML = '<i class="fas fa-plus-square"></i> ';
     reviewButtonGroup.appendChild(addReviewButton);
 
     const likeButton = document.createElement("button");
-    likeButton.classList.add("btn-review","add-to-favourite-btn");
+    likeButton.classList.add("btn-review", "add-to-favourite-btn");
     likeButton.innerHTML = '<i class="fas fa-heart"></i> ';
     reviewButtonGroup.appendChild(likeButton);
 
     const removeButton = document.createElement("button");
     removeButton.classList.add("btn-review", "remove-product-btn");
-    removeButton.innerHTML = '<i class="fas fa-times-circle"></i> '; 
+    removeButton.innerHTML = '<i class="fas fa-times-circle"></i> ';
     reviewButtonGroup.appendChild(removeButton);
 
     // Position Changer Elements
@@ -308,16 +308,16 @@ function createProductCard(product, currentIndex) {
     positionInput.type = "number";
     positionInput.min = "1";
     positionInput.max = allProducts.length.toString();
-    positionInput.value = (currentIndex + 1).toString(); 
+    positionInput.value = (currentIndex + 1).toString();
     positionInput.title = `Enter new position (1-${allProducts.length})`;
 
     const positionButton = document.createElement("button");
-    positionButton.classList.add("btn-review","position-button");
-    positionButton.innerHTML = '<i class="fas fa-arrows-alt-h"></i> '; 
+    positionButton.classList.add("btn-review", "position-button");
+    positionButton.innerHTML = '<i class="fas fa-arrows-alt-h"></i> ';
 
     positionChangerDiv.appendChild(positionButton);
     positionChangerDiv.appendChild(positionInput);
-    reviewButtonGroup.appendChild(positionChangerDiv); 
+    reviewButtonGroup.appendChild(positionChangerDiv);
 
 
     reviewsSection.appendChild(reviewButtonGroup);
@@ -458,7 +458,7 @@ document.addEventListener("click", function (event) {
         if (productCardElement) {
             const currentProductIndex = parseInt(productCardElement.dataset.productIndex);
             const positionInput = productCardElement.querySelector(".position-input");
-            const newPosition = parseInt(positionInput.value); 
+            const newPosition = parseInt(positionInput.value);
 
             if (isNaN(newPosition) || newPosition < 1 || newPosition > allProducts.length) {
                 alert(`Invalid position. Please enter a number between 1 and ${allProducts.length}.`);
@@ -466,16 +466,16 @@ document.addEventListener("click", function (event) {
             }
             const newIndex = newPosition - 1;
 
-            if (currentProductIndex !== newIndex) { 
+            if (currentProductIndex !== newIndex) {
                 const moved = moveProductInArray(allProducts, currentProductIndex, newIndex);
                 if (moved) {
                     console.log(`Moved product from index ${currentProductIndex} to ${newIndex}.`);
-                    displayProducts(); 
+                    displayProducts();
                 } else {
                     console.error("Failed to move product in array (should not happen with valid input).");
                 }
             } else {
-                 console.log("Product is already in the desired position.");
+                console.log("Product is already in the desired position.");
             }
         } else {
             console.warn("Could not find parent .product-card for the position button.", btn);
@@ -484,12 +484,12 @@ document.addEventListener("click", function (event) {
 });
 
 async function removeProduct(productTitle, productCardElement) {
-   
+
     try {
         const removeRequest = {
             type: "RemoveFromCompare",
             apikey: api_key,
-            Product_Name: productTitle 
+            Product_Name: productTitle
         };
         const success = await sendRequest(removeRequest);
 
@@ -507,7 +507,7 @@ async function removeProduct(productTitle, productCardElement) {
 }
 
 // --- Call displayProducts to initiate the process when the DOM is ready ---
-function ClearDisplay(){
+function ClearDisplay() {
     const mainProductColumn = document.querySelector(".main-product-column");
     const comparedProductsColumn = document.querySelector(".compared-products-column");
     if (mainProductColumn) {
@@ -525,11 +525,11 @@ let currentProductTitleForReview = '';
 function openReviewModal(productTitle) {
     currentProductTitleForReview = productTitle;
     reviewModalHeader.textContent = `Add Review for "${productTitle}"`;
-    reviewDescriptionInput.value = ''; 
-    reviewRatingInput.value = ''; 
-    reviewFormMessage.textContent = ''; 
+    reviewDescriptionInput.value = '';
+    reviewRatingInput.value = '';
+    reviewFormMessage.textContent = '';
     reviewFormMessage.classList.remove('success', 'error');
-    reviewModal.style.display = 'flex'; 
+    reviewModal.style.display = 'flex';
 }
 
 // Function to close the review modal
@@ -538,8 +538,8 @@ function closeReviewModal() {
 }
 
 // Event listener for opening the modal (delegated to document)
-document.addEventListener('click', function(event) {
-    const addReviewBtn = event.target.closest('.add-review-btn'); 
+document.addEventListener('click', function (event) {
+    const addReviewBtn = event.target.closest('.add-review-btn');
 
     if (addReviewBtn) {
         const productCardElement = addReviewBtn.closest('.product-card');
@@ -555,18 +555,17 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Event listeners for closing the modal
+
 closeButton.addEventListener('click', closeReviewModal);
-// Close modal if user clicks outside of the modal content
-window.addEventListener('click', function(event) {
+
+window.addEventListener('click', function (event) {
     if (event.target === reviewModal) {
         closeReviewModal();
     }
 });
 
-// Event listener for submitting the review form inside the modal
-reviewForm.addEventListener('submit', async function(event) {
-    event.preventDefault(); // Prevent default form submission
+reviewForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
 
     const description = reviewDescriptionInput.value.trim();
     const rating = parseFloat(reviewRatingInput.value);
@@ -584,27 +583,60 @@ reviewForm.addEventListener('submit', async function(event) {
     }
 
     const reviewData = {
-        type: "AddReview", 
+        type: "AddReview",
         apikey: api_key,
-        Title: currentProductTitleForReview, 
-        Rating: rating, 
-        Review : description 
+        Title: currentProductTitleForReview,
+        Rating: rating,
+        Review: description
     };
 
     try {
-       
+
         submitReviewButton.disabled = true;
         submitReviewButton.textContent = 'Submitting...';
 
-        const response = await sendRequest(reviewData); 
-        if (response ) { 
+        const response = await sendRequest(reviewData);
+        if (response) {
             reviewFormMessage.textContent = 'Review added successfully!';
             reviewFormMessage.className = 'form-message success';
+
+            ///adding XP points :
+            const csrfToken = getCsrfToken();
+
+            if (!csrfToken) {
+                console.error("CSRF token not found. Aborting DeleteAccount request.");
+                alert("Security error: CSRF token missing. Please refresh the page.");
+                return;
+            }
+            fetch("../api.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
+                },
+                body: JSON.stringify({
+                    type: "AddUserXP",
+                    apikey: api_key,
+                    xp: 15
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        console.log("+15xp")
+                    } else {
+                        console.error("Failed to add user experience:", data.data);
+                    }
+                })
+                .catch(error => {
+                    console.error("Network error adding user experience:", error);
+                });
+            window.location.href = "compare.php";
             setTimeout(() => {
                 closeReviewModal();
-                displayProducts(); 
-            }, 1000); 
-        } 
+                displayProducts();
+            }, 1000);
+        }
     } catch (error) {
         console.error("Error adding review:", error);
         reviewFormMessage.textContent = 'An error occurred while adding review.';
@@ -615,7 +647,7 @@ reviewForm.addEventListener('submit', async function(event) {
     }
 });
 
-document.addEventListener("click", async function(event) {
+document.addEventListener("click", async function (event) {
     const addToFavouriteBtn = event.target.closest(".add-to-favourite-btn");
 
     if (addToFavouriteBtn) {
@@ -642,12 +674,12 @@ document.addEventListener("click", async function(event) {
                         addToFavouriteBtn.style.cursor = 'default';
                     } else {
                         alert(`Failed to add "${productTitle}" to favourites. Please try again.`);
-                        addToFavouriteBtn.innerHTML = '<i class="fas fa-heart"></i> Like'; 
+                        addToFavouriteBtn.innerHTML = '<i class="fas fa-heart"></i> Like';
                     }
                 } catch (error) {
                     console.error("Error adding to favourites:", error);
                     alert(`An error occurred while adding "${productTitle}" to favourites.`);
-                    addToFavouriteBtn.innerHTML = '<i class="fas fa-heart"></i> Like'; 
+                    addToFavouriteBtn.innerHTML = '<i class="fas fa-heart"></i> Like';
                     addToFavouriteBtn.disabled = false;
                 }
             } else {
