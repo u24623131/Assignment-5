@@ -1134,16 +1134,24 @@ class API {
             return;
         }
 
-        $all = isset($input['filter']['All']) ? $input['filter']['All']: '';
-        $byTitle = isset($input['filter']['byTitle']) ? $input['filter']['byTitle']: '';
-        $byCategory = isset($input['filter']['byCategory']) ? $input['filter']['byCategory']: '';
-        $byDescription = isset($input['filter']['byDescription']) ? $input['filter']['byDescription']: '';
-        $byBrand = isset($input['filter']['byBrand']) ? $input['filter']['byBrand']: '';
-        // $byPrice = isset($input['filter']['byPrice']) ? $input['filter']['byPrice']: ''; // price needs to be a [min, max] array
+        $filter = $input['filter'];
+        if (!is_array($filter)) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "filter must be an array");
+            return;
+        }
 
         $whereClauses = [];
         $params = [];
         $types = "";
+
+        $byTitle = $filter['byTitle'] ?? '';
+        $byCategory = $filter['byCategory'] ?? '';
+        $byDescription = $filter['byDescription'] ?? '';
+        $byBrand = $filter['byBrand'] ?? '';
+        $byRetailer =$filter['byRetailer'] ?? '';
+        $byMaxPrice = isset($filter['byMaxPrice']) ? floatval($filter['byMaxPrice']): null; 
+        $byMinPrice = isset($filter['byMinPrice']) ? floatval($filter['byMinPrice']): null; 
 
         if(!empty($byTitle)){
             $whereClauses[] = "Title = ?";
@@ -1165,18 +1173,67 @@ class API {
             $params[] = $byBrand;
             $types .= "s";
         }
+        if(!empty($byRetailer)){
+            $retailerInfo = $this->getRetailerInfo($byRetailer);
+            if (!$retailerInfo) {
+                http_response_code(400);
+                $this->response("400 Bad Request", "error", "Retailer does not exist");
+                return;
+            }
+            $whereClauses[] = "pr.Retailer_ID = ?";
+            $params[] = $retailerInfo['Retailer_ID'];
+            $types .= "i";
+        }
+        if ($byMinPrice !== null && $byMaxPrice !== null) {
+            $whereClauses[] = "pr.Price BETWEEN ? AND ?";
+            $params[] = $byMinPrice;
+            $params[] = $byMaxPrice;
+            $types .="dd";
+        }else if ($byMinPrice !== null) {
+            $whereClauses[] = "pr.Price >= ?";
+            $params[] = $byMinPrice;
+            $types .= "d";
+        }else if ($byMaxPrice !== null) {
+            $whereClauses[] = "pr.Price <= ?";
+            $params[] = $byMaxPrice;
+            $types .= "d";
+        }
 
         if (count($whereClauses) === 0) {
             $whereClauses[] = "1=1"; //return all by default
         }
 
-        $searchSql = "SELECT * FROM Products WHERE " . implode(" AND ", $whereClauses);
+        $sortBy = $input['Sort'] ?? 'p.Title';
+        $allowedSortColumns = ['p.Title', 'pr.Price', 'p.Category', 'p.Brand'];
+
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            http_response_code(400);
+            $this->response("400 Bad Request", "error", "Invalid sort column");
+            return;
+        }
+
+        $order = strtoupper($input['Order'] ?? 'ASC');
+        if(!in_array($order, ['ASC', 'DESC'])){
+            $order = 'ASC';
+        }
+
+        $searchSql = "SELECT p.*, pr.Price, r.Name AS Retailer_Name 
+        FROM Products AS p 
+        JOIN Prices AS pr ON p.Product_No = pr.Product_No 
+        JOIN Retailers AS r ON r.Retailer_ID = pr.Retailer_ID 
+        WHERE " . implode(" AND ", $whereClauses) . " GROUP BY p.Product_No";
+        $searchSql .= " ORDER BY $sortBy $order";
         $searchStmt = $this->DB_Connection->prepare($searchSql);
         if ($searchStmt) {
             if (count($params) > 0) {
                 $searchStmt->bind_param($types, ...$params);
             }
-            $searchStmt->execute();
+            if (!$searchStmt->execute()) {
+                error_log("Execution failed " . $searchStmt->error);
+                http_response_code(500);
+                $this->response("500 Internal Server Error", "error", "Failed to execute filter query");
+                return;
+            }
             $searchResult = $searchStmt->get_result();
             if ($searchResult) {
                 http_response_code(200);
@@ -1193,8 +1250,6 @@ class API {
             $this->response("500 Internal Server Error","error",["message" => "Database error occured. Please try again later"]);
             return;
         }
-
-
     }
     private function AddReview($input){ // only logged in normal users can leave reviews
         // ensure apiKey is NOT NULL
