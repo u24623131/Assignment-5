@@ -75,14 +75,14 @@ function loadTimerState() {
 /**
  * Clears the timer state from localStorage.
  */
-// function clearTimerState() {
-//     try {
-//         localStorage.removeItem(LOCAL_STORAGE_KEY);
-//         // console.log("Timer state cleared from localStorage.");
-//     } catch (e) {
-//         console.error("Failed to clear timer state from localStorage:", e);
-//     }
-// }
+function clearTimerState() {
+    try {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        // console.log("Timer state cleared from localStorage.");
+    } catch (e) {
+        console.error("Failed to clear timer state from localStorage:", e);
+    }
+}
 
 /**
  * Initiates the primary 5-minute timer.
@@ -147,15 +147,6 @@ if (logoutButton) {
         // This mimics the original href behavior but ensures localStorage is cleared first
         window.location.href = logoutButton.href;
     });
-}
-
-function clearTimerState() {
-    try {
-        localStorage.removeItem('randomButtonTimerState');
-        console.log("Timer state cleared from localStorage during logout.");
-    } catch (e) {
-        console.error("Failed to clear timer state from localStorage:", e);
-    }
 }
 
 /**
