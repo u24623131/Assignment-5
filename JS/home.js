@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // });
 
     const categorySelect = document.getElementById("Dropdown_Category");
-    // const countrySelect = document.getElementById("Dropdown_country");
+    const retailerSelect = document.getElementById("Dropdown_Retailer");
     const brandSelect = document.getElementById("Dropdown_brand");
 
     categorySelect.addEventListener("change", function () {
@@ -592,10 +592,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
         sendRequest();
     });
 
-    // countrySelect.addEventListener("change", function () {
-    //     getAllProducts.search.country_of_origin = countrySelect.value;
-    //     sendRequest();
-    // });
+    retailerSelect.addEventListener("change", function () {
+ 
+        getAllProducts = {
+            type: "Filter",
+            apikey: api_key,
+            filter: {
+                "byRetailer": retailerSelect.value
+            }
+        };
+        sendRequest();
+    });
 
     brandSelect.addEventListener("change", function () {
 
@@ -646,19 +653,13 @@ document.addEventListener("click", async function (event) {
                 btn.classList.add('animate-bg-and-heart');
                 heartIcon.classList.add('animate-favorite');
 
-                try {
-                    await sendAddRequest(addToFavPayload);
-                    setTimeout(() => {
-                        btn.classList.remove('animate-bg-and-heart');
-                        heartIcon.classList.remove('animate-favorite');
-                    }, 2000);
-
-                } catch (error) {
-                    console.error("Failed to add to favorites:", error);
+                
+                await sendAddRequest(addToFavPayload);
+                setTimeout(() => {
                     btn.classList.remove('animate-bg-and-heart');
                     heartIcon.classList.remove('animate-favorite');
-                    alert("Failed to add to favorites. Please try again.");
-                }
+                }, 2000);
+
             } else {
                 console.warn("Heart icon not found inside .add-fav button.");
             }
@@ -723,7 +724,7 @@ document.addEventListener("click", function (event) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-Token": csrfToken
+                "X-CSRF-Token": csrfToken 
             },
             body: JSON.stringify({
                 type: "AddUserXP",
