@@ -1,0 +1,1053 @@
+==================================================================
+                 WORKING WITH SATOSHI NAKAMOTO API
+==================================================================
+
+============================= SETUP ==============================
+-> Only POST requests allowed
+-> MUST HAVE .env FILE (Available on Discord)
+	--> if file name is not .env (e.g. "env") rename and add a . 
+	    to the name (e.g.".env")
+-> Install Composer: https://getcomposer.org/download/
+-> After Composer is installed, run in terminal:
+
+       composer require vlucas/phpdotenv
+
+==================================================================
+                        REQUESTS
+==================================================================
+
+========================= REGISTRATION ===========================
+
+Required Fields:
+  - type         : "Register"
+  - Name         : First name
+  - Surname      : Surname
+  - Email        : Valid email address
+  - Password     : Minimum 8 characters; must include:
+                     * Uppercase & lowercase letters
+                     * Numbers
+                     * Symbols
+  - User_Type    : "admin" or "normal"
+
+Optional Field:
+  - Cell_No      : 10-digit phone number
+
+------------------ REQUEST EXAMPLE 1 ------------------
+
+{
+  "type": "Register",
+  "Name": "TestName2",
+  "Surname": "TestSurname2",
+  "Email": "testemail2@test.com",
+  "Password": "test1P@ssword",
+  "User_Type": "normal",
+  "Cell_No": "0123456789"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747763875493,
+  "data": {
+    "message": "TestName2 was added",
+    "apiKey": "0ce38b841cd526f2b18b9707aed7f772"
+  }
+}
+
+------------------- ERROR RESPONSE -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747766654058,
+  "data": "Email was already used"
+}
+
+------------------ REQUEST EXAMPLE 2 ------------------
+
+{
+  "type": "Register",
+  "Name": "TestName",
+  "Surname": "TestSurname",
+  "Email": "testemail@test.com",
+  "Password": "test1P@ssword",
+  "User_Type": "normal"
+}
+
+==================================================================
+                          LOGIN
+==================================================================
+
+Required Fields:
+  - type     : "Login"
+  - Email    : Registered email address
+  - Password : Associated password
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "Login",
+  "Email": "testemail2@test.com",
+  "Password": "test1P@ssword"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": {
+    "API_Key": "0ce38b841cd526f2b18b9707aed7f772"
+  }
+}
+
+------------------- ERROR RESPONSE -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "Incorrect password."
+}
+
+==================================================================
+                         DELETE ACCOUNT
+==================================================================
+
+Required Fields:
+  - type       : "DeleteAccount"
+  - API_Key    : Valid API key (from login or registration)
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "DeleteAccount",
+  "API_Key": "0ce38b841cd526f2b18b9707aed7f772"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747771234567,
+  "data": "User was deleted"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747772345678,
+  "data": "User not found, cannot delete"
+}
+
+==================================================================
+                      GET ALL PRODUCTS
+==================================================================
+
+Required Fields:
+  - type     : "GetAllProducts"
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "GetAllProducts"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": {
+    "Products": [
+      {
+        "Product_No": 1,
+        "Title": "Product 1",
+        "Category": "Category 1",
+        "Description": "Description 1",
+        "Brand": "Brand 1",
+        "Image_UTL": "image1.jpg"
+      },
+      {
+        "Product_No": 2,
+        "Title": "Product 2",
+        "Category": "Category 2",
+        "Description": "Description 2",
+        "Brand": "Brand 2",
+        "Image_UTL": "image2.jpg"
+      }
+    ]
+  }
+}
+
+------------------- ERROR RESPONSE -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "Query failed in getAllProducts"
+}
+
+==================================================================
+                      PRODUCT BY RETAILER
+==================================================================
+
+Required Fields:
+  - type        : "ProductByRetailer"
+  - retailer    : Retailer ID
+  - productNum  : Product number
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "ProductByRetailer",
+  "retailer": 1,
+  "productNum": 5
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": {
+    "ProductNo": 5,
+    "Title": "Product 5",
+    "Category": "Category 5",
+    "Description": "Description 5",
+    "Brand": "Brand 5",
+    "ImageUrl": "image5.jpg",
+    "Price": 19.99
+  }
+}
+
+------------------- ERROR RESPONSE -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "Could not get price of desired item"
+}
+
+==================================================================
+                      PRODUCTS BY CUSTOMER ID
+==================================================================
+
+Required Fields:
+  - type        : "ProductsByCustomerId"
+  - customerID  : Customer ID
+
+Note: This endpoint appears to be incomplete in the implementation.
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "ProductsByCustomerId",
+  "customerID": 123
+}
+
+==================================================================
+                      ADD TO FAVOURITES
+==================================================================
+
+Required Fields:
+  - type        : "AddToFavourite"
+  - apiKey      : Valid API key
+  - Product_No  : Product number to add
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "AddToFavourite",
+  "apiKey": "0ce38b841cd526f2b18b9707aed7f772",
+  "Product_No": 5
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": "Product added to favourites"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "apiKey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "User not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "Product not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "This product is already in your favourites."
+}
+
+==================================================================
+                      GET USER FAVOURITES
+==================================================================
+
+Required Fields:
+  - type        : "getUserFavourite"
+  - apiKey      : Valid API key
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "getUserFavourite",
+  "apiKey": "0ce38b841cd526f2b18b9707aed7f772"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": [
+    {
+      "Product_No": 1,
+      "Title": "Product 1",
+      "Category": "Category 1",
+      "Description": "Description 1",
+      "Brand": "Brand 1",
+      "Image_UTL": "image1.jpg"
+    },
+    {
+      "Product_No": 5,
+      "Title": "Product 5",
+      "Category": "Category 5",
+      "Description": "Description 5",
+      "Brand": "Brand 5",
+      "Image_UTL": "image5.jpg"
+    }
+  ]
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "apiKey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "User not found"
+}
+
+==================================================================
+                          ADD PRODUCT
+==================================================================
+
+Required Fields:
+  - type        : "addProduct"
+  - apikey      : Valid admin API key
+  - Title       : Product title
+  - Category    : Product category
+  - Description : Product description
+  - Brand       : Product brand
+  - Image_URL   : URL to product image
+  - Retailers   : Array of retailer names
+  - Prices      : Array of corresponding prices (float)
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "addProduct",
+  "apikey": "admin_api_key_here",
+  "Title": "Product X",
+  "Category": "Electronics",
+  "Description": "Latest gadget",
+  "Brand": "BrandX",
+  "Image_URL": "imagex.jpg",
+  "Retailers": ["Retailer1", "Retailer2"],
+  "Prices": [199.99, 189.99]
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000000,
+  "data": "product(s) & prices added"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767000001,
+  "data": "Title is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767000002,
+  "data": "User is not an admin"
+}
+
+==================================================================
+                     UPDATE PRODUCT PRICES
+==================================================================
+
+Required Fields:
+  - type        : "updateProductPrice"
+  - apikey      : Valid admin API key
+  - productTitle: Title of the product
+  - retailer    : Name of the retailer
+  - newPrice    : New price to be updated
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "updateProductPrice",
+  "apikey": "admin_api_key_here",
+  "productTitle": "Product X",
+  "retailer": "Retailer1",
+  "newPrice": 179.99
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000003,
+  "data": "Product price has been updated: 179.99"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767000004,
+  "data": "Product does not exist"
+}
+
+==================================================================
+                       DELETE PRODUCT
+==================================================================
+
+Required Fields:
+  - type        : "deleteProduct"
+  - apikey      : Valid admin API key
+  - productTitle: Title of the product to delete
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "deleteProduct",
+  "apikey": "admin_api_key_here",
+  "productTitle": "Product X"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000005,
+  "data": {
+    "message": "Product Product X has been deleted."
+  }
+}
+
+==================================================================
+                     ADD PRODUCT REVIEW
+==================================================================
+
+Required Fields:
+  - type   : "addReview"
+  - apikey : Valid user API key
+  - Title  : Product title
+  - Rating : Integer (0 to 5)
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "addReview",
+  "apikey": "user_api_key_here",
+  "Title": "Product X",
+  "Rating": 4
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000006,
+  "data": "Review was inserted"
+}
+
+==================================================================
+                    REMOVE PRODUCT REVIEW
+==================================================================
+
+Required Fields:
+  - type       : "removeReview"
+  - apikey     : API key of requester (user or admin)
+  - Title      : Product title
+  - userapikey : [ONLY FOR ADMIN] Target user's API key
+
+------------------ REQUEST EXAMPLE (User) ------------------
+
+{
+  "type": "removeReview",
+  "apikey": "user_api_key_here",
+  "Title": "Product X"
+}
+
+------------------ REQUEST EXAMPLE (Admin) ------------------
+
+{
+  "type": "removeReview",
+  "apikey": "admin_api_key_here",
+  "Title": "Product X",
+  "userapikey": "user_api_key_here"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747767000007,
+  "data": "Removed user's review"
+}
+
+==================================================================
+                      GET USER FAVOURITES
+==================================================================
+
+Required Fields:
+  - type   : "getUserFavourite"
+  - apiKey : Valid API key
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "getUserFavourite",
+  "apiKey": "0ce38b841cd526f2b18b9707aed7f772"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": [
+    {
+      "Product_No": 1,
+      "Title": "Product 1",
+      "Category": "Category 1",
+      "Description": "Description 1",
+      "Brand": "Brand 1",
+      "Image_UTL": "image1.jpg"
+    },
+    {
+      "Product_No": 5,
+      "Title": "Product 5",
+      "Category": "Category 5",
+      "Description": "Description 5",
+      "Brand": "Brand 5",
+      "Image_UTL": "image5.jpg"
+    }
+  ]
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "apiKey is missing"
+}
+==================================================================
+                      PRODUCT COMPARISON
+==================================================================
+
+Required Fields:
+  - type          : "productCompare"
+  - apiKey        : Valid API key
+  - productTitle1 : Title of the first product to compare
+  - productTitle2 : Title of the second product to compare
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "productCompare",
+  "apiKey": "0ce38b841cd526f2b18b9707aed7f772",
+  "productTitle1": "Product A",
+  "productTitle2": "Product B"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747766939157,
+  "data": {
+    "product1": {
+      "Product_No": 2,
+      "Title": "Product A",
+      "Category": "Category A",
+      "Description": "Description A",
+      "Brand": "Brand A",
+      "Image_URL": "productA.jpg",
+      "Prices": [
+        {
+          "Retailer": "Retailer 1",
+          "Price": 99.99
+        },
+        {
+          "Retailer": "Retailer 2",
+          "Price": 94.50
+        }
+      ]
+    },
+    "product2": {
+      "Product_No": 7,
+      "Title": "Product B",
+      "Category": "Category B",
+      "Description": "Description B",
+      "Brand": "Brand B",
+      "Image_URL": "productB.jpg",
+      "Prices": [
+        {
+          "Retailer": "Retailer 3",
+          "Price": 109.95
+        },
+        {
+          "Retailer": "Retailer 4",
+          "Price": 105.00
+        }
+      ]
+    }
+  }
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747767153738,
+  "data": "apiKey is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153742,
+  "data": "productTitle1 is required"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747767153746,
+  "data": "productTitle2 is required"
+}
+==================================================================
+                             SEARCH
+==================================================================
+
+Required Fields:
+  - type     : "Search"
+  - apikey   : Valid API key
+  - search   : Object with one or more of the following fields:
+                 • Title
+                 • Category
+                 • Description
+                 • Brand
+
+Optional Field:
+  - limit    : Maximum number of results to return (default: 50, max: 50)
+
+Notes:
+  - Partial matches are supported (e.g. "Dron" matches "Drone")
+  - All fields in `search` must be strings
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "Search",
+  "apikey": "youalreadyknowfakeapikey",
+  "search": {
+    "Title": "Drone",
+    "Brand": "DJI"
+  },
+  "limit": 10
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777000,
+  "data": [
+    {
+      "Product_No": 3,
+      "Title": "DJI Mini Drone",
+      "Category": "Electronics",
+      "Description": "Compact and lightweight drone",
+      "Brand": "DJI",
+      "Image_URL": "minidrone.jpg"
+    },
+    ...
+  ]
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "Invalid column name 'Price'. Valid columns: Title, Category, Description, Brand"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "search must be an array"
+}
+==================================================================
+                      GET USER DETAILS
+==================================================================
+
+Required Fields:
+  - type     : "GetUserDetails"
+  - apikey   : Valid API key
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "GetUserDetails",
+  "apikey": "0ce38b841cd526f2b18b9707aed7f772"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777000,
+  "data": {
+    "User_ID": 12,
+    "Name": "John",
+    "Surname": "Doe",
+    "Email": "john.doe@example.com",
+    "Cell_No": "0821234567"
+  }
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is not valid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "Failed to fetch user data"
+}
+
+==================================================================
+                     UPDATE USER DETAILS
+==================================================================
+
+Required Fields:
+  - type     : "UpdateUserDetails"
+  - apikey   : Valid API key
+
+Optional Fields (at least one required):
+  - name     : New name
+  - surname  : New surname
+  - email    : New email (must not be in use)
+  - cell_no  : New cellphone number (must be valid)
+  - password : New password (must be strong)
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "UpdateUserDetails",
+  "apikey": "0ce38b841cd526f2b18b9707aed7f772",
+  "name": "Jane",
+  "surname": "Smith",
+  "email": "jane.smith@example.com",
+  "cell_no": "0839876543",
+  "password": "SecurePass1!"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747777777000,
+  "data": "User details updated successfully"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747778888000,
+  "data": "apikey is missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888001,
+  "data": "apikey is not valid"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888002,
+  "data": "No fields to update"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888003,
+  "data": "Email is already used"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888004,
+  "data": "Invalid Cellphone number"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747778888005,
+  "data": "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a symbol."
+}
+==================================================================
+                    REMOVE FROM FAVOURITE
+==================================================================
+
+Required Fields:
+  - type   : "RemoveFromFavourite"
+  - apikey : Valid API key
+  - Title  : Product title
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "RemoveFromFavourite",
+  "apikey": "766d4969d53b80ae446ef13d892736f1",
+  "Title": "Wireless Bluetooth Earbuds"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747947537221,
+  "data": "Product removed from favourites"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747947537999,
+  "data": "apikey is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747947538001,
+  "data": "Title is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747947538002,
+  "data": "Invalid API Key"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747947538003,
+  "data": "Product not found"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747947538004,
+  "data": "User did not add product to favourites"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747947538005,
+  "data": "Failed to prepare statement"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747947538006,
+  "data": "Failed to delete favourite"
+}
+==================================================================
+                         ADD RETAILER
+==================================================================
+
+Required Fields:
+  - type         : "AddRetailer"
+  - apikey       : Valid API key (must be admin)
+  - retailName   : Name of the retailer
+
+Optional Fields:
+  - retailAddress : Physical address of the retailer
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "AddRetailer",
+  "apikey": "adminapikey1234567890",
+  "retailName": "TechWorld",
+  "retailAddress": "123 Market Street, Cape Town"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747948000000,
+  "data": "Retailer added successfully"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747948001000,
+  "data": "apikey is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948001001,
+  "data": "User is not an admin"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948001002,
+  "data": "retailName is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948001003,
+  "data": "Retailer already exists"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948001004,
+  "data": "Could not prepare insert statement"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948001005,
+  "data": "Failed to insert retailer"
+}
+==================================================================
+                         UPDATE RETAILER
+==================================================================
+
+Required Fields:
+  - type         : "UpdateRetailer"
+  - apikey       : Valid API key (must be admin)
+  - retailName   : Current name of the retailer
+
+Optional Fields (at least one required to update):
+  - newRetailName : New name of the retailer
+  - retailAddress : New physical address of the retailer
+
+------------------ REQUEST EXAMPLE ------------------
+
+{
+  "type": "UpdateRetailer",
+  "apikey": "adminapikey1234567890",
+  "retailName": "TechWorld",
+  "newRetailName": "TechPlanet",
+  "retailAddress": "456 Innovation Road, Joburg"
+}
+
+------------------ SUCCESS RESPONSE ------------------
+
+{
+  "status": "success",
+  "timestamp": 1747948000000,
+  "data": "Retailer updated successfully"
+}
+
+------------------- ERROR RESPONSES -------------------
+
+{
+  "status": "error",
+  "timestamp": 1747948002000,
+  "data": "apikey is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948002001,
+  "data": "User is not an admin"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948002002,
+  "data": "retailName is Missing"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948002003,
+  "data": "Retailer does not exist"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948002004,
+  "data": "Could not prepare update statement"
+}
+
+{
+  "status": "error",
+  "timestamp": 1747948002005,
+  "data": "Failed to update retailer"
+}
+

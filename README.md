@@ -26,9 +26,6 @@ A web application that allows users to compare product prices across different r
 - Product comparison page
 - User profile
 - Login/Signup
-- Favorites
-- Manager
-
 ## Installation
 
 -Make sure you have xampp installed then store the project folder in the htdocs directory.

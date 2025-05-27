@@ -1,0 +1,361 @@
+.signup-page {
+    background: radial-gradient(circle, #646262 0%, #141414 50%, #000 100%);
+    margin: 0px;
+    padding: 0px;
+}
+
+.MainDiv {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    margin: 26px;
+    color: #000;
+}
+
+.Top-Header {
+    display: flex;
+    align-items: center;
+}
+
+.Top-Header h2 {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 26px;
+    margin: 5px;
+}
+
+.Slogan {
+    color: #ff523b;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.MainContainer {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 5px;
+    transition: transform 0.5s;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 11px;
+    width: 700px;
+    height: 400px;
+}
+
+#btnLogout {
+    position: absolute;
+    top: -5px;
+    right: 15px;
+}
+
+#btnSave {
+    position: absolute;
+    bottom: 15px;
+    right: 185px;
+}
+
+#btnDeleteAccount {
+    position: absolute;
+    top: -5px;
+    right: 135px;
+    width: auto;
+}
+
+.MainContainer hr {
+    border: none;
+    background-color: #ff523b;
+    position: absolute;
+    top: 48px;
+    left: -2px;
+    width: 700px;
+    height: 4px;
+    border-radius: 11px;
+    margin-bottom: 11px;
+}
+
+.error-tooltip[data-field-id="curPasswordInput"] {
+    transform: translate(298px, 35px);
+}
+
+#expDisplay {
+    position: absolute;
+    top: -25px;
+}
+
+#lvlDisplay {
+    position: absolute;
+    top: -25px;
+    left: 550px;
+}
+
+#btnExpHelp {
+    width: fit-content;
+    position: absolute;
+    top: -85px;
+    left: 550px;
+}
+
+.LblPA {
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    margin: 8px;
+    font-weight: bold;
+    color: white;
+    left: 26px;
+}
+
+.Containerdots {
+    display: flex;
+    gap: 3px;
+}
+
+.divdot {
+    position: relative;
+    width: 5px;
+    height: 5px;
+    top: 11px;
+    background-color: #ff523b;
+    top: 24px;
+    left: 1%;
+    border-radius: 100%;
+}
+
+.Main_Form {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 11px;
+}
+
+.input-group {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    /* gap:50px; */
+}
+
+.input-group i {
+    position: absolute;
+    left: 60%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: #ccc;
+    pointer-events: none;
+    z-index: 2;
+}
+
+#pIcon {
+    bottom: -3px;
+}
+
+.Main_Form input.NewVal {
+    font-size: 11px;
+    padding: 11px 11px 11px 29px;
+    width: 30%;
+    height: 32px;
+    border: none;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border-radius: 21px;
+    color: #ccc;
+    font-weight: bold;
+    left: 58.3%;
+    position: absolute;
+}
+
+.Main_Form input.CurVal {
+    font-size: 11px;
+    padding: 11px 11px 11px 29px;
+    width: 30%;
+    height: 32px;
+    border: none;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border-radius: 21px;
+    color: #ccc;
+    font-weight: bold;
+    left: 15%;
+    position: absolute;
+}
+
+
+.Main_Form select {
+    font-size: 11px;
+    padding: 11px 11px 11px 29px;
+    width: 30%;
+    height: 37px;
+    border: none;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border-radius: 21px;
+    color: #ccc;
+    font-weight: bold;
+    position: absolute;
+    left: 58.3%;
+    top: 8px;
+}
+
+.Main_Form select option {
+    background-color: #333;
+    /* Darker background for options */
+    color: #fff;
+    /* White text for options */
+    padding: 5px;
+    /* May or may not work depending on browser */
+}
+
+.Main_Form select option:checked {
+    background-color: #ff523b;
+    /* Highlight selected option */
+    color: #000;
+}
+
+#CurAcc {
+    top: 10px;
+}
+
+#curDet {
+    position: absolute;
+    top: 60px;
+    left: 30px;
+}
+
+#newDet {
+    position: absolute;
+    top: 60px;
+    left: 400px;
+}
+
+.Main_Form input::placeholder {
+    color: #ccc;
+    font-weight: bold;
+}
+
+.error-label {
+    color: red;
+    font-size: 8px;
+    font-weight: bold;
+    margin-top: 4px;
+    text-align: left;
+    width: 100%;
+    padding-left: 5px;
+}
+
+.lbldescription {
+    position: relative;
+    margin-top: 16px;
+    margin-left: 21px;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.ImgAnimal {
+    position: absolute;
+    top: 132px;
+    left: 53px;
+}
+
+.Items {
+    position: absolute;
+    top: 106px;
+    right: 16px;
+    width: 423px;
+    height: 423px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.icon-circle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ff523b;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 5px rgba(255, 82, 59, 0.6);
+    color: #fff;
+    font-size: 13px;
+    margin: 5px;
+}
+
+.icon-circle:hover {
+    transform: scale(1.2);
+    background-color: #ff523b;
+    color: #000;
+}
+
+.btnSignUp {
+    font-size: 11px;
+    font-weight: bold;
+    width: 106px;
+    height: 26px;
+    margin: 0;
+}
+
+.btnSignUp:hover {
+    background-color: #563434;
+}
+
+/* In your profile.css or main.css */
+
+.error-tooltip {
+    position: absolute;
+    /* Essential for precise positioning relative to its nearest positioned ancestor, or the document body if none. */
+    margin-left: 220px;
+    margin-top: -33px;
+    background-color: #dc3545;
+    /* Red background for errors */
+    color: white;
+    /* White text color */
+    padding: 8px 15px;
+    /* Spacing inside the tooltip */
+    border-radius: 5px;
+    /* Slightly rounded corners */
+    font-size: 10px;
+    /* Smaller font size */
+    white-space: nowrap;
+    /* Prevents text from wrapping to the next line */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Soft shadow for depth */
+    z-index: 1000;
+    /* Ensures the tooltip appears on top of other content */
+    opacity: 0;
+    /* Initial state: hidden for fade-in effect */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    /* Smooth fade and potential movement */
+
+
+}
+
+/* For the input field itself when it has an error */
+.input-error-border {
+    border: 1px solid #dc3545 !important;
+    /* Makes the input border red */
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    /* Optional: A red glow */
+}

@@ -1,0 +1,411 @@
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.heading{
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+.Main-title-1{
+    position: relative;
+    left: -400px ;
+}
+.Main-title-2{
+    position: relative;
+    left: 150px ;
+}
+.product-comparison-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 40px; 
+    min-height: 80vh;
+}
+
+.main-product-column,
+.compared-products-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.main-product-column {
+    width: 450px; 
+}
+
+.compared-products-column {
+    flex-grow: 1;
+    max-width: 60%; 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+    gap: 20px;
+    max-height: calc(115vh - 115px); 
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.main-product-column h2,
+.compared-products-column h2 {
+    text-align: center;
+    color: #ff523b;
+    margin-bottom: 15px;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 0px;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 13px;
+    transition: transform 0.5s; 
+    height: 670px;
+    width: 420px;
+    max-width: 450px;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.product-card-header {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    gap: 15px; 
+    height: 200px;
+}
+
+.product-card-header img {
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px; 
+}
+
+.alternate-prices-box {
+    width: 50%;
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; 
+    align-items: center;
+}
+
+.alternate-prices-box h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #ff523b;
+}
+
+.price-item {
+    padding: 5px; 
+    width: 70%;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 2px;
+    transition: transform 0.3s;
+}
+
+.price-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.price-item h4 {
+    margin: 0;
+   
+}
+
+.retailer-name {
+    color: white; 
+    font-size: small;
+    font-size: 12px;
+}
+
+.product-price {
+    color: #ff523b; 
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.product-details {
+    padding: 8px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-title {
+    font-size: 18px; 
+    color: #ff523b;
+}
+
+.product-rating i {
+    color: #ff523b;
+}
+
+.product-description {
+    margin-top: 5px; 
+}
+
+
+.product-description p {
+    font-size: small;
+    line-height: 1.5; /* Improved readability */
+}
+
+.reviews-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; 
+    margin-top: 10px; 
+}
+
+.reviews-section h4 {
+    margin-bottom: 3px;
+}
+
+.review-item {
+    padding: 10px; 
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px; 
+    align-items: flex-start; 
+}
+.review-header{
+    display: flex;
+    gap: 3px;
+}
+.review-rating {
+    color: #ff523b;
+    font-size: small;
+    font-weight: bold;
+    flex-shrink: 0; 
+}
+.review-name{
+    color: white;
+    font-size: small;
+    font-weight: bold;
+    flex-shrink: 0; 
+}
+.review-date {
+    color: white;
+    font-size: small;
+    font-weight: bold;
+    flex-shrink: 0; 
+}
+
+.review-item p {
+    font-size: small;
+    margin: 0; 
+}
+
+.review-buttons-group {
+    display: flex;
+    justify-content: flex-end; 
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.btn-review {
+    color: #ff523b;
+    background-color: transparent;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    border: none;
+    padding: 8px 12px; 
+    font-size: small;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.btn-review:hover {
+    transform: translateY(-3px);
+    color: #e63946; 
+}
+.position-changer {
+    display: flex;
+    align-items: center;
+    margin-left: 10px; /* Adjust spacing as needed */
+}
+
+.btn-review i{
+    color: #ff523b;
+    width: 40px;
+}
+.position-changer input {
+    width: 40px; /* Adjust width as needed */
+    background-color: transparent;
+    height: 30px;
+    text-align: center;
+    border-radius: 5px;
+
+}
+.position-button {
+    color: #ff523b;
+    border: none;
+    justify-content: center;
+    align-items: center;
+    font-size: smaller;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0, 0, 0, 0.6); 
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 13px;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 25px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more responsive */
+    max-width: 500px; /* Max width for larger screens */
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.modal-content h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+}
+.form-group  input {
+    color: white;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 13px;
+}
+.form-group  textarea {
+    color: WHITE;
+    background: rgba(255, 255, 255, 0.085);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 13px;
+}
+.modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+.modal-content input[type="number"],
+.modal-content textarea {
+    width: calc(100% - 20px); 
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box; 
+}
+
+.modal-content textarea {
+    resize: vertical; 
+}
+
+.modal-content button {
+    background-color: #ff523b; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.2s ease;
+}
+
+.modal-content button:hover {
+    background-color: #218838;
+}
+
+.form-message {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.form-message.success {
+    color: #28a745;
+}
+
+.form-message.error {
+    color: #dc3545; 
+}
+

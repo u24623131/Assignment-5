@@ -9,5 +9,4 @@ backend/composer.lock
 #ignore logs (just in case)
 *.log
 
-#ignore test/debug files
-backend/testConfig.php
+
