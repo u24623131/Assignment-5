@@ -1267,17 +1267,17 @@ class API {
                     if (!isset($products[$productNo])) {
                         $products[$productNo] = [
                             "Product_No" => $row['Product_No'],
-                            "Title" => htmlspecialchars($row['Title'], ENT_QUOTES, 'UTF-8'),
-                            "Category" => htmlspecialchars($row['Category'], ENT_QUOTES, 'UTF-8'),
-                            "Description" => htmlspecialchars($row['Description'], ENT_QUOTES, 'UTF-8'),
-                            "Brand" => htmlspecialchars($row['Brand'], ENT_QUOTES, 'UTF-8'),
-                            "Image_URL" => filter_var($row['Image_URL'], FILTER_VALIDATE_URL) ? htmlspecialchars($row['Image_URL'], ENT_QUOTES, 'UTF-8') : null,
+                            "Title" => $row['Title'],
+                            "Category" => $row['Category'],
+                            "Description" => $row['Description'],
+                            "Brand" => $row['Brand'],
+                            "Image_URL" => filter_var($row['Image_URL'], FILTER_VALIDATE_URL) ? $row['Image_URL'] : null,
                             "Retailer_Names" => [],
                             "Prices" => []
                         ];
                     }
 
-                    $products[$productNo]['Retailers'][] = htmlspecialchars($row['Retailer_Name'], ENT_QUOTES, 'UTF-8');
+                    $products[$productNo]['Retailer_Names'][] = $row['Retailer_Name'];
                     $products[$productNo]['Prices'][] = (float)$row['Price'];
                 }
                 http_response_code(200);

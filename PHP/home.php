@@ -53,16 +53,6 @@
         <div class="row row-2">
             <h2> All Products</h2>
             <div class="fliters-group">
-                <select class="btn filters-btn">
-                    <option value="" selected disabled><b>SORT</b></option>
-                    <i class="fas fa-chevron-down"></i>
-                    <option value="price_asc">Price: Low to High</option>
-                    <option value="price_desc">Price: High to Low</option>
-                    <option value="Title">Title</option>
-                    <option value="Latest"> Latest</option>
-                    <option value="Country"> Country </option>
-                </select>
-
                 <button class=" btn fliters-btn" id="BtnFliter">
                     FILTERS
                     <i class="fas fa-chevron-down"></i>
