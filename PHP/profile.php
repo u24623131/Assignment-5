@@ -89,6 +89,7 @@ $currentPage = 'profile';
             </form>
             <button class="btn btnSignUp" type="button" id="btnLogout">Log Out</button>
             <button class="btn btnSignUp" type="button" id="btnDeleteAccount">Delete Account</button>
+            <h4 id="expDisplay">Experience: </h4>
 
         </div>
     </div>
