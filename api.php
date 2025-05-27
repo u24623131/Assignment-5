@@ -1,9 +1,9 @@
 <?php
-// ini_set('display_errors', 0); // Turn off display of errors to the browser
-// ini_set('log_errors', 1);    // Log errors to the PHP error log
-// // You might also want to explicitly set an error log file for easier access during development:
-// ini_set('error_log', './php_error.log'); // Replace with actual path
-// error_reporting(E_ALL);
+ini_set('display_errors', 0); // Turn off display of errors to the browser
+ini_set('log_errors', 1);    // Log errors to the PHP error log
+// You might also want to explicitly set an error log file for easier access during development:
+ini_set('error_log', './php_error.log'); // Replace with actual path
+error_reporting(E_ALL);
 
 session_start();
 
