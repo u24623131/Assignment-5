@@ -2136,7 +2136,7 @@ class API {
 
         if($stmt->execute()){
             http_response_code(200);
-            $this->response("200 OK","success","Congradulations, XP went up by " . $xp);
+            $this->response("200 OK","success","Congratulations, XP went up by " . $xp);
             return;
         }
         else{
