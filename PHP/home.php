@@ -72,7 +72,7 @@
 
         <div class="compareBox" id="compareList">
             <h2> Compare Items </h2>
-            <button class="btn btn-compare">
+            <button class="btn btn-compare btn-compare2">
                 <i class="fas fa-exchange-alt"></i> Compare
             </button>
         </div>

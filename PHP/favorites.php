@@ -72,26 +72,7 @@
 
             <div class="compareBox" id="compareList">
                 <h2> Compare Items </h2>
-
-                <div class="compareitem">
-                    <img src="..\image\toaster.jpg">
-                    <h4 id="Title">Toaster</h4>
-                    <div class="remove-message">Click to remove</div>
-                </div>
-
-                <div class="compareitem">
-                    <img src="..\image\toaster.jpg">
-                    <h4 id="Title">Toaster</h4>
-                    <div class="remove-message">Click to remove</div>
-                </div>
-
-                <div class="compareitem">
-                    <img src="..\image\toaster.jpg">
-                    <h4 id="Title">Toaster</h4>
-                    <div class="remove-message">Click to remove</div>
-                </div>
-
-                <button class="btn btn-compare">
+                <button class="btn btn-compare btn-compare2">
                     <i class="fas fa-exchange-alt"></i> Compare
                 </button>
             </div>

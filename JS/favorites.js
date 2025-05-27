@@ -251,6 +251,45 @@ document.addEventListener("click", function (event) {
     }
 });
 
+async function sendCompRequest(dataToSend) {
+    console.log("SENDING REQUEST");
+
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        console.error("CSRF token not found. Aborting request.");
+        alert("Security error: CSRF token missing. Please refresh the page.");
+        return;
+    }
+
+    const reqURL = '../api.php';
+
+    try {
+        const response = await fetch(reqURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify(dataToSend)
+        });
+
+        const result = await response.json();
+        console.dir(result, { depth: null });
+
+        // Check if the result has the expected structure
+        if (result && result.data && result.data.products) {
+            return result.data.products;
+        } else {
+            console.warn("Unexpected response structure:", result);
+            return []; // fallback if structure is not as expected
+        }
+
+    } catch (error) {
+        console.error("Request failed", error);
+        return []; // fallback if request fails
+    }
+}
 // Fetch Data from the database
 var GetUserFavourite = {
     type: "GetUserFavourite",
@@ -627,4 +666,62 @@ document.addEventListener("click", function (event) {
     }
 });
 
+//Listing if an add to campare list button pressed ;
+async function displayCompare() {
+    let compareList = document.getElementById("compareList");
 
+    const AddRequest = {
+        type: "ProductCompare",
+        apikey: api_key
+    };
+
+    let allProducts = await sendCompRequest(AddRequest);
+
+    for (let i = 0; i < allProducts.length; i++) {
+        const product = allProducts[i];
+
+        // Assuming the product object has Title and ImageURL fields
+        const title = product.Title;
+        const image = product.ImageUrl; // or whatever the correct field is
+
+        let newItem = createCompareListCard(title, image);
+        compareList.insertBefore(newItem, compareList.lastElementChild);
+    }
+}
+
+document.addEventListener("click", function (event) {
+    if (event.target.closest(".btn-compare2")) {
+        const csrfToken = getCsrfToken();
+
+        if (!csrfToken) {
+            console.error("CSRF token not found. Aborting DeleteAccount request.");
+            alert("Security error: CSRF token missing. Please refresh the page.");
+            return;
+        }
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify({
+                type: "AddUserXP",
+                apikey: api_key,
+                xp: 15
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    console.log("+15xp")
+                } else {
+                    console.error("Failed to add user experience:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error adding user experience:", error);
+            });
+        window.location.href = "compare.php";
+    }
+});
+document.addEventListener('DOMContentLoaded', displayCompare);

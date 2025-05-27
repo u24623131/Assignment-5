@@ -214,8 +214,8 @@ document.addEventListener("click", function (event) {
         compareList.insertBefore(newItem, compareList.lastElementChild);
         const AddRequest = {
             type: "AddToCompare",
-            apikey : api_key ,
-            Product_Name : titleElement.textContent
+            apikey: api_key,
+            Product_Name: titleElement.textContent
         };
         sendAddRequest(AddRequest)
 
@@ -270,8 +270,8 @@ async function sendRequest() {
         setupPagination(allProducts.length);
         if (getAllProducts.type === "Search") {
             renderProductsPage(1);
-        }else if(getAllProducts.type === "ProductCompare"){
-                return allProducts;
+        } else if (getAllProducts.type === "ProductCompare") {
+            return allProducts;
         } else {
             renderProductsPage(currentPage);
         }
@@ -314,7 +314,7 @@ async function sendAddRequest(dataToSend) {
     } catch (error) {
         console.error("Request failed", error);
     }
-    return result.data.products ;
+    return result.data.products;
 }
 
 async function sendCompRequest(dataToSend) {
@@ -676,12 +676,12 @@ document.addEventListener("click", function (event) {
             //console.log("Removing product ID:", titleElement);
             // Remove item from DOM
             clickedCompareItem.remove();
-             const AddRequest = {
-            type: "RemoveFromCompare",
-            apikey : api_key ,
-            Product_Name : titleElement.textContent
-        };
-        sendAddRequest(AddRequest)
+            const AddRequest = {
+                type: "RemoveFromCompare",
+                apikey: api_key,
+                Product_Name: titleElement.textContent
+            };
+            sendAddRequest(AddRequest)
         } else {
             console.warn("Missing data-product-id on:", clickedCompareItem);
         }
@@ -710,5 +710,39 @@ async function displayCompare() {
         compareList.insertBefore(newItem, compareList.lastElementChild);
     }
 }
+document.addEventListener("click", function (event) {
+    if (event.target.closest(".btn-compare2")) {
+        const csrfToken = getCsrfToken();
 
+        if (!csrfToken) {
+            console.error("CSRF token not found. Aborting DeleteAccount request.");
+            alert("Security error: CSRF token missing. Please refresh the page.");
+            return;
+        }
+        fetch("../api.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify({
+                type: "AddUserXP",
+                apikey: api_key,
+                xp: 15
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    console.log("+15xp")
+                } else {
+                    console.error("Failed to add user experience:", data.data);
+                }
+            })
+            .catch(error => {
+                console.error("Network error adding user experience:", error);
+            });
+        window.location.href = "compare.php";
+    }
+});
 document.addEventListener('DOMContentLoaded', displayCompare);
