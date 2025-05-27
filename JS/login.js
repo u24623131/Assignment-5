@@ -88,12 +88,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             console.log(data);
                             const apiKey = data.data.apikey;
-
+                            const email = data.data.email;
                             const d = new Date();
                             d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
                             let expires = "expires=" + d.toUTCString();
 
                             document.cookie = `api_key=${apiKey}; ${expires}; path=/; Secure; SameSite=Lax`;
+                            document.cookie = `user_email=${encodeURIComponent(email)}; ${expires}; path=/; Secure; SameSite=Lax`;
                             window.location.href = "home.php";
                         } else {
                             // Show error
